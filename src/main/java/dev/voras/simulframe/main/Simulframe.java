@@ -10,7 +10,7 @@ public class Simulframe {
 			
 		Bank b = Bank.getBank();
 		
-		CSVLoader.load("data.csv");
+		CSVLoader.load("accounts.csv");
 		
 		System.out.println("Loading services");
 
