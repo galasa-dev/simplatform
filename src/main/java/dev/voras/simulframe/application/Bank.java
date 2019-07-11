@@ -14,8 +14,10 @@ public class Bank {
 	private Map<String,Account> accounts;
 	
 	public static Bank getBank() {
-		if(Bank.bank == null)
+		if(Bank.bank == null) {
 			bank = new Bank();
+			System.out.println("Creating new Bank");
+		}	
 		return bank;
 	}
 	
