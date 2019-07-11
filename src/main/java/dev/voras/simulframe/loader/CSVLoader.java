@@ -16,7 +16,7 @@ public class CSVLoader {
 		try {
 			inputData = Files.readAllLines(Paths.get(path));
 		}catch(Exception e) {
-			System.out.println("Unable to read file" + path);
+			System.out.println("Unable to read file:  " + path);
 			return;
 		}
 		for(String s : inputData) {
