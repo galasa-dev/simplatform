@@ -1,5 +1,8 @@
 package dev.voras.simulframe.main;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dev.voras.simulframe.application.Bank;
 import dev.voras.simulframe.listener.Listener;
 import dev.voras.simulframe.loader.CSVLoader;
@@ -15,8 +18,12 @@ public class Simulframe {
 		
 		System.out.println("Loading services");
 		
-		Listener  l = new Listener(80, "dev.voras.simulframe.listener.WebServiceListener");
-		new Thread(l).start();
+		List<Listener> listeners = new ArrayList<>();
+		
+		listeners.add(new Listener(80, "dev.voras.simulframe.listener.WebServiceListener"));
+		
+		for(Listener l : listeners)	
+			new Thread(l).start();
 		
 		System.out.println("Loading services");
 
