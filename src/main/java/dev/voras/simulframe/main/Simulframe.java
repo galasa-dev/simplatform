@@ -24,8 +24,6 @@ public class Simulframe {
 		
 		for(Listener l : listeners)	
 			new Thread(l).start();
-		
-		System.out.println("Loading services");
 
 	}
 

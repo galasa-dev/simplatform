@@ -67,5 +67,9 @@ public class Bank {
 		accounts.put(account, new Account(account,sortCode,amount));
 	}
 	
+	public void creditAccount(String account, double amount) throws InsufficientBalanceException, AccountNotFoundException {
+		getAccount(account).creditAccount(amount);
+	}
+	
 
 }
