@@ -75,7 +75,8 @@ public class WebServiceListener implements IListener {
 			socket.close();
 				
 		}catch(Exception e) {
-			
+			System.err.println("Stuff went really wrong");
+			e.printStackTrace();
 		}
 
 	}
@@ -163,24 +164,45 @@ public class WebServiceListener implements IListener {
 		return "";
 	}
 	
-	private void processInput() throws IOException{
-		InputStream input = socket.getInputStream();
-		BufferedReader br = new BufferedReader(new InputStreamReader(input));
+	private void processInput() {
+		BufferedReader br = null;
+		try {
+			InputStream input = socket.getInputStream();
+			br = new BufferedReader(new InputStreamReader(input));
+		}catch(IOException e) {
+			System.err.println("Unable to access input stream from HTTP");
+			return;
+		}
 		
 		boolean readAllHeaders = false;
-		while(br.ready()) {
-			String data = br.readLine();
-			if(readAllHeaders)
-				payload+=data;
-			else {
-				if(data.equals("")) {
-					readAllHeaders = true;
-				}else {
-					headers.add(data);
-				}
+		try {
+			while(!br.ready()) {
+				try {
+					Thread.sleep(1000);
+				}catch(InterruptedException e) {
 					
+				}
+				
 			}
+			while(br.ready()) {
+				String data = br.readLine();
+				if(readAllHeaders)
+					payload+=data;
+				else {
+					if(data.equals("")) {
+						readAllHeaders = true;
+					}else {
+						headers.add(data);
+					}
+						
+				}
+			}
+		}catch(IOException e){
+			System.err.println("Unable to access input stream from HTTP");
+			
+			return;
 		}
+		
 	}
 
 	public void setSocket(Socket socket) {
