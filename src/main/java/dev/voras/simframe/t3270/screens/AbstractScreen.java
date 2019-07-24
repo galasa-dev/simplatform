@@ -1,4 +1,4 @@
-package dev.voras.simulframe.t3270.screens;
+package dev.voras.simframe.t3270.screens;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

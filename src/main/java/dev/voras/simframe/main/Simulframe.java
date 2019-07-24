@@ -1,13 +1,13 @@
-package dev.voras.simulframe.main;
+package dev.voras.simframe.main;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.voras.simulframe.application.Bank;
-import dev.voras.simulframe.listener.Listener;
-import dev.voras.simulframe.listener.TelnetServiceListener;
-import dev.voras.simulframe.listener.WebServiceListener;
-import dev.voras.simulframe.loader.CSVLoader;
+import dev.voras.simframe.application.Bank;
+import dev.voras.simframe.listener.Listener;
+import dev.voras.simframe.listener.TelnetServiceListener;
+import dev.voras.simframe.listener.WebServiceListener;
+import dev.voras.simframe.loader.CSVLoader;
 
 public class Simulframe {
 

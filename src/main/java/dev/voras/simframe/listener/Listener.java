@@ -1,4 +1,4 @@
-package dev.voras.simulframe.listener;
+package dev.voras.simframe.listener;
 
 import java.io.IOException;
 import java.net.ServerSocket;

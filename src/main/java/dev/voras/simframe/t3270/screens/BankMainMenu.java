@@ -1,4 +1,4 @@
-package dev.voras.simulframe.t3270.screens;
+package dev.voras.simframe.t3270.screens;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -10,19 +10,21 @@ import dev.voras.common.zos3270.internal.datastream.WriteControlCharacter;
 import dev.voras.common.zos3270.internal.terminal.fields.FieldText;
 import dev.voras.common.zos3270.spi.Screen;
 
-public class CICSGoodMorning extends AbstractScreen {
+public class BankMainMenu extends AbstractScreen {
 
 	private final Screen screen;
-	
+
 	private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-	public CICSGoodMorning(NetworkServer network) throws ScreenException {
+	public BankMainMenu(NetworkServer network) throws ScreenException {
 		super(network);
 
 		try {
 			this.screen = buildScreen(getClass().getSimpleName());
-			
-			makeTextField(screen, 37,0);
+
+			makeTextField(screen, 72,0);
+			makeTextField(screen, 6,2);
+			makeTextField(screen, 2,3);
 		} catch(Exception e) {
 			throw new ScreenException("Problem building screen", e);
 		}
@@ -36,11 +38,10 @@ public class CICSGoodMorning extends AbstractScreen {
 				writeScreen();
 
 				AttentionIdentification aid = receiveScreen(screen);
-				
-				if (aid == AttentionIdentification.CLEAR) {
-					return new CICSClearScreen(network);
-				}
 
+				if (aid == AttentionIdentification.PF3) {
+					return new SessionManagerMenu(network);
+				}
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -51,10 +52,10 @@ public class CICSGoodMorning extends AbstractScreen {
 
 	private void writeScreen() throws ScreenException {
 		LocalTime time = LocalTime.now();
-		
-		FieldText timeField = (FieldText) screen.locateFieldsAt(calcPos(37, 0));
+
+		FieldText timeField = (FieldText) screen.locateFieldsAt(calcPos(72, 0));
 		timeField.setContents(time.format(dtf));
-		
+
 		writeScreen(new CommandEraseWrite(), 
 				new WriteControlCharacter(false, false, false, false, false, false, true, true),
 				screen

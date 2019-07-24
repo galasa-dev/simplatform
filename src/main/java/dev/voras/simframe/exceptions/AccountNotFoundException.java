@@ -1,4 +1,4 @@
-package dev.voras.simulframe.exceptions;
+package dev.voras.simframe.exceptions;
 
 public class AccountNotFoundException extends Exception {
 

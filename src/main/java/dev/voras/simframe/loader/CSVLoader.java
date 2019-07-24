@@ -1,4 +1,4 @@
-package dev.voras.simulframe.loader;
+package dev.voras.simframe.loader;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import dev.voras.simulframe.application.Bank;
+import dev.voras.simframe.application.Bank;
 
 public class CSVLoader {
 
