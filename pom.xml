@@ -30,7 +30,12 @@
 			<artifactId>dev.voras.common.zos3270.manager</artifactId>
 			<version>${dev.voras.common.zos3270.manager}</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-logging}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
