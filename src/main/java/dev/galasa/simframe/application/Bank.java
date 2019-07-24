@@ -1,8 +1,11 @@
 package dev.galasa.simframe.application;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import dev.galasa.simframe.data.Account;
+import dev.galasa.simframe.db.Database;
 import dev.galasa.simframe.exceptions.AccountNotFoundException;
 import dev.galasa.simframe.exceptions.DuplicateAccountException;
 import dev.galasa.simframe.exceptions.InsufficientBalanceException;
@@ -10,8 +13,6 @@ import dev.galasa.simframe.exceptions.InsufficientBalanceException;
 public class Bank {
 	
 	private static Bank bank;
-	
-	private Map<String,Account> accounts;
 	
 	public static Bank getBank() {
 		if(Bank.bank == null) {
@@ -21,15 +22,17 @@ public class Bank {
 		return bank;
 	}
 	
-	private Bank() {
-		this.accounts = new HashMap<String, Account>();
-	}
-	
 	private Account getAccount(String accountNumber) throws AccountNotFoundException{
-		Account a = accounts.get(accountNumber);
-		if(a == null)
+		if(!accountExists(accountNumber))
 			throw new AccountNotFoundException("Account: " + accountNumber + " not found");
-		return a;
+		
+		ResultSet results = Database.getDatabase().getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + accountNumber + "'");
+		try{
+			results.next();
+			return new Account(results.getString(1), results.getString(2), results.getDouble(3));
+		}catch(SQLException se) {
+			return null;
+		}
 	}
 	
 	public void transferMoney(String sourceAccount, String targetAccount, double amount) throws AccountNotFoundException, InsufficientBalanceException{
@@ -41,20 +44,23 @@ public class Bank {
 	}
 	
 	public boolean accountExists(String account) {
-		return accounts.containsKey(account);
+		ResultSet results = Database.getDatabase().getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + account + "'");
+		try {
+			if(results.next())
+				return true;
+			else
+				return false;
+		} catch (SQLException e) {
+			return false;
+		}
 	}
 	
 	public String getSortCode(String account) throws AccountNotFoundException {
-		return accounts.get(account).getSortCode();
+		return getAccount(account).getSortCode();
 	}
 	
 	public double getBalance(String account) throws AccountNotFoundException {
-		return accounts.get(account).getBalance();
-	}
-	
-	public void closeAccount(String account) {
-		if(accounts.containsKey(account))
-			accounts.remove(account);
+		return getAccount(account).getBalance();
 	}
 	
 	public void openAccount(String account, String sortCode) throws DuplicateAccountException{
@@ -62,9 +68,9 @@ public class Bank {
 	}
 	
 	public void openAccount(String account, String sortCode, double amount) throws DuplicateAccountException{
-		if(accounts.containsKey(account))
+		if(accountExists(account))
 			throw new DuplicateAccountException("Account: " + account + " already exists at this bank");
-		accounts.put(account, new Account(account,sortCode,amount));
+		Database.getDatabase().execute("INSERT INTO ACCOUNTS ( ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES ('" + account + "','" + sortCode + "'," + amount + ")");
 	}
 	
 	public void creditAccount(String account, double amount) throws InsufficientBalanceException, AccountNotFoundException {

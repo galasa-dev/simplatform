@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.galasa.simframe.application.Bank;
+import dev.galasa.simframe.db.Database;
 import dev.galasa.simframe.listener.Listener;
 import dev.galasa.simframe.listener.TelnetServiceListener;
 import dev.galasa.simframe.listener.WebServiceListener;
@@ -13,11 +14,13 @@ public class Simframe {
 
 	public static void main(String[] args) {
 		System.out.println("Starting Simframe ...");
+		
+		Database.getDatabase();
 			
 		Bank b = Bank.getBank();
 		
 		CSVLoader.load(null);
-		
+
 		System.out.println("Loading services...");
 		
 		List<Listener> listeners = new ArrayList<>();
