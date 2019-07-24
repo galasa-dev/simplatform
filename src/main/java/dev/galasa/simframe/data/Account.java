@@ -1,6 +1,6 @@
-package dev.voras.simframe.data;
+package dev.galasa.simframe.data;
 
-import dev.voras.simframe.exceptions.InsufficientBalanceException;
+import dev.galasa.simframe.exceptions.InsufficientBalanceException;
 
 public class Account {
 	private String accountNumber;

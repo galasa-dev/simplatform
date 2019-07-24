@@ -1,10 +1,10 @@
-package dev.voras.simframe.listener;
+package dev.galasa.simframe.listener;
 
 import java.net.Socket;
 
+import dev.galasa.simframe.t3270.screens.IScreen;
+import dev.galasa.simframe.t3270.screens.SessionManagerLogon;
 import dev.voras.common.zos3270.internal.comms.NetworkServer;
-import dev.voras.simframe.t3270.screens.IScreen;
-import dev.voras.simframe.t3270.screens.SessionManagerLogon;
 
 public class TelnetServiceListener implements IListener {
 	private Socket socket;

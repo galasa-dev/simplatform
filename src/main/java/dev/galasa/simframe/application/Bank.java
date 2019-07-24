@@ -1,11 +1,11 @@
-package dev.voras.simframe.application;
+package dev.galasa.simframe.application;
 import java.util.HashMap;
 import java.util.Map;
 
-import dev.voras.simframe.data.Account;
-import dev.voras.simframe.exceptions.AccountNotFoundException;
-import dev.voras.simframe.exceptions.DuplicateAccountException;
-import dev.voras.simframe.exceptions.InsufficientBalanceException;
+import dev.galasa.simframe.data.Account;
+import dev.galasa.simframe.exceptions.AccountNotFoundException;
+import dev.galasa.simframe.exceptions.DuplicateAccountException;
+import dev.galasa.simframe.exceptions.InsufficientBalanceException;
 
 public class Bank {
 	

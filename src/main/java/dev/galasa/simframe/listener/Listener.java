@@ -1,4 +1,4 @@
-package dev.voras.simframe.listener;
+package dev.galasa.simframe.listener;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,6 +12,7 @@ public class Listener implements Runnable{
 	ServerSocket server;
 	
 	public Listener (int port, String className) {
+		System.out.println("Loading service: " + className);
 		this.port = port;
 		this.className = className;
 		try {

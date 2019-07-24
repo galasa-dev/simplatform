@@ -1,4 +1,4 @@
-package dev.voras.simframe.t3270.screens;
+package dev.galasa.simframe.t3270.screens;
 
 public class ScreenException extends Exception {
 	private static final long serialVersionUID = 1L;
