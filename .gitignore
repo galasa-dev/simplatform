@@ -1,3 +1,5 @@
+galasaBankDB/
+derby.log
 target/
 .settings/
 .project
