@@ -1,4 +1,4 @@
-package dev.voras.simframe.listener;
+package dev.galasa.simframe.listener;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -20,9 +20,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import dev.voras.simframe.application.Bank;
-import dev.voras.simframe.exceptions.AccountNotFoundException;
-import dev.voras.simframe.exceptions.InsufficientBalanceException;
+import dev.galasa.simframe.application.Bank;
+import dev.galasa.simframe.exceptions.AccountNotFoundException;
+import dev.galasa.simframe.exceptions.InsufficientBalanceException;
 
 public class WebServiceListener implements IListener {
 	private Socket socket;

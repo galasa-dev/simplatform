@@ -1,4 +1,4 @@
-package dev.voras.simframe.t3270.screens;
+package dev.galasa.simframe.t3270.screens;
 
 import dev.voras.common.zos3270.internal.comms.NetworkServer;
 import dev.voras.common.zos3270.internal.datastream.AttentionIdentification;

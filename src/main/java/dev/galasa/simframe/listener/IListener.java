@@ -1,4 +1,4 @@
-package dev.voras.simframe.listener;
+package dev.galasa.simframe.listener;
 
 import java.net.Socket;
 

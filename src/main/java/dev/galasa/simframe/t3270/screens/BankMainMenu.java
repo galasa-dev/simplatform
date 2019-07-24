@@ -1,4 +1,4 @@
-package dev.voras.simframe.t3270.screens;
+package dev.galasa.simframe.t3270.screens;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
