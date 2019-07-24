@@ -65,7 +65,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>dev.voras.simframe.main.Simulframe</mainClass>
+							<mainClass>dev.voras.simframe.main.Simframe</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
