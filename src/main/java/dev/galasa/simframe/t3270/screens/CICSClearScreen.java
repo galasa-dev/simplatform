@@ -10,15 +10,15 @@ import dev.voras.common.zos3270.spi.Screen;
 public class CICSClearScreen extends AbstractScreen {
 
 	private final Screen screen;
-	
+
 	public CICSClearScreen(NetworkServer network) throws ScreenException {
 		super(network);
 
 		try {
 			this.screen = buildScreen(getClass().getSimpleName());
-			
-			makeTextField(screen, 1,0);
-		} catch(Exception e) {
+
+			makeTextField(screen, 1, 0);
+		} catch (Exception e) {
 			throw new ScreenException("Problem building screen", e);
 		}
 	}
@@ -27,13 +27,13 @@ public class CICSClearScreen extends AbstractScreen {
 	public IScreen run() {
 
 		try {
-			while(true) {
+			while (true) {
 				writeScreen();
 
 				AttentionIdentification aid = receiveScreen(screen);
 
 				if (aid == AttentionIdentification.ENTER) {
-					FieldText transactionField   = (FieldText) screen.locateFieldsAt(calcPos(1, 0));
+					FieldText transactionField = (FieldText) screen.locateFieldsAt(calcPos(1, 0));
 					String application = transactionField.getFieldWithoutNulls().trim().toUpperCase();
 
 					if ("BANK".equals(application)) {
@@ -41,7 +41,7 @@ public class CICSClearScreen extends AbstractScreen {
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Problem writing screen");
 			return null;
@@ -49,10 +49,8 @@ public class CICSClearScreen extends AbstractScreen {
 	}
 
 	private void writeScreen() throws ScreenException {
-		writeScreen(new CommandEraseWrite(), 
-				new WriteControlCharacter(false, false, false, false, false, false, true, true),
-				screen
-				);
+		writeScreen(new CommandEraseWrite(),
+				new WriteControlCharacter(false, false, false, false, false, false, true, true), screen);
 	}
 
 }
