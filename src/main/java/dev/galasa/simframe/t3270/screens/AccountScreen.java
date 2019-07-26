@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import dev.galasa.simframe.application.Bank;
 import dev.galasa.simframe.data.Account;
 import dev.voras.common.zos3270.internal.comms.NetworkServer;
-import dev.voras.common.zos3270.internal.datastream.AttentionIdentification;
+import dev.voras.common.zos3270.AttentionIdentification;
 import dev.voras.common.zos3270.internal.datastream.CommandEraseWrite;
 import dev.voras.common.zos3270.internal.datastream.WriteControlCharacter;
 import dev.voras.common.zos3270.internal.terminal.fields.FieldText;
@@ -44,6 +44,10 @@ public class AccountScreen extends AbstractScreen {
 
 				if (aid == AttentionIdentification.PF3) {
 					return new SessionManagerMenu(network);
+				}
+				
+				if (aid == AttentionIdentification.PF1) {
+					return new TransferScreen(network);
 				}
 				
 				if(aid == AttentionIdentification.ENTER) {

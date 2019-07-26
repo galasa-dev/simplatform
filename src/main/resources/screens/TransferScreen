@@ -1,13 +1,13 @@
 N01234567890123456789012345678901234567890123456789012345678901234567890123456789N
-S]                          @SIMBANK ACCOUNT MENU]                      ]99:99:99S
+S]                          @SIMBANK TRANSFER MENU]                     ]99:99:99S
 S]-------------------------------------------------------------------------------S
 S@===>[                                                                          S
 S@                                                                               S
-S  ]Account Number [_________]                                                   S
-S  ]Sort Code      [         ]                                                   S
-S  ]Balance        [         ]                                                   S
+S  ]Transfer from Account Number [_________]                                     S
+S  ]Transfer to Account Number   [_________]                                     S
+S  ]Transfer Amount              [_________]                                     S
 S                                                                                S
-S   Bank Transfer  FP1                                                           S
+S  ][                                   ]                                        S
 S                                                                                S
 S                                                                                S
 S                                                                                S
