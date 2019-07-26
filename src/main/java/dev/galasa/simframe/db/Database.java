@@ -25,8 +25,9 @@ public class Database {
 		    conn = DriverManager.getConnection(connectionURL);
 		    createTable();
 		}catch (SQLException e) {
-			// TODO: handle exception
-		}      
+			System.err.println("Unable to connect to embedded DB - exit");
+			System.exit(1);
+		}    
 	}
 	
 	public static Database getDatabase() {

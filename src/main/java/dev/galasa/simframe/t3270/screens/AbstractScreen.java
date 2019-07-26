@@ -7,10 +7,10 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
+import dev.voras.common.zos3270.AttentionIdentification;
 import dev.voras.common.zos3270.internal.comms.Network;
 import dev.voras.common.zos3270.internal.comms.NetworkServer;
 import dev.voras.common.zos3270.internal.comms.NetworkThread;
-import dev.voras.common.zos3270.AttentionIdentification;
 import dev.voras.common.zos3270.internal.datastream.BufferAddress;
 import dev.voras.common.zos3270.internal.datastream.CommandEraseWrite;
 import dev.voras.common.zos3270.internal.datastream.Order;
