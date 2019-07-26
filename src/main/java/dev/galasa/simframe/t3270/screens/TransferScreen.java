@@ -32,6 +32,7 @@ public class TransferScreen extends AbstractScreen {
 			makeTextField(screen, 33,4);
 			makeTextField(screen, 33,5);
 			makeTextField(screen, 33,6);
+			makeTextField(screen, 3,8);
 			
 		} catch(Exception e) {
 			throw new ScreenException("Problem building screen", e);
@@ -65,19 +66,17 @@ public class TransferScreen extends AbstractScreen {
 						this.account2 = new Account(accountNumber2, null, Bank.getBank().getBalance(accountNumber2));
 						try {
 							Bank.getBank().transferMoney(accountNumber1, accountNumber2, Double.parseDouble(transferAmount));
+							errorMessage = "Transfer Successful";
 						} catch (InsufficientBalanceException e) {
 							errorMessage = "Transfer failed: Insufficient funds";
-						} 
-					} else if(!Bank.getBank().accountExists(accountNumber1)) {
+						}
+					} else if(isNumeric(accountNumber1) && !Bank.getBank().accountExists(accountNumber1)) {
 						errorMessage = "Account 1 does not exist";
-					} else if(!Bank.getBank().accountExists(accountNumber2)) {
+					} else if(isNumeric(accountNumber2) && !Bank.getBank().accountExists(accountNumber2)) {
 						errorMessage = "Account 2 does not exist";
-					} else if(!isNumeric(transferAmount)) {
+					} else if(!transferAmount.equals("") && !isNumeric(transferAmount)) {
 						errorMessage = "Please enter a valid transfer value";
-					} else {
-						errorMessage = "Something has gone wrong";
-					}
-					
+					}					
 					
 				}
 			}
@@ -94,15 +93,16 @@ public class TransferScreen extends AbstractScreen {
 		FieldText timeField = (FieldText) screen.locateFieldsAt(calcPos(72, 0));
 		timeField.setContents(time.format(dtf));
 		
+		FieldText errorField = (FieldText) screen.locateFieldsAt(calcPos(3, 8));
+		errorField.setContents("                                   ");
+		errorField.setContents(errorMessage);
+		
 		if(validFields) {
 			FieldText account1Field = (FieldText) screen.locateFieldsAt(calcPos(33, 4));
 			account1Field.setContents(account1.getAccountNumber());
 			
 			FieldText account2Field = (FieldText) screen.locateFieldsAt(calcPos(33, 5));
 			account2Field.setContents(account2.getAccountNumber());
-			
-			FieldText errorField = (FieldText) screen.locateFieldsAt(calcPos(4, 8));
-			errorField.setContents(errorMessage);
 		}
 
 		writeScreen(new CommandEraseWrite(), 
