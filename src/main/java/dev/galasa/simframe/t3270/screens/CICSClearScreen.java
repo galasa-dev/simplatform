@@ -1,7 +1,7 @@
 package dev.galasa.simframe.t3270.screens;
 
+import dev.voras.common.zos3270.AttentionIdentification;
 import dev.voras.common.zos3270.internal.comms.NetworkServer;
-import dev.voras.common.zos3270.internal.datastream.AttentionIdentification;
 import dev.voras.common.zos3270.internal.datastream.CommandEraseWrite;
 import dev.voras.common.zos3270.internal.datastream.WriteControlCharacter;
 import dev.voras.common.zos3270.internal.terminal.fields.FieldText;
