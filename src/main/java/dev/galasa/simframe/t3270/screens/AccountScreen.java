@@ -46,10 +46,6 @@ public class AccountScreen extends AbstractScreen {
 					return new SessionManagerMenu(network);
 				}
 				
-				if (aid == AttentionIdentification.PF1) {
-					return new TransferScreen(network);
-				}
-				
 				if(aid == AttentionIdentification.ENTER) {
 					FieldText accountField   = (FieldText) screen.locateFieldsAt(calcPos(19,4));
 					String accountNumber = accountField.getFieldWithoutNulls().trim().toUpperCase();

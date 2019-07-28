@@ -7,7 +7,7 @@ S  ]Options    ]Description       ]PFKey                                        
 S  ]-------    ]---------------------------------------------------------------  S
 S  @BROWSE     @Browse Accounts   @PF1                                           S
 S  @UPDATE     @Update Accounts   @PF2                                           S
-S                                                                                S
+S  @TRANSF     @Transfer Money    @PF4                                           S
 S                                                                                S
 S                                                                                S
 S                                                                                S
