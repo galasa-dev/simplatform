@@ -70,13 +70,13 @@ public class TransferScreen extends AbstractScreen {
 						} catch (InsufficientBalanceException e) {
 							errorMessage = "Transfer failed: Insufficient funds";
 						}
-					} else if(isNumeric(accountNumber1) && !Bank.getBank().accountExists(accountNumber1)) {
+					} else if(!accountNumber1.equals("_________") && !Bank.getBank().accountExists(accountNumber1)) {
 						errorMessage = "Account 1 does not exist";
-					} else if(isNumeric(accountNumber2) && !Bank.getBank().accountExists(accountNumber2)) {
+					} else if(!accountNumber2.equals("_________") && !Bank.getBank().accountExists(accountNumber2)) {
 						errorMessage = "Account 2 does not exist";
 					} else if(!transferAmount.equals("") && !isNumeric(transferAmount)) {
 						errorMessage = "Please enter a valid transfer value";
-					}					
+					}
 					
 				}
 			}
