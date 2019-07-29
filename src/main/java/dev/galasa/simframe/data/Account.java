@@ -15,7 +15,7 @@ public class Account {
 	}
 	
 	public void creditAccount(double amount) throws InsufficientBalanceException{
-		if(amount < 0 && balance < amount)
+		if(amount < 0 && balance < (amount * -1))
 			throw new InsufficientBalanceException("Account: " + accountNumber + "has insufficient funds");
 		this.balance = this.balance + amount;
 		persistUpdateToDatabase();

@@ -44,6 +44,9 @@ public class BankMainMenu extends AbstractScreen {
 				if (aid == AttentionIdentification.PF3) {
 					return new SessionManagerMenu(network);
 				}
+				if (aid == AttentionIdentification.PF4) {
+					return new TransferScreen(network);
+				}
 			}
 		} catch(Exception e) {
 			e.printStackTrace();

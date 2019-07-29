@@ -1,13 +1,13 @@
 N01234567890123456789012345678901234567890123456789012345678901234567890123456789N
-S]                              @SIMBANK MAIN MENU]                     ]99:99:99S
+S]                          @SIMBANK TRANSFER MENU]                     ]99:99:99S
 S]-------------------------------------------------------------------------------S
-S@===>[                                                                          S
 S@                                                                               S
-S  ]Options    ]Description       ]PFKey                                         S
-S  ]-------    ]---------------------------------------------------------------  S
-S  @BROWSE     @Browse Accounts   @PF1                                           S
-S  @UPDATE     @Update Accounts   @PF2                                           S
-S  @TRANSF     @Transfer Money    @PF4                                           S
+S@                                                                               S
+S  ]Transfer from Account Number [_________]                                     S
+S  ]Transfer to Account Number   [_________]                                     S
+S  ]Transfer Amount              [         ]                                     S
+S                                                                                S
+S ][                                   ]                                         S
 S                                                                                S
 S                                                                                S
 S                                                                                S
