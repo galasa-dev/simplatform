@@ -86,7 +86,6 @@ public class WebServiceListener implements IListener {
 			ps.println("\r\n");
 			ps.flush();
 			socket.close();
-	        
 				
 		}catch(Exception e) {
 			System.err.println("Stuff went really wrong");
@@ -96,7 +95,7 @@ public class WebServiceListener implements IListener {
 	}
 	
 	private void updateAccount() throws InsufficientBalanceException, AccountNotFoundException {
-			Bank.getBank().creditAccount(accountNumber, value);
+		Bank.getBank().creditAccount(accountNumber, value);
 	}
 	
 	private void parseRequest() throws Exception{
