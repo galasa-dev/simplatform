@@ -60,16 +60,29 @@ public class WebServiceListener implements IListener {
 				return;
 			}
 			
+			String balance = Double.toString(Bank.getBank().getBalance(accountNumber));
+			
+			String xmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+					"<SOAP-ENV:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" + 
+					"<SOAP-ENV:Body>\n" + 
+					"<UPDACCTOperationResponse xmlns=\"http://www.UPDACCT.Account.Response.com\">\n" + 
+					"<update_account_record_response>\n" + 
+					"<account_data>\n" + 
+					"<account_available_balance>" + balance + "</account_available_balance>\n" + 
+					"<account_actual_balance>" + balance + "</account_actual_balance>\n" + 
+					"</account_data>\n" + 
+					"</update_account_record_response>\n" + 
+					"</UPDACCTOperationResponse>\n" + 
+					"</SOAP-ENV:Body>\n" + 
+					"</SOAP-ENV:Envelope>";
 			
 			OutputStream output = socket.getOutputStream();
 			PrintStream ps = new PrintStream(output);
 			ps.println("HTTP/1.1 200 OK");
 			ps.println("Server: Simulframe 0.3.0");
-			ps.println("Content-Length: "  + Double.toString(Bank.getBank().getBalance(accountNumber)).length());
-			ps.println("Content-Type: text");
-			ps.println("Connection: Closed");
-			ps.println("");
-			ps.println(Double.toString(Bank.getBank().getBalance(accountNumber)));
+			ps.println("Content-Length: "  + xmlText.length());
+			ps.println("Content-Type: application/soap+xml; charset=\"utf-8\"\r\n");
+			ps.println(xmlText);
 			ps.println("\r\n");
 			ps.flush();
 			socket.close();
