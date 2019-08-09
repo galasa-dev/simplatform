@@ -35,14 +35,10 @@ public class SimframeTest {
 
         terminal.waitForKeyboard();
 
-        terminal.tab()
-                .waitForKeyboard()
+        terminal.positionCursorToFieldContaining("Userid").tab()
                 .type("boo")
-                .waitForKeyboard()
-                .tab()
-                .waitForKeyboard()
+                .positionCursorToFieldContaining("Password").tab()
                 .type("eek")
-                .waitForKeyboard()
                 .enter()
                 .waitForKeyboard()
 
@@ -50,27 +46,21 @@ public class SimframeTest {
                 .waitForKeyboard()
                 .clear()
                 .waitForKeyboard()
-                .tab()
-                .waitForKeyboard()
-                .type("bank")
-                .waitForKeyboard()
+                .tab().type("bank")
                 .enter()
-
                 .waitForKeyboard()
+
                 .pf1()
                 .waitForKeyboard()
-                .tab()
-                .waitForKeyboard()
-                .tab()
-                .waitForKeyboard()
-                .reportScreen()
+                .positionCursorToFieldContaining("Account Number").tab()
                 .type("123456789")
-                .waitForKeyboard()
                 .reportScreen();
                 
                 // .waitForKeyboard()
 
                 terminal.enter();
+                terminal.waitForKeyboard()
+                        .reportScreenWithCursor();
 
         
         //SOME CODE TO FIND THE BALANCE

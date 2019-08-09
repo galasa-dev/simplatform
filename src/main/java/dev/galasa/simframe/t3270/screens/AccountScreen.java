@@ -27,6 +27,8 @@ public class AccountScreen extends AbstractScreen {
 			this.screen = buildScreen(getClass().getSimpleName());
 
 			makeTextField(screen, 19,4);
+			makeTextField(screen, 19,5);
+			makeTextField(screen, 19,6);
 			
 		} catch(Exception e) {
 			throw new ScreenException("Problem building screen", e);
@@ -43,7 +45,7 @@ public class AccountScreen extends AbstractScreen {
 				AttentionIdentification aid = receiveScreen(screen);
 
 				if (aid == AttentionIdentification.PF3) {
-					return new SessionManagerMenu(network);
+					return new BankMainMenu(network);
 				}
 				
 				if(aid == AttentionIdentification.ENTER) {
