@@ -54,18 +54,16 @@ public class SimframeTest {
                 .waitForKeyboard()
                 .positionCursorToFieldContaining("Account Number").tab()
                 .type("123456789")
-                .reportScreen();
-                
-                // .waitForKeyboard()
+                .enter()
+                .waitForKeyboard();
 
-                terminal.enter();
-                terminal.waitForKeyboard()
-                        .reportScreenWithCursor();
+        Double userBalance = Double.parseDouble(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
+        System.err.println(userBalance);
 
-        
-        //SOME CODE TO FIND THE BALANCE
+        terminal.positionCursorToFieldContaining("Account Number").tab();
+        System.err.println(terminal.retrieveFieldAtCursor());
 
-        int userBalance = 0;
+        System.err.println(terminal.retrieveScreen());
 
         terminal.pf3();
 
@@ -73,21 +71,19 @@ public class SimframeTest {
 
         sendRequest(amount, "http://127.0.0.1:2080/updateAccount");
 
-        terminal.pf1();
-        terminal.clear();
-        terminal.tab();
-        terminal.type("bank");
-        terminal.enter();
+        terminal.pf1()
+                .waitForKeyboard()
+                .positionCursorToFieldContaining("Account Number").tab()
+                .type("123456789")
+                .enter()
+                .waitForKeyboard();
 
-        terminal.pf1();
-        terminal.tab();
-        terminal.tab();
-        terminal.type("123456789");
-        terminal.enter();
+        terminal.reportScreenWithCursor()
+                .reportScreen();
         
         //SOME CODE TO FIND THE BALANCE
 
-        int newUserBalance = 0;
+        double newUserBalance = 500.50;
 
         //HOW EVER ASSERTION IS DONE IN GALASA(userBalance + amount == newUserBalance);
 
