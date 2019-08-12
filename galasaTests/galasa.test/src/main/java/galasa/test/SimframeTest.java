@@ -45,7 +45,7 @@ public class SimframeTest{
 
     @Test
     public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException {
-            //Initial actions to get into banking applcation
+            //Initial actions to get into banking application
             login();
 
             //Obain the initial balance
