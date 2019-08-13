@@ -82,7 +82,7 @@ public class AccountScreen extends AbstractScreen {
 			sortCodeField.setContents(account.getSortCode());
 			
 			FieldText balanceField = (FieldText) screen.locateFieldsAt(calcPos(19, 6));
-			balanceField.setContents(Double.toString(account.getBalance()));
+			balanceField.setContents(account.getBalance().toPlainString());
 		}
 
 		writeScreen(new CommandEraseWrite(), 

@@ -29,7 +29,7 @@ public class Bank {
 		ResultSet results = Database.getDatabase().getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + accountNumber + "'");
 		try{
 			results.next();
-			return new Account(results.getString(1), results.getString(2), results.getDouble(3));
+			return new Account(results.getString(1), results.getString(2), results.getBigDecimal(3));
 		}catch(SQLException se) {
 			return null;
 		}
@@ -60,7 +60,7 @@ public class Bank {
 	}
 	
 	public double getBalance(String account) throws AccountNotFoundException {
-		return getAccount(account).getBalance();
+		return getAccount(account).getBalance().doubleValue();
 	}
 	
 	public void openAccount(String account, String sortCode) throws DuplicateAccountException{
