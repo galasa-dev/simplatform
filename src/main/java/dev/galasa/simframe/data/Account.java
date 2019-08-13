@@ -2,7 +2,7 @@ package dev.galasa.simframe.data;
 
 import java.math.BigDecimal;
 
-import dev.galasa.simframe.db.Database;
+import dev.galasa.simframe.application.Bank;
 import dev.galasa.simframe.exceptions.InsufficientBalanceException;
 
 public class Account {
@@ -26,7 +26,7 @@ public class Account {
 		if(amount < 0 && balance.doubleValue() < (amount * -1))
 			throw new InsufficientBalanceException("Account: " + accountNumber + "has insufficient funds");
 		this.balance = this.balance.add(BigDecimal.valueOf(amount));
-		persistUpdateToDatabase();
+		new Bank().persistAccount(this);
 	}
 
 	public String getAccountNumber() {
@@ -40,11 +40,4 @@ public class Account {
 	public BigDecimal getBalance() {
 		return balance;
 	}
-	
-	private void persistUpdateToDatabase() {
-		String query = "UPDATE ACCOUNTS SET SORT_CODE = '" + this.sortCode + "', BALANCE = " + this.balance.toPlainString()+ " WHERE ACCOUNT_NUM = '" + this.accountNumber + "'";
-		Database.getDatabase().execute(query);
-	}
-	
-
 }

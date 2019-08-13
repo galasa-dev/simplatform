@@ -12,16 +12,12 @@ import dev.galasa.simframe.exceptions.DuplicateAccountException;
 import dev.galasa.simframe.exceptions.InsufficientBalanceException;
 
 public class Bank {
-	
-	private static Bank bank;
 	private Logger log = Logger.getLogger("Simframe");
+	private static Database database = null;
 	
-	public static Bank getBank() {
-		if(Bank.bank == null) {
-			bank = new Bank();
-			bank.log.info("Creating new Bank");
-		}	
-		return bank;
+	public Bank() {
+		if(database == null)
+			database = new Database();
 	}
 	
 	private Account getAccount(String accountNumber) throws AccountNotFoundException{
@@ -30,7 +26,7 @@ public class Bank {
 			log.info("Account: " + accountNumber + " not found");
 			throw new AccountNotFoundException("Account: " + accountNumber + " not found");
 		}
-		ResultSet results = Database.getDatabase().getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + accountNumber + "'");
+		ResultSet results = database.getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + accountNumber + "'");
 		try{
 			results.next();
 			log.info("Account: " + accountNumber + " found");
@@ -51,7 +47,7 @@ public class Bank {
 	
 	public boolean accountExists(String account) {
 		log.info("Checking if account: " + account + " exists");
-		ResultSet results = Database.getDatabase().getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + account + "'");
+		ResultSet results = database.getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + account + "'");
 		try {
 			if(results.next()) {
 				log.info("Account exists");
@@ -85,12 +81,17 @@ public class Bank {
 			throw new DuplicateAccountException("Account: " + account + " already exists at this bank");
 		}
 		log.info("Creating account: " + account);	
-		Database.getDatabase().execute("INSERT INTO ACCOUNTS ( ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES ('" + account + "','" + sortCode + "'," + amount + ")");
+		database.execute("INSERT INTO ACCOUNTS ( ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES ('" + account + "','" + sortCode + "'," + amount + ")");
 	}
 	
 	public void creditAccount(String account, double amount) throws InsufficientBalanceException, AccountNotFoundException {
 		log.info("Crediting account: " + account + " with: " + amount);
 		getAccount(account).creditAccount(amount);
+	}
+	
+	public void persistAccount(Account account) {
+		String query = "UPDATE ACCOUNTS SET SORT_CODE = '" + account.getSortCode() + "', BALANCE = " + account.getBalance().toPlainString()+ " WHERE ACCOUNT_NUM = '" + account.getAccountNumber() + "'";
+		database.execute(query);
 	}
 	
 

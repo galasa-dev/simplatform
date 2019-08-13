@@ -59,20 +59,20 @@ public class TransferScreen extends AbstractScreen {
 					String accountNumber1 = accountField1.getFieldWithoutNulls().trim().toUpperCase();
 					String accountNumber2 = accountField2.getFieldWithoutNulls().trim().toUpperCase();
 					String transferAmount = transferField.getFieldWithoutNulls().trim();
-					this.validFields = Bank.getBank().accountExists(accountNumber1) && Bank.getBank().accountExists(accountNumber2)
+					this.validFields = new Bank().accountExists(accountNumber1) && new Bank().accountExists(accountNumber2)
 							&& isNumeric(transferAmount);
 					if(validFields) {
-						this.account1 = new Account(accountNumber1, null, Bank.getBank().getBalance(accountNumber1));
-						this.account2 = new Account(accountNumber2, null, Bank.getBank().getBalance(accountNumber2));
+						this.account1 = new Account(accountNumber1, null, new Bank().getBalance(accountNumber1));
+						this.account2 = new Account(accountNumber2, null, new Bank().getBalance(accountNumber2));
 						try {
-							Bank.getBank().transferMoney(accountNumber1, accountNumber2, Double.parseDouble(transferAmount));
+							new Bank().transferMoney(accountNumber1, accountNumber2, Double.parseDouble(transferAmount));
 							errorMessage = "Transfer Successful";
 						} catch (InsufficientBalanceException e) {
 							errorMessage = "Transfer failed: Insufficient funds";
 						}
-					} else if(!accountNumber1.equals("_________") && !Bank.getBank().accountExists(accountNumber1)) {
+					} else if(!accountNumber1.equals("_________") && !new Bank().accountExists(accountNumber1)) {
 						errorMessage = "Account 1 does not exist";
-					} else if(!accountNumber2.equals("_________") && !Bank.getBank().accountExists(accountNumber2)) {
+					} else if(!accountNumber2.equals("_________") && !new Bank().accountExists(accountNumber2)) {
 						errorMessage = "Account 2 does not exist";
 					} else if(!transferAmount.equals("") && !isNumeric(transferAmount)) {
 						errorMessage = "Please enter a valid transfer value";

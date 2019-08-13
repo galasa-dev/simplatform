@@ -71,7 +71,7 @@ public class WebServiceListener implements IListener {
 				return;
 			}
 			
-			String balance = Double.toString(Bank.getBank().getBalance(accountNumber));
+			String balance = Double.toString(new Bank().getBalance(accountNumber));
 			
 			String xmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 					"<SOAP-ENV:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" + 
@@ -106,7 +106,7 @@ public class WebServiceListener implements IListener {
 	}
 	
 	private void updateAccount() throws InsufficientBalanceException, AccountNotFoundException {
-		Bank.getBank().creditAccount(accountNumber, value);
+		new Bank().creditAccount(accountNumber, value);
 	}
 	
 	private void parseRequest() throws Exception{

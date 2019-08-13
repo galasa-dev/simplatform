@@ -18,10 +18,6 @@ public class Simframe {
 		Logger log = Logger.getLogger("Simframe");
 		log.info("Starting Simframe ...");
 		
-		Database.getDatabase();
-			
-		Bank b = Bank.getBank();
-		
 		CSVLoader.load(null,null);
 
 		log.info("Loading services...");

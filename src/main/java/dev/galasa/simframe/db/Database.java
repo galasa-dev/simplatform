@@ -16,14 +16,12 @@ public class Database {
 
 	private static final String TABLE_EXISTS = "X0Y32";
 	
-	private static Database database = null;
-	
 	private Connection conn = null;
 	
 	private Logger log;
 	
 
-	private Database() {
+	public Database() {
 		Logger log = Logger.getLogger("Simframe");
 		try {
 		    conn = DriverManager.getConnection(connectionURL);
@@ -34,15 +32,6 @@ public class Database {
 		}    
 	}
 	
-	public static Database getDatabase() {
-		if(Database.database == null) {
-			database = new Database();
-		}
-		return database;
-	}
-	
-	
-
 	private void createTable() {
 		try {
 			Statement stmt = conn.createStatement();
