@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,6 +32,8 @@ public class WebServiceListener implements IListener {
 	
 	private String accountNumber;
 	private double value;
+	
+	private Logger log = Logger.getLogger("Simframe");
 
 	public void run() {
 		try {
@@ -88,8 +91,8 @@ public class WebServiceListener implements IListener {
 			socket.close();
 				
 		}catch(Exception e) {
-			System.err.println("Stuff went really wrong");
-			e.printStackTrace();
+			log.severe("Stuff went really wrong");
+			log.severe(e.getMessage());
 		}
 
 	}
@@ -183,7 +186,7 @@ public class WebServiceListener implements IListener {
 			InputStream input = socket.getInputStream();
 			br = new BufferedReader(new InputStreamReader(input));
 		}catch(IOException e) {
-			System.err.println("Unable to access input stream from HTTP");
+			log.warning("Unable to access input stream from HTTP");
 			return;
 		}
 		
@@ -211,8 +214,7 @@ public class WebServiceListener implements IListener {
 				}
 			}
 		}catch(IOException e){
-			System.err.println("Unable to access input stream from HTTP");
-			
+			log.warning("Unable to access input stream from HTTP");
 			return;
 		}
 		
