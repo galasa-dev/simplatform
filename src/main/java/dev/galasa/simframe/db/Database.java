@@ -43,7 +43,7 @@ public class Database {
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.execute("CREATE TABLE ACCOUNTS  " + "(ACCOUNT_NUM VARCHAR(9) NOT NULL,"
-					+ " SORT_CODE VARCHAR(8) NOT NULL," + " BALANCE FLOAT) ");
+					+ " SORT_CODE VARCHAR(8) NOT NULL," + " BALANCE DECIMAL(10,2)) ");
 		}catch (SQLException e) {
 			if(e.getSQLState().equals(TABLE_EXISTS)) {
 				dropTable();
