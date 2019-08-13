@@ -51,10 +51,10 @@ public class AccountScreen extends AbstractScreen {
 				if(aid == AttentionIdentification.ENTER) {
 					FieldText accountField   = (FieldText) screen.locateFieldsAt(calcPos(19,4));
 					String accountNumber = accountField.getFieldWithoutNulls().trim().toUpperCase();
-					this.foundAccount = Bank.getBank().accountExists(accountNumber);
+					this.foundAccount = new Bank().accountExists(accountNumber);
 					if(foundAccount) {
-						double balance = Bank.getBank().getBalance(accountNumber);
-						String sortCode = Bank.getBank().getSortCode(accountNumber);
+						double balance = new Bank().getBalance(accountNumber);
+						String sortCode = new Bank().getSortCode(accountNumber);
 						this.account = new Account(accountNumber, sortCode, balance);
 					}
 					

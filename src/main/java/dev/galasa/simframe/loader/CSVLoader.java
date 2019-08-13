@@ -15,7 +15,7 @@ import dev.galasa.simframe.saf.SecurityAuthorizationFacility;
 public class CSVLoader {
 
 	public static void load(String pathToAccounts, String pathToSecurity){
-		Bank bank = Bank.getBank();
+		Bank bank = new Bank();
 		SecurityAuthorizationFacility saf = new SecurityAuthorizationFacility();
 		Logger log = Logger.getLogger("Simframe");
 
