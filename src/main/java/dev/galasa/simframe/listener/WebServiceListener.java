@@ -40,11 +40,13 @@ public class WebServiceListener implements IListener {
 			processInput();
 			String path = findPath();
 			if(!"/updateAccount".equals(path.trim())) {
+				log.warning("Request was not sent to path /updateAccount, it was: " + path + " returning 404");
 				return404();
 				return;
 			}
 			
 			if(!"POST".equals(getMethod())) {
+				log.warning("Request was not using POST HTTP verb, it was: " + getMethod() + " returning 405");
 				return405();
 				return;
 			}
@@ -52,13 +54,19 @@ public class WebServiceListener implements IListener {
 			try {
 				parseRequest();
 			}catch(Exception e) {
+				log.warning("Exception found while reading request" + " returning 500");
 				return500();
 				return;
 			}
 			
 			try {
 				updateAccount();
-			}catch(Exception e) {
+			}catch(InsufficientBalanceException e) {
+				log.warning("Account did not have adequate balance" + " returning 400");
+				return400();
+				return;
+			}catch(AccountNotFoundException e) {
+				log.warning("Account did not exist" + " returning 400");
 				return400();
 				return;
 			}
@@ -183,6 +191,7 @@ public class WebServiceListener implements IListener {
 	private void processInput() {
 		BufferedReader br = null;
 		try {
+			log.info("Received HTTP request from address: " + socket.getInetAddress().toString());
 			InputStream input = socket.getInputStream();
 			br = new BufferedReader(new InputStreamReader(input));
 		}catch(IOException e) {

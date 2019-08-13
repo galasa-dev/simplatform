@@ -89,6 +89,7 @@ public class Bank {
 	}
 	
 	public void creditAccount(String account, double amount) throws InsufficientBalanceException, AccountNotFoundException {
+		log.info("Crediting account: " + account + " with: " + amount);
 		getAccount(account).creditAccount(amount);
 	}
 	

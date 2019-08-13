@@ -15,7 +15,7 @@ public class Listener implements Runnable{
 	ServerSocket server;
 	
 	public Listener (int port, String className) {
-		log.info("Loading service: " + className);
+		log.info("Loading service: " + className + " listening on port: " + port);
 		this.port = port;
 		this.className = className;
 		try {
