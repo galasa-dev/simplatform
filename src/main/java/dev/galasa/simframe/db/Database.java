@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 public class Database {
 
@@ -19,13 +20,16 @@ public class Database {
 	
 	private Connection conn = null;
 	
+	private Logger log;
+	
 
 	private Database() {
+		Logger log = Logger.getLogger("Simframe");
 		try {
 		    conn = DriverManager.getConnection(connectionURL);
 		    createTable();
 		}catch (SQLException e) {
-			System.err.println("Unable to connect to embedded DB - exit");
+			log.severe("Unable to connect to embedded DB - exit");
 			System.exit(1);
 		}    
 	}

@@ -3,16 +3,19 @@ package dev.galasa.simframe.listener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Logger;
 
 public class Listener implements Runnable{
 	
 	private int port;
 	private String className;
+	private Logger log = Logger.getLogger("Simframe");
+	
 	
 	ServerSocket server;
 	
 	public Listener (int port, String className) {
-		System.out.println("Loading service: " + className);
+		log.info("Loading service: " + className + " listening on port: " + port);
 		this.port = port;
 		this.className = className;
 		try {

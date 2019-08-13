@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import dev.voras.common.zos3270.AttentionIdentification;
 import dev.voras.common.zos3270.internal.comms.Network;
@@ -28,9 +29,11 @@ import dev.voras.common.zos3270.spi.Screen;
 public abstract class AbstractScreen implements IScreen {
 
 	protected final NetworkServer network;
+	protected Logger log;
 
 	public AbstractScreen(NetworkServer network) {
 		this.network = network;
+		this.log = Logger.getLogger("Simframe");
 	}
 
 	protected void writeScreen(CommandEraseWrite commandEraseWrite, 
@@ -72,6 +75,7 @@ public abstract class AbstractScreen implements IScreen {
 	}
 
 	protected Screen buildScreen(String screenName) throws ScreenException {
+		log.info("Building Screen: " + screenName);
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/screens/" + screenName)))) {	
 			LinkedList<Field> fields = new LinkedList<>();
 			String line = null;
