@@ -22,7 +22,7 @@ public class Simframe {
 			
 		Bank b = Bank.getBank();
 		
-		CSVLoader.load(null);
+		CSVLoader.load(null,null);
 
 		log.info("Loading services...");
 		

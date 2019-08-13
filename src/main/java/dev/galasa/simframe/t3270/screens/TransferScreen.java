@@ -49,7 +49,7 @@ public class TransferScreen extends AbstractScreen {
 				AttentionIdentification aid = receiveScreen(screen);
 
 				if (aid == AttentionIdentification.PF3) {
-					return new SessionManagerMenu(network);
+					return new BankMainMenu(network);
 				}
 				
 				if(aid == AttentionIdentification.ENTER) {
