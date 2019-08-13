@@ -45,42 +45,40 @@ public class SimframeTest{
 
     @Test
     public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException {
-            //Initial actions to get into banking application
-            login();
+        //Initial actions to get into banking application
+        login();
 
-            //Obain the initial balance
-            Double userBalance = getBalance("123456789");
+        //Obtain the initial balance
+        Double userBalance = getBalance("123456789");
 
-            //Set the amount be crecited and call web service
-            Double amount = 500.50;
-            HashMap<String,Object> parameters = new HashMap<String,Object>();
-            parameters.put("ACCOUNT_NUMBER", "123456789");
-            parameters.put("SORT_CODE", "000000"); //Needed or XML Not generated correctly. ++ notation could be removed from XML to be cleaner
-            parameters.put("AMOUNT", "500.50");
+        //Set the amount be crecited and call web service
+        Double amount = 500.50;
+        HashMap<String,Object> parameters = new HashMap<String,Object>();
+        parameters.put("ACCOUNT_NUMBER", "123456789");
+        parameters.put("SORT_CODE", "000000"); //Needed or XML Not generated correctly. ++ notation could be removed from XML to be cleaner
+        parameters.put("AMOUNT", "500.50");
 
-            //Load sample request with the given parameters
-            InputStream is = artifacts.getBundleResources(this.getClass()).retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
-            String textContext = artifacts.getBundleResources(this.getClass()).streamAsString(is);
+        //Load sample request with the given parameters
+        InputStream is = artifacts.getBundleResources(this.getClass()).retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
+        String textContext = artifacts.getBundleResources(this.getClass()).streamAsString(is);
 
-            //Invoke the web request
-            client.setURI(new URI("http://127.0.0.1:2080"));
-            Object response = client.postTextAsXML("updateAccount", textContext, false);
+        //Invoke the web request
+        client.setURI(new URI("http://127.0.0.1:2080"));
+        Object response = client.postTextAsXML("updateAccount", textContext, false);
 
-            //Obtain the final balance
-            Double newUserBalance = getBalance("123456789");
+        //Obtain the final balance
+        Double newUserBalance = getBalance("123456789");
 
-            //Assert that the correct amount has been credited to the account
-            assertThat(newUserBalance).isEqualTo(userBalance + amount);
+        //Assert that the correct amount has been credited to the account
+        assertThat(newUserBalance).isEqualTo(userBalance + amount);
     }
 
     private void login() {
         try {
             //Initial log in to system
             terminal.waitForKeyboard()
-                    .positionCursorToFieldContaining("Userid").tab()
-                    .type("boo")
-                    .positionCursorToFieldContaining("Password").tab()
-                    .type("eek")
+                    .positionCursorToFieldContaining("Userid").tab().type("boo")
+                    .positionCursorToFieldContaining("Password").tab().type("eek")
                     .enter().waitForKeyboard()
 
             //Open banking application
@@ -96,20 +94,18 @@ public class SimframeTest{
         Double amount = 0.0;
         try {
             //Open account menu and enter account number
-            terminal.pf1()
-                    .waitForKeyboard()
+            terminal.pf1().waitForKeyboard()
                     .positionCursorToFieldContaining("Account Number").tab()
-                    .type(accountNum)
-                    .enter().waitForKeyboard();
+                    .type(accountNum).enter().waitForKeyboard();
 
             //Retrieve balance from screen
             amount = Double.parseDouble(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
 
+            //Return to bank menu
             terminal.pf3();
         } catch(Exception e) {
             e.printStackTrace();
-        } finally {
-            return amount;
         }
+        return amount;
     }
 }
