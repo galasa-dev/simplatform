@@ -50,19 +50,19 @@ public class Bank {
 	}
 	
 	public boolean accountExists(String account) {
-		log.info("Searching for account: " + account);
+		log.info("Checking if account: " + account + " exists");
 		ResultSet results = Database.getDatabase().getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + account + "'");
 		try {
 			if(results.next()) {
-				log.info("Account found");
+				log.info("Account exists");
 				return true;
 			}
 			else {
-				log.info("Account not found");
+				log.info("Account doesn't exist");
 				return false;
 			}
 		} catch (SQLException e) {
-			log.info("Account not found");
+			log.info("Account doesn't exist");
 			return false;
 		}
 	}

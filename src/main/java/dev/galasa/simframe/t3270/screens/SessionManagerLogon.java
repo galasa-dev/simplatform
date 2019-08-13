@@ -74,7 +74,6 @@ public class SessionManagerLogon extends AbstractScreen {
 		
 		FieldText timeField = (FieldText) screen.locateFieldsAt(calcPos(72, 0));
 		timeField.setContents(time.format(dtf));
-		
 		writeScreen(new CommandEraseWrite(), 
 				new WriteControlCharacter(false, false, false, false, false, false, true, true),
 				screen
