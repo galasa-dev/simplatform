@@ -102,7 +102,7 @@ public class SimframeTest{
             amount = Double.parseDouble(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
 
             //Return to bank menu
-            terminal.pf3();
+            terminal.pf3().waitForKeyboard();
         } catch(Exception e) {
             e.printStackTrace();
         }
