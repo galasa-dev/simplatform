@@ -100,8 +100,7 @@ public class SimframeTest{
                     .waitForKeyboard()
                     .positionCursorToFieldContaining("Account Number").tab()
                     .type(accountNum)
-                    .enter()
-                    .waitForKeyboard();
+                    .enter().waitForKeyboard();
 
             //Retrieve balance from screen
             amount = Double.parseDouble(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
