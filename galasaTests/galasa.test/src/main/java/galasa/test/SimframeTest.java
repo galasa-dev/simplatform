@@ -73,6 +73,9 @@ public class SimframeTest{
         assertThat(newUserBalance).isEqualTo(userBalance + amount);
     }
 
+    /**
+     * Initial actions required to log in to system and open the banking application
+     */
     private void login() {
         try {
             //Initial log in to system
@@ -90,6 +93,12 @@ public class SimframeTest{
         }
     }
 
+    /**
+     * Navigate through the banking application and extract the balance of a given account
+     * 
+     * @param accountNum - Account Number of the accont being queried
+     * @return Balance of the account being queried
+     */
     private Double getBalance(String accountNum) {
         Double amount = 0.0;
         try {
