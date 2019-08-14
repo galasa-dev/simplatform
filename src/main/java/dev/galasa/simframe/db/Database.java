@@ -3,15 +3,11 @@ package dev.galasa.simframe.db;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Set;
 import java.util.logging.Logger;
 
 public class Database {
@@ -45,11 +41,8 @@ public class Database {
 	 * that should work across platforms
 	 */
 	private void setDerbyHome() {
-		Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rwxrwxrwx");
-	    FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
-	        .asFileAttribute(permissions);
 	    try {
-	    	Path tempDir = Files.createTempDirectory("galasaSimframe", fileAttributes);
+	    	Path tempDir = Files.createTempDirectory("galasaSimframe");
 	    	log.info("Setting Derby home to " + tempDir.toString());
 	    	System.setProperty("derby.system.home", tempDir.toString()); 
 	    }catch(IOException e) {
