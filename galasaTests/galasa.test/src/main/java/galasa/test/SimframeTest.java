@@ -44,6 +44,16 @@ public class SimframeTest{
         assertThat(client).isNotNull();
     }
 
+    /**
+     * Test which checks the initial balance of an account, uses the webservice to credit the account, then checks the balance again.
+     * The text passes if the final balance is equal to the old balance + the credited amount.
+     * 
+     * @throws TestBundleResourceException
+     * @throws URISyntaxException
+     * @throws IOException
+     * @throws HttpClientException
+     * @throws ZosManagerException
+     */
     @Test
     public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException {
         //Initial actions to get into banking application
