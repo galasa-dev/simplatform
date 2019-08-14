@@ -46,7 +46,7 @@ public class SimframeTest{
 
     /**
      * Test which checks the initial balance of an account, uses the webservice to credit the account, then checks the balance again.
-     * The text passes if the final balance is equal to the old balance + the credited amount.
+     * The test passes if the final balance is equal to the old balance + the credited amount.
      * 
      * @throws TestBundleResourceException
      * @throws URISyntaxException
