@@ -13,11 +13,13 @@ import dev.galasa.simframe.application.Bank;
 import dev.galasa.simframe.saf.SecurityAuthorizationFacility;
 
 public class CSVLoader {
+	
+	private static Logger log;
 
 	public static void load(String pathToAccounts, String pathToSecurity){
 		Bank bank = new Bank();
 		SecurityAuthorizationFacility saf = new SecurityAuthorizationFacility();
-		Logger log = Logger.getLogger("Simframe");
+		log = Logger.getLogger("Simframe");
 
 		List<String> inputData;
 		try {
@@ -47,6 +49,7 @@ public class CSVLoader {
 		}
 		parseSecurityAccounts(saf, inputData);
 		
+		
 
 	}
 	
@@ -69,7 +72,9 @@ public class CSVLoader {
 			StringTokenizer token = new StringTokenizer(s, ",");
 			while(token.hasMoreTokens()) {
 				try {
-					saf.addUser(token.nextToken(), token.nextToken());
+					String user = token.nextToken();
+					String password = token.nextToken();
+					saf.addUser(user,password);
 				}catch(Exception e) {
 					continue;
 				}
