@@ -3,6 +3,7 @@ package dev.galasa.simframe.t3270.screens;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import dev.galasa.simframe.saf.SecurityAuthorizationFacility;
 import dev.voras.common.zos3270.AttentionIdentification;
 import dev.voras.common.zos3270.internal.comms.NetworkServer;
 import dev.voras.common.zos3270.internal.datastream.CommandEraseWrite;
@@ -54,7 +55,7 @@ public class SessionManagerLogon extends AbstractScreen {
 				String userid = useridField.getFieldWithoutNulls().trim().toUpperCase();
 				String password = passwordField.getFieldWithoutNulls().trim().toUpperCase();
 
-				if ("BOO".equals(userid) && "EEK".equals(password)) {
+				if(new SecurityAuthorizationFacility().authenticate(userid, password)) {
 					return new SessionManagerMenu(network);
 				}
 
@@ -74,7 +75,6 @@ public class SessionManagerLogon extends AbstractScreen {
 		
 		FieldText timeField = (FieldText) screen.locateFieldsAt(calcPos(72, 0));
 		timeField.setContents(time.format(dtf));
-		
 		writeScreen(new CommandEraseWrite(), 
 				new WriteControlCharacter(false, false, false, false, false, false, true, true),
 				screen

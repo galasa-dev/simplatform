@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 public class Database {
 
@@ -15,35 +16,27 @@ public class Database {
 
 	private static final String TABLE_EXISTS = "X0Y32";
 	
-	private static Database database = null;
-	
 	private Connection conn = null;
 	
+	private Logger log;
+	
 
-	private Database() {
+	public Database() {
+		Logger log = Logger.getLogger("Simframe");
 		try {
 		    conn = DriverManager.getConnection(connectionURL);
 		    createTable();
 		}catch (SQLException e) {
-			System.err.println("Unable to connect to embedded DB - exit");
+			log.severe("Unable to connect to embedded DB - exit");
 			System.exit(1);
 		}    
 	}
 	
-	public static Database getDatabase() {
-		if(Database.database == null) {
-			database = new Database();
-		}
-		return database;
-	}
-	
-	
-
 	private void createTable() {
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.execute("CREATE TABLE ACCOUNTS  " + "(ACCOUNT_NUM VARCHAR(9) NOT NULL,"
-					+ " SORT_CODE VARCHAR(8) NOT NULL," + " BALANCE FLOAT) ");
+					+ " SORT_CODE VARCHAR(8) NOT NULL," + " BALANCE DECIMAL(10,2)) ");
 		}catch (SQLException e) {
 			if(e.getSQLState().equals(TABLE_EXISTS)) {
 				dropTable();

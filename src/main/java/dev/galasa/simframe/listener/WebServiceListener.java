@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,17 +32,21 @@ public class WebServiceListener implements IListener {
 	
 	private String accountNumber;
 	private double value;
+	
+	private Logger log = Logger.getLogger("Simframe");
 
 	public void run() {
 		try {
 			processInput();
 			String path = findPath();
 			if(!"/updateAccount".equals(path.trim())) {
+				log.warning("Request was not sent to path /updateAccount, it was: " + path + " returning 404");
 				return404();
 				return;
 			}
 			
 			if(!"POST".equals(getMethod())) {
+				log.warning("Request was not using POST HTTP verb, it was: " + getMethod() + " returning 405");
 				return405();
 				return;
 			}
@@ -49,18 +54,24 @@ public class WebServiceListener implements IListener {
 			try {
 				parseRequest();
 			}catch(Exception e) {
+				log.warning("Exception found while reading request" + " returning 500");
 				return500();
 				return;
 			}
 			
 			try {
 				updateAccount();
-			}catch(Exception e) {
+			}catch(InsufficientBalanceException e) {
+				log.warning("Account did not have adequate balance" + " returning 400");
+				return400();
+				return;
+			}catch(AccountNotFoundException e) {
+				log.warning("Account did not exist" + " returning 400");
 				return400();
 				return;
 			}
 			
-			String balance = Double.toString(Bank.getBank().getBalance(accountNumber));
+			String balance = Double.toString(new Bank().getBalance(accountNumber));
 			
 			String xmlText = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 					"<SOAP-ENV:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" + 
@@ -88,14 +99,14 @@ public class WebServiceListener implements IListener {
 			socket.close();
 				
 		}catch(Exception e) {
-			System.err.println("Stuff went really wrong");
-			e.printStackTrace();
+			log.severe("Stuff went really wrong");
+			log.severe(e.getMessage());
 		}
 
 	}
 	
 	private void updateAccount() throws InsufficientBalanceException, AccountNotFoundException {
-		Bank.getBank().creditAccount(accountNumber, value);
+		new Bank().creditAccount(accountNumber, value);
 	}
 	
 	private void parseRequest() throws Exception{
@@ -180,10 +191,11 @@ public class WebServiceListener implements IListener {
 	private void processInput() {
 		BufferedReader br = null;
 		try {
+			log.info("Received HTTP request from address: " + socket.getInetAddress().toString());
 			InputStream input = socket.getInputStream();
 			br = new BufferedReader(new InputStreamReader(input));
 		}catch(IOException e) {
-			System.err.println("Unable to access input stream from HTTP");
+			log.warning("Unable to access input stream from HTTP");
 			return;
 		}
 		
@@ -211,8 +223,7 @@ public class WebServiceListener implements IListener {
 				}
 			}
 		}catch(IOException e){
-			System.err.println("Unable to access input stream from HTTP");
-			
+			log.warning("Unable to access input stream from HTTP");
 			return;
 		}
 		

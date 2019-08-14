@@ -3,6 +3,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import dev.galasa.simframe.data.Account;
 import dev.galasa.simframe.db.Database;
@@ -11,31 +12,32 @@ import dev.galasa.simframe.exceptions.DuplicateAccountException;
 import dev.galasa.simframe.exceptions.InsufficientBalanceException;
 
 public class Bank {
+	private Logger log = Logger.getLogger("Simframe");
+	private static Database database = null;
 	
-	private static Bank bank;
-	
-	public static Bank getBank() {
-		if(Bank.bank == null) {
-			bank = new Bank();
-			System.out.println("Creating new Bank");
-		}	
-		return bank;
+	public Bank() {
+		if(database == null)
+			database = new Database();
 	}
 	
 	private Account getAccount(String accountNumber) throws AccountNotFoundException{
-		if(!accountExists(accountNumber))
+		log.info("Searching for account: " + accountNumber);
+		if(!accountExists(accountNumber)) {
+			log.info("Account: " + accountNumber + " not found");
 			throw new AccountNotFoundException("Account: " + accountNumber + " not found");
-		
-		ResultSet results = Database.getDatabase().getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + accountNumber + "'");
+		}
+		ResultSet results = database.getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + accountNumber + "'");
 		try{
 			results.next();
-			return new Account(results.getString(1), results.getString(2), results.getDouble(3));
+			log.info("Account: " + accountNumber + " found");
+			return new Account(results.getString(1), results.getString(2), results.getBigDecimal(3));
 		}catch(SQLException se) {
 			return null;
 		}
 	}
 	
 	public void transferMoney(String sourceAccount, String targetAccount, double amount) throws AccountNotFoundException, InsufficientBalanceException{
+		log.info("Transfering  " + amount + " from account: " + sourceAccount + " to account: " + targetAccount);
 		Account source = getAccount(sourceAccount);
 		Account target = getAccount(targetAccount);
 		
@@ -44,13 +46,19 @@ public class Bank {
 	}
 	
 	public boolean accountExists(String account) {
-		ResultSet results = Database.getDatabase().getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + account + "'");
+		log.info("Checking if account: " + account + " exists");
+		ResultSet results = database.getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + account + "'");
 		try {
-			if(results.next())
+			if(results.next()) {
+				log.info("Account exists");
 				return true;
-			else
+			}
+			else {
+				log.info("Account doesn't exist");
 				return false;
+			}
 		} catch (SQLException e) {
+			log.info("Account doesn't exist");
 			return false;
 		}
 	}
@@ -60,7 +68,7 @@ public class Bank {
 	}
 	
 	public double getBalance(String account) throws AccountNotFoundException {
-		return getAccount(account).getBalance();
+		return getAccount(account).getBalance().doubleValue();
 	}
 	
 	public void openAccount(String account, String sortCode) throws DuplicateAccountException{
@@ -68,13 +76,22 @@ public class Bank {
 	}
 	
 	public void openAccount(String account, String sortCode, double amount) throws DuplicateAccountException{
-		if(accountExists(account))
+		if(accountExists(account)) {
+			log.info("Account: " + account + " already exists at this bank");
 			throw new DuplicateAccountException("Account: " + account + " already exists at this bank");
-		Database.getDatabase().execute("INSERT INTO ACCOUNTS ( ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES ('" + account + "','" + sortCode + "'," + amount + ")");
+		}
+		log.info("Creating account: " + account);	
+		database.execute("INSERT INTO ACCOUNTS ( ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES ('" + account + "','" + sortCode + "'," + amount + ")");
 	}
 	
 	public void creditAccount(String account, double amount) throws InsufficientBalanceException, AccountNotFoundException {
+		log.info("Crediting account: " + account + " with: " + amount);
 		getAccount(account).creditAccount(amount);
+	}
+	
+	public void persistAccount(Account account) {
+		String query = "UPDATE ACCOUNTS SET SORT_CODE = '" + account.getSortCode() + "', BALANCE = " + account.getBalance().toPlainString()+ " WHERE ACCOUNT_NUM = '" + account.getAccountNumber() + "'";
+		database.execute(query);
 	}
 	
 
