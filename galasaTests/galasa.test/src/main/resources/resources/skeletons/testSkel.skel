@@ -3,7 +3,7 @@
 <ns1:UPDACCTOperation xmlns:ns1='http://www.UPDACCT.STCUSTN2.Request.com'>
 <ns1:update_account_record>
 <ns1:account_key>
-<ns1:sort_code>++SORT_CODE++</ns1:sort_code>
+<ns1:sort_code>00-00-00</ns1:sort_code>
 <ns1:account_number>++ACCOUNT_NUMBER++</ns1:account_number>
 </ns1:account_key>
 <ns1:account_change>++AMOUNT++</ns1:account_change>

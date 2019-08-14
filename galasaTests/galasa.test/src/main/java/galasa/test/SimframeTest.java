@@ -10,6 +10,7 @@ import dev.voras.common.http.HttpClientException;
 import dev.voras.common.http.IHttpClient;
 import dev.voras.common.zos.IZosImage;
 import dev.voras.common.zos.ZosImage;
+import dev.voras.common.zos.ZosManagerException;
 import dev.voras.common.zos3270.ITerminal;
 import dev.voras.common.zos3270.Zos3270Terminal;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +45,7 @@ public class SimframeTest{
     }
 
     @Test
-    public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException {
+    public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException {
         //Initial actions to get into banking application
         login();
 
@@ -55,7 +56,6 @@ public class SimframeTest{
         Double amount = 500.50;
         HashMap<String,Object> parameters = new HashMap<String,Object>();
         parameters.put("ACCOUNT_NUMBER", "123456789");
-        parameters.put("SORT_CODE", "000000"); //Needed or XML Not generated correctly. ++ notation could be removed from XML to be cleaner
         parameters.put("AMOUNT", "500.50");
 
         //Load sample request with the given parameters
@@ -63,7 +63,7 @@ public class SimframeTest{
         String textContext = artifacts.getBundleResources(this.getClass()).streamAsString(is);
 
         //Invoke the web request
-        client.setURI(new URI("http://127.0.0.1:2080"));
+        client.setURI(new URI("http://" + image.getDefaultHostname() + ":2080"));
         Object response = client.postTextAsXML("updateAccount", textContext, false);
 
         //Obtain the final balance
@@ -77,8 +77,8 @@ public class SimframeTest{
         try {
             //Initial log in to system
             terminal.waitForKeyboard()
-                    .positionCursorToFieldContaining("Userid").tab().type("boo")
-                    .positionCursorToFieldContaining("Password").tab().type("eek")
+                    .positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
+                    .positionCursorToFieldContaining("Password").tab().type("SYS1")
                     .enter().waitForKeyboard()
 
             //Open banking application
