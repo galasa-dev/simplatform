@@ -1,18 +1,18 @@
 
 package galasa.test;
 
-import dev.voras.Test;
-import dev.voras.common.artifact.ArtifactManager;
-import dev.voras.common.artifact.IArtifactManager;
-import dev.voras.common.artifact.TestBundleResourceException;
-import dev.voras.common.http.HttpClient;
-import dev.voras.common.http.HttpClientException;
-import dev.voras.common.http.IHttpClient;
-import dev.voras.common.zos.IZosImage;
-import dev.voras.common.zos.ZosImage;
-import dev.voras.common.zos.ZosManagerException;
-import dev.voras.common.zos3270.ITerminal;
-import dev.voras.common.zos3270.Zos3270Terminal;
+import dev.galasa.Test;
+import dev.galasa.common.artifact.ArtifactManager;
+import dev.galasa.common.artifact.IArtifactManager;
+import dev.galasa.common.artifact.TestBundleResourceException;
+import dev.galasa.common.http.HttpClient;
+import dev.galasa.common.http.HttpClientException;
+import dev.galasa.common.http.IHttpClient;
+import dev.galasa.common.zos.IZosImage;
+import dev.galasa.common.zos.ZosImage;
+import dev.galasa.common.zos.ZosManagerException;
+import dev.galasa.common.zos3270.ITerminal;
+import dev.galasa.common.zos3270.Zos3270Terminal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
