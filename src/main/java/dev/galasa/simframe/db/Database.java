@@ -1,8 +1,10 @@
 package dev.galasa.simframe.db;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,7 +24,8 @@ public class Database {
 	
 
 	public Database() {
-		Logger log = Logger.getLogger("Simframe");
+		log = Logger.getLogger("Simframe");
+		setDerbyHome();
 		try {
 		    conn = DriverManager.getConnection(connectionURL);
 		    createTable();
@@ -30,6 +33,22 @@ public class Database {
 			log.severe("Unable to connect to embedded DB - exit");
 			System.exit(1);
 		}    
+	}
+	/**
+	 * If running in eclipse, on windows under a account that is non admin, derby
+	 * will by default try to write to c:\windows\System 32\ which could cause 
+	 * permission problems, so this function changes the derby home to be a temp dir
+	 * that should work across platforms
+	 */
+	private void setDerbyHome() {
+	    try {
+	    	Path tempDir = Files.createTempDirectory("galasaSimframe");
+	    	log.info("Setting Derby home to " + tempDir.toString());
+	    	System.setProperty("derby.system.home", tempDir.toString()); 
+	    }catch(IOException e) {
+	    	log.warning("Unable to calculate temp dir, will use default");
+	    }
+		
 	}
 	
 	private void createTable() {
