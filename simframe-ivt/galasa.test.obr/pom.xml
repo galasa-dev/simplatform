@@ -4,22 +4,22 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>dev.voras</groupId>
+		<groupId>dev.galasa</groupId>
 		<artifactId>galasa.test.parent</artifactId>
 		<version>0.3.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>galasa.test</artifactId>
+	<artifactId>galasa.test.obr</artifactId>
 	<version>0.3.0-SNAPSHOT</version>
-	<packaging>bundle</packaging>
+	<packaging>galasa-obr</packaging>
 
 	<dependencies>
 		<dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
+			<groupId>dev.galasa</groupId>
+			<artifactId>galasa.test</artifactId>
+			<version>0.3.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
-		
+
 </project>
