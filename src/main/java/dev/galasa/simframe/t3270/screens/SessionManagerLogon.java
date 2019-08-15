@@ -4,12 +4,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import dev.galasa.simframe.saf.SecurityAuthorizationFacility;
-import dev.voras.common.zos3270.AttentionIdentification;
-import dev.voras.common.zos3270.internal.comms.NetworkServer;
-import dev.voras.common.zos3270.internal.datastream.CommandEraseWrite;
-import dev.voras.common.zos3270.internal.datastream.WriteControlCharacter;
-import dev.voras.common.zos3270.internal.terminal.fields.FieldText;
-import dev.voras.common.zos3270.spi.Screen;
+import dev.galasa.common.zos3270.AttentionIdentification;
+import dev.galasa.common.zos3270.internal.comms.NetworkServer;
+import dev.galasa.common.zos3270.internal.datastream.CommandEraseWrite;
+import dev.galasa.common.zos3270.internal.datastream.WriteControlCharacter;
+import dev.galasa.common.zos3270.internal.terminal.fields.FieldText;
+import dev.galasa.common.zos3270.spi.Screen;
 
 public class SessionManagerLogon extends AbstractScreen {
 

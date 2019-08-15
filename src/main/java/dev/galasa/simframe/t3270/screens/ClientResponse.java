@@ -1,6 +1,6 @@
 package dev.galasa.simframe.t3270.screens;
 
-import dev.voras.common.zos3270.AttentionIdentification;
+import dev.galasa.common.zos3270.AttentionIdentification;
 
 public class ClientResponse {
 	

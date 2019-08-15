@@ -8,23 +8,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import dev.voras.common.zos3270.AttentionIdentification;
-import dev.voras.common.zos3270.internal.comms.Network;
-import dev.voras.common.zos3270.internal.comms.NetworkServer;
-import dev.voras.common.zos3270.internal.comms.NetworkThread;
-import dev.voras.common.zos3270.internal.datastream.BufferAddress;
-import dev.voras.common.zos3270.internal.datastream.CommandEraseWrite;
-import dev.voras.common.zos3270.internal.datastream.Order;
-import dev.voras.common.zos3270.internal.datastream.OrderRepeatToAddress;
-import dev.voras.common.zos3270.internal.datastream.OrderSetBufferAddress;
-import dev.voras.common.zos3270.internal.datastream.OrderStartField;
-import dev.voras.common.zos3270.internal.datastream.WriteControlCharacter;
-import dev.voras.common.zos3270.internal.terminal.fields.Field;
-import dev.voras.common.zos3270.internal.terminal.fields.FieldChars;
-import dev.voras.common.zos3270.internal.terminal.fields.FieldStartOfField;
-import dev.voras.common.zos3270.internal.terminal.fields.FieldText;
-import dev.voras.common.zos3270.spi.DatastreamException;
-import dev.voras.common.zos3270.spi.Screen;
+import dev.galasa.common.zos3270.AttentionIdentification;
+import dev.galasa.common.zos3270.internal.comms.Network;
+import dev.galasa.common.zos3270.internal.comms.NetworkServer;
+import dev.galasa.common.zos3270.internal.comms.NetworkThread;
+import dev.galasa.common.zos3270.internal.datastream.BufferAddress;
+import dev.galasa.common.zos3270.internal.datastream.CommandEraseWrite;
+import dev.galasa.common.zos3270.internal.datastream.Order;
+import dev.galasa.common.zos3270.internal.datastream.OrderRepeatToAddress;
+import dev.galasa.common.zos3270.internal.datastream.OrderSetBufferAddress;
+import dev.galasa.common.zos3270.internal.datastream.OrderStartField;
+import dev.galasa.common.zos3270.internal.datastream.WriteControlCharacter;
+import dev.galasa.common.zos3270.internal.terminal.fields.Field;
+import dev.galasa.common.zos3270.internal.terminal.fields.FieldChars;
+import dev.galasa.common.zos3270.internal.terminal.fields.FieldStartOfField;
+import dev.galasa.common.zos3270.internal.terminal.fields.FieldText;
+import dev.galasa.common.zos3270.spi.DatastreamException;
+import dev.galasa.common.zos3270.spi.Screen;
 
 public abstract class AbstractScreen implements IScreen {
 
