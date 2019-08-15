@@ -4,7 +4,7 @@ import java.net.Socket;
 
 import dev.galasa.simframe.t3270.screens.IScreen;
 import dev.galasa.simframe.t3270.screens.SessionManagerLogon;
-import dev.voras.common.zos3270.internal.comms.NetworkServer;
+import dev.galasa.common.zos3270.internal.comms.NetworkServer;
 
 public class TelnetServiceListener implements IListener {
 	private Socket socket;
