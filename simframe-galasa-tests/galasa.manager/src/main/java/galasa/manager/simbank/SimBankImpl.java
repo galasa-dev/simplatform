@@ -55,4 +55,19 @@ public class SimBankImpl extends AbstractManager implements ISimBank {
 
 		activeManagers.add(this);
 	}
+
+	@Override
+	public String getHost() {
+		return null;
+	}
+
+	@Override
+	public String getWebnetPort() {
+		return null;
+	}
+
+	@Override
+	public String getFullAddress() {
+		return null;
+	}
 }
