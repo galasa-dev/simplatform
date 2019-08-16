@@ -12,6 +12,7 @@
 	
 	<modules>
 		<module>galasa.test</module>
+		<module>galasa.manager</module>
 		<module>galasa.test.obr</module>
 	</modules>
 
