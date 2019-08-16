@@ -1,4 +1,4 @@
-package galasa.manager.simbank;
+package galasa.manager;
 
 public interface ISimBank {
 

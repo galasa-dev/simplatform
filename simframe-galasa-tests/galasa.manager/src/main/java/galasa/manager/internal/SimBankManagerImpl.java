@@ -1,4 +1,4 @@
-package galasa.manager.simbank;
+package galasa.manager.internal;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -16,14 +16,22 @@ import dev.galasa.framework.spi.GenerateAnnotatedField;
 import dev.galasa.framework.spi.IFramework;
 import dev.galasa.framework.spi.IManager;
 import dev.galasa.framework.spi.ResourceUnavailableException;
+import galasa.manager.IAccount;
+import galasa.manager.ISimBank;
+import galasa.manager.SimBank;
 
-public class SimBankImpl extends AbstractManager implements ISimBank {
+public class SimBankManagerImpl extends AbstractManager {
     
-    private static final Log logger = LogFactory.getLog(SimBankImpl.class);
+    private static final Log logger = LogFactory.getLog(SimBankManagerImpl.class);
 
-    @GenerateAnnotatedField(annotation = SimframeBank.class)
-    public ISimBank fillfield(Field field, List<Annotation> annotations) {
-        return this;
+    @GenerateAnnotatedField(annotation = SimBank.class)
+    public ISimBank generateSimBank(Field field, List<Annotation> annotations) {
+		return null;
+	}
+	
+	@GenerateAnnotatedField(annotation = IAccount.class)
+    public ISimBank generateSimBankAccount(Field field, List<Annotation> annotations) {
+        return null;
     }
 
     @Override
@@ -54,20 +62,5 @@ public class SimBankImpl extends AbstractManager implements ISimBank {
 		}
 
 		activeManagers.add(this);
-	}
-
-	@Override
-	public String getHost() {
-		return null;
-	}
-
-	@Override
-	public String getWebnetPort() {
-		return null;
-	}
-
-	@Override
-	public String getFullAddress() {
-		return null;
 	}
 }

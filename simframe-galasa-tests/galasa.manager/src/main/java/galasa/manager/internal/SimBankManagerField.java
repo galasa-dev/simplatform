@@ -1,4 +1,4 @@
-package galasa.manager.simbank;
+package galasa.manager.internal;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
