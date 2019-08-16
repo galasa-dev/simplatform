@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -60,10 +61,10 @@ public class SimframeTest{
         login();
 
         //Obtain the initial balance
-        Double userBalance = getBalance("123456789");
+        BigDecimal userBalance = getBalance("123456789");
 
         //Set the amount be crecited and call web service
-        Double amount = 500.50;
+        BigDecimal amount = BigDecimal.valueOf(500.50);
         HashMap<String,Object> parameters = new HashMap<String,Object>();
         parameters.put("ACCOUNT_NUMBER", "123456789");
         parameters.put("AMOUNT", "500.50");
@@ -77,10 +78,10 @@ public class SimframeTest{
         Object response = client.postTextAsXML("updateAccount", textContext, false);
 
         //Obtain the final balance
-        Double newUserBalance = getBalance("123456789");
+        BigDecimal newUserBalance = getBalance("123456789");
 
         //Assert that the correct amount has been credited to the account
-        assertThat(newUserBalance).isEqualTo(userBalance + amount);
+        assertThat(newUserBalance).isEqualTo(userBalance.add(amount));
     }
 
     /**
@@ -109,8 +110,8 @@ public class SimframeTest{
      * @param accountNum - Account Number of the accont being queried
      * @return Balance of the account being queried
      */
-    private Double getBalance(String accountNum) {
-        Double amount = 0.0;
+    private BigDecimal getBalance(String accountNum) {
+        BigDecimal amount = BigDecimal.ZERO;
         try {
             //Open account menu and enter account number
             terminal.pf1().waitForKeyboard()
@@ -118,7 +119,7 @@ public class SimframeTest{
                     .type(accountNum).enter().waitForKeyboard();
 
             //Retrieve balance from screen
-            amount = Double.parseDouble(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
+            amount = BigDecimal.valueOf(Double.parseDouble(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim()));
 
             //Return to bank menu
             terminal.pf3().waitForKeyboard();
