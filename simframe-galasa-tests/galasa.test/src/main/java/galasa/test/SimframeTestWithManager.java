@@ -53,6 +53,7 @@ public class SimframeTestWithManager{
 
     @Account
     public IAccount account;
+    
 
     @Test
     public void testNotNull() {
@@ -60,6 +61,7 @@ public class SimframeTestWithManager{
         assertThat(terminal).isNotNull();
         assertThat(artifacts).isNotNull();
         assertThat(client).isNotNull();
+        assertThat(artifactRoot).isNotNull();
         assertThat(bank).isNotNull();
         assertThat(account).isNotNull();
     }
@@ -76,11 +78,8 @@ public class SimframeTestWithManager{
      */
     @Test
     public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException {
-        //Initial actions to get into banking application
-        login();
-
         //Obtain the initial balance
-        BigDecimal userBalance = getBalance(account.getAccountNumber());
+        BigDecimal userBalance = bank.getBalance(account.getAccountNumber());
 
         //Set the amount be credited and call web service
         BigDecimal amount = BigDecimal.valueOf(500.50);
@@ -98,54 +97,9 @@ public class SimframeTestWithManager{
         Object response = client.postTextAsXML(bank.getUpdateAddress(), textContext, false);
 
         //Obtain the final balance
-        BigDecimal newUserBalance = getBalance(account.getAccountNumber());
+        BigDecimal newUserBalance = bank.getBalance(account.getAccountNumber());
 
         //Assert that the correct amount has been credited to the account
         assertThat(newUserBalance).isEqualTo(userBalance.add(amount));
-    }
-
-    /**
-     * Initial actions required to log in to system and open the banking application
-     */
-    private void login() {
-        try {
-            //Initial log in to system
-            terminal.waitForKeyboard()
-                    .positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
-                    .positionCursorToFieldContaining("Password").tab().type("SYS1")
-                    .enter().waitForKeyboard()
-
-            //Open banking application
-                    .pf1().waitForKeyboard()
-                    .clear().waitForKeyboard()
-                    .tab().type("bank").enter().waitForKeyboard();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Navigate through the banking application and extract the balance of a given account
-     * 
-     * @param accountNum - Account Number of the accont being queried
-     * @return Balance of the account being queried
-     */
-    private BigDecimal getBalance(String accountNum) {
-        BigDecimal amount = BigDecimal.ZERO;
-        try {
-            //Open account menu and enter account number
-            terminal.pf1().waitForKeyboard()
-                    .positionCursorToFieldContaining("Account Number").tab()
-                    .type(accountNum).enter().waitForKeyboard();
-
-            //Retrieve balance from screen
-            amount = new BigDecimal(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
-
-            //Return to bank menu
-            terminal.pf3().waitForKeyboard();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return amount;
     }
 }

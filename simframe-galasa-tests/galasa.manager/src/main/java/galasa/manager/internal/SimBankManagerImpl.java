@@ -15,9 +15,11 @@ import dev.galasa.common.ipnetwork.IIpHost;
 import dev.galasa.common.zos.IZosImage;
 import dev.galasa.common.zos.IZosManager;
 import dev.galasa.common.zos.spi.IZosManagerSpi;
+import dev.galasa.common.zos3270.ITerminal;
 import dev.galasa.common.zos3270.IZos3270Manager;
 import dev.galasa.common.zos3270.Zos3270ManagerException;
 import dev.galasa.common.zos3270.Zos3270Terminal;
+import dev.galasa.common.zos3270.spi.IZos3270ManagerSpi;
 import dev.galasa.framework.spi.AbstractManager;
 import dev.galasa.framework.spi.AnnotatedField;
 import dev.galasa.framework.spi.GenerateAnnotatedField;
@@ -36,6 +38,7 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 	private static final Log logger = LogFactory.getLog(SimBankManagerImpl.class);
 	
 	private IZosManagerSpi zosManager;
+	private IZos3270ManagerSpi z3270manager;
 
     @GenerateAnnotatedField(annotation = SimBank.class)
     public ISimBank generateSimBank(Field field, List<Annotation> annotations) throws Zos3270ManagerException {
@@ -46,7 +49,8 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 			IZosImage image = this.zosManager.getImageForTag(tag);
 			IIpHost host = image.getIpHost();
 
-			ISimBank bank = new SimBankImpl(host.getHostname(), host.getWebnetPort());
+			ITerminal terminal = z3270manager.getTerminal();
+			ISimBank bank = new SimBankImpl(host.getHostname(), host.getTelnetPort(), host.getWebnetPort(), terminal);
 			return bank;
 		} catch(Exception e) {
 			throw new Zos3270ManagerException("Unable to generate Bank for zOS Image tagged " + tag, e);
@@ -91,11 +95,15 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 		if (zosManager == null) {
 			throw new Zos3270ManagerException("The zOS Manager is not available");
 		}
+		z3270manager = addDependentManager(allManagers, activeManagers, IZos3270ManagerSpi.class);
+		if (z3270manager == null) {
+			throw new Zos3270ManagerException("The zOS 3270 Manager is not available");
+		}
 	}
 
 	@Override
 	public boolean areYouProvisionalDependentOn(@NotNull IManager otherManager) {
-		if (otherManager instanceof IZosManager) {
+		if (otherManager instanceof IZosManager || otherManager instanceof IZos3270Manager) {
 			return true;
 		}
 
