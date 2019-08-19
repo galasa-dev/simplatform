@@ -23,19 +23,13 @@ import galasa.manager.SimBank;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
 @Test
@@ -61,18 +55,6 @@ public class SimframeTestWithManager{
 
     @Account
     public IAccount account;
-    
-
-    @Test
-    public void testNotNull() {
-        //Check all objects loaded
-        assertThat(terminal).isNotNull();
-        assertThat(artifacts).isNotNull();
-        assertThat(client).isNotNull();
-        assertThat(artifactRoot).isNotNull();
-        assertThat(bank).isNotNull();
-        assertThat(account).isNotNull();
-    }
 
     /**
      * Test which checks the initial balance of an account, uses the webservice to credit the account, then checks the balance again.
@@ -101,18 +83,18 @@ public class SimframeTestWithManager{
         String textContext = resources.streamAsString(is);
 
         //Store the xml request in the RAS
-        Path context = artifactRoot.resolve("webservice").resolve("context.txt");
-        Files.createFile(context, ResultArchiveStoreContentType.TEXT);
-        Files.write(context,textContext.getBytes());
+        Path requestPath = artifactRoot.resolve("webservice").resolve("request.txt");
+        Files.createFile(requestPath, ResultArchiveStoreContentType.TEXT);
+        Files.write(requestPath,textContext.getBytes());
 
         //Invoke the web request
         client.setURI(new URI(bank.getFullAddress()));
         String response = (String) client.postTextAsXML(bank.getUpdateAddress(), textContext, false);
 
         //Store the response in the RAS
-        Path resp = artifactRoot.resolve("webservice").resolve("response.txt");
-        Files.createFile(resp, ResultArchiveStoreContentType.TEXT);
-        Files.write(resp, response.getBytes());
+        Path responsePath = artifactRoot.resolve("webservice").resolve("response.txt");
+        Files.createFile(responsePath, ResultArchiveStoreContentType.TEXT);
+        Files.write(responsePath, response.getBytes());
 
         //Obtain the final balance
         BigDecimal newUserBalance = bank.getBalance(account.getAccountNumber());

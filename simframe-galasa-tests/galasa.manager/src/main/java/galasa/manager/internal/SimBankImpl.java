@@ -65,10 +65,11 @@ public class SimBankImpl implements ISimBank{
     }
 
     public BigDecimal getBalance(String AccNum) {
-        if(terminal.retrieveScreen().contains("Userid"))
-            login();
         BigDecimal amount = BigDecimal.ZERO;
         try {
+            //Check if already logged into system
+            if(terminal.waitForKeyboard().retrieveScreen().contains("LOGON"))
+                login();
             //Open account menu and enter account number
             terminal.pf1().waitForKeyboard()
                     .positionCursorToFieldContaining("Account Number").tab()
