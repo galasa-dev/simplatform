@@ -37,6 +37,8 @@
 
 		<dev.galasa.ivt.core>0.3.0-SNAPSHOT</dev.galasa.ivt.core>
 		<dev.galasa.ivt.obr>0.3.0-SNAPSHOT</dev.galasa.ivt.obr>
+		
+		<unpackBundle>true</unpackBundle>
 	</properties>
 
 	<dependencyManagement>
