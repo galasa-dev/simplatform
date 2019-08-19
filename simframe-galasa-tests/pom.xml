@@ -114,7 +114,7 @@
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.zosBatch.zosmf.manager</artifactId>
+			<artifactId>dev.galasa.common.zosbatch.zosmf.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
