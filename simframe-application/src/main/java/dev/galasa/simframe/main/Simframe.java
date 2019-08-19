@@ -3,11 +3,8 @@ package dev.galasa.simframe.main;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import dev.galasa.simframe.application.Bank;
-import dev.galasa.simframe.db.Database;
 import dev.galasa.simframe.listener.Listener;
 import dev.galasa.simframe.listener.TelnetServiceListener;
 import dev.galasa.simframe.listener.WebServiceListener;
