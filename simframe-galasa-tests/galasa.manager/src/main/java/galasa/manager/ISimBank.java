@@ -6,8 +6,6 @@ public interface ISimBank {
 
     public String getHost();
 
-    public int getTelnetPort();
-
     public int getWebnetPort();
 
     public String getFullAddress();
