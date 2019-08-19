@@ -15,4 +15,6 @@ import galasa.manager.ISimBank;
 @ValidAnnotatedFields({ ISimBank.class })
 public @interface SimBank {
 
+    String imageTag() default "primary";
+    
 }

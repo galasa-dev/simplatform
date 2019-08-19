@@ -6,7 +6,7 @@ public class AccountImpl implements IAccount {
 
     private String accountNumber;
 
-    public AccountImpl(String number, String tag) {
+    public AccountImpl(String number) {
 
         accountNumber = number;
 

@@ -14,6 +14,7 @@ import dev.galasa.common.zos.ZosImage;
 import dev.galasa.common.zos.ZosManagerException;
 import dev.galasa.common.zos3270.ITerminal;
 import dev.galasa.common.zos3270.Zos3270Terminal;
+import dev.galasa.core.manager.StoredArtifactRoot;
 import galasa.manager.Account;
 import galasa.manager.IAccount;
 import galasa.manager.ISimBank;
@@ -26,6 +27,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 @Test
@@ -43,7 +45,10 @@ public class SimframeTestWithManager{
     @HttpClient
     public IHttpClient client;
 
-    @SimBank
+    @StoredArtifactRoot
+    public Path artifactRoot;
+
+    @SimBank(imageTag="A")
     public ISimBank bank;
 
     @Account

@@ -4,7 +4,7 @@ public interface ISimBank {
 
     public String getHost();
 
-    public String getWebnetPort();
+    public int getWebnetPort();
 
     public String getFullAddress();
 

@@ -5,12 +5,12 @@ import galasa.manager.ISimBank;
 public class SimBankImpl implements ISimBank{
 
     private String host;
-    private String webnetPort;
+    private int webnetPort;
     private String updateAddress;
 
-    public SimBankImpl() {
-        host = "127.0.0.1";
-        webnetPort = "2080";
+    public SimBankImpl(String hostAddress, int webnet) {
+        host = hostAddress;
+        webnetPort = webnet;
         updateAddress = "updateAccount";
     }
 
@@ -20,7 +20,7 @@ public class SimBankImpl implements ISimBank{
     }
 
     @Override
-    public String getWebnetPort() {
+    public int getWebnetPort() {
         return webnetPort;
     }
 
