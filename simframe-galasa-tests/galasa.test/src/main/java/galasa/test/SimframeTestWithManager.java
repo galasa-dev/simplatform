@@ -14,6 +14,11 @@ import dev.galasa.common.zos.ZosImage;
 import dev.galasa.common.zos.ZosManagerException;
 import dev.galasa.common.zos3270.ITerminal;
 import dev.galasa.common.zos3270.Zos3270Terminal;
+import galasa.manager.Account;
+import galasa.manager.IAccount;
+import galasa.manager.ISimBank;
+import galasa.manager.SimBank;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
@@ -24,7 +29,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 
 @Test
-public class SimframeTest{ 
+public class SimframeTestWithManager{ 
 
     @ZosImage(imageTag="A")
     public IZosImage image;
@@ -38,12 +43,20 @@ public class SimframeTest{
     @HttpClient
     public IHttpClient client;
 
+    @SimBank
+    public ISimBank bank;
+
+    @Account
+    public IAccount account;
+
     @Test
     public void testNotNull() {
         //Check all objects loaded
         assertThat(terminal).isNotNull();
         assertThat(artifacts).isNotNull();
         assertThat(client).isNotNull();
+        assertThat(bank).isNotNull();
+        assertThat(account).isNotNull();
     }
 
     /**
@@ -62,12 +75,12 @@ public class SimframeTest{
         login();
 
         //Obtain the initial balance
-        BigDecimal userBalance = getBalance("123456789");
+        BigDecimal userBalance = getBalance(account.getAccountNumber());
 
         //Set the amount be credited and call web service
         BigDecimal amount = BigDecimal.valueOf(500.50);
         HashMap<String,Object> parameters = new HashMap<String,Object>();
-        parameters.put("ACCOUNT_NUMBER", "123456789");
+        parameters.put("ACCOUNT_NUMBER", account.getAccountNumber());
         parameters.put("AMOUNT", amount.toString());
 
         //Load sample request with the given parameters
@@ -76,11 +89,11 @@ public class SimframeTest{
         String textContext = resources.streamAsString(is);
 
         //Invoke the web request
-        client.setURI(new URI("http://" + image.getDefaultHostname() + ":2080"));
-        Object response = client.postTextAsXML("updateAccount", textContext, false);
+        client.setURI(new URI(bank.getFullAddress()));
+        Object response = client.postTextAsXML(bank.getUpdateAddress(), textContext, false);
 
         //Obtain the final balance
-        BigDecimal newUserBalance = getBalance("123456789");
+        BigDecimal newUserBalance = getBalance(account.getAccountNumber());
 
         //Assert that the correct amount has been credited to the account
         assertThat(newUserBalance).isEqualTo(userBalance.add(amount));
@@ -121,7 +134,7 @@ public class SimframeTest{
                     .type(accountNum).enter().waitForKeyboard();
 
             //Retrieve balance from screen
-            amount = new BigDecimal(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
+            amount = BigDecimal.valueOf(Double.parseDouble(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim()));
 
             //Return to bank menu
             terminal.pf3().waitForKeyboard();

@@ -8,4 +8,6 @@ public interface ISimBank {
 
     public String getFullAddress();
 
+    public String getUpdateAddress();
+
 }
