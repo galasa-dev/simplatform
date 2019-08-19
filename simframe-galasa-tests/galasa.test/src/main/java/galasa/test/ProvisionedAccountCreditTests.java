@@ -33,7 +33,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 
 @Test
-public class SimframeTestWithManager{ 
+public class ProvisionedAccountCreditTests{ 
 
     @ZosImage(imageTag="A")
     public IZosImage image;
@@ -53,6 +53,7 @@ public class SimframeTestWithManager{
     @SimBank(imageTag="A")
     public ISimBank bank;
 
+    //Provision account data
     @Account
     public IAccount account;
 
@@ -80,26 +81,29 @@ public class SimframeTestWithManager{
         //Load sample request with the given parameters
         IBundleResources resources = artifacts.getBundleResources(this.getClass());
         InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
-        String textContext = resources.streamAsString(is);
+        String textContent = resources.streamAsString(is);
 
-        //Store the xml request in the RAS
-        Path requestPath = artifactRoot.resolve("webservice").resolve("request.txt");
-        Files.createFile(requestPath, ResultArchiveStoreContentType.TEXT);
-        Files.write(requestPath,textContext.getBytes());
+        //Store the xml request in the test results archive
+        storeOutput("webservice", "request.txt", textContent);
 
         //Invoke the web request
         client.setURI(new URI(bank.getFullAddress()));
-        String response = (String) client.postTextAsXML(bank.getUpdateAddress(), textContext, false);
+        String response = (String) client.postTextAsXML(bank.getUpdateAddress(), textContent, false);
 
-        //Store the response in the RAS
-        Path responsePath = artifactRoot.resolve("webservice").resolve("response.txt");
-        Files.createFile(responsePath, ResultArchiveStoreContentType.TEXT);
-        Files.write(responsePath, response.getBytes());
+        //Store the response in the test results archive
+        storeOutput("webservice", "response.txt", response);
 
         //Obtain the final balance
         BigDecimal newUserBalance = bank.getBalance(account.getAccountNumber());
 
         //Assert that the correct amount has been credited to the account
         assertThat(newUserBalance).isEqualTo(userBalance.add(amount));
+    }
+    
+    private void storeOutput(String folder, String file, String content) throws IOException {
+    	//Store the xml request in the test results archive
+        Path requestPath = artifactRoot.resolve(folder).resolve(file);
+        Files.createFile(requestPath, ResultArchiveStoreContentType.TEXT);
+        Files.write(requestPath,content.getBytes());
     }
 }
