@@ -1,5 +1,13 @@
-
 package galasa.test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
 
 import dev.galasa.Test;
 import dev.galasa.common.artifact.ArtifactManager;
@@ -12,19 +20,16 @@ import dev.galasa.common.http.IHttpClient;
 import dev.galasa.common.zos.IZosImage;
 import dev.galasa.common.zos.ZosImage;
 import dev.galasa.common.zos.ZosManagerException;
+import dev.galasa.common.zos3270.FieldNotFoundException;
 import dev.galasa.common.zos3270.ITerminal;
+import dev.galasa.common.zos3270.KeyboardLockedException;
+import dev.galasa.common.zos3270.TextNotFoundException;
+import dev.galasa.common.zos3270.TimeoutException;
 import dev.galasa.common.zos3270.Zos3270Terminal;
-import static org.assertj.core.api.Assertions.assertThat;
+import dev.galasa.common.zos3270.spi.DatastreamException;
+import dev.galasa.common.zos3270.spi.NetworkException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-
-@Test
-public class SimframeTest{ 
+public class BasicAccountCreditTest{ 
 
     @ZosImage(imageTag="A")
     public IZosImage image;
@@ -38,14 +43,6 @@ public class SimframeTest{
     @HttpClient
     public IHttpClient client;
 
-    @Test
-    public void testNotNull() {
-        //Check all objects loaded
-        assertThat(terminal).isNotNull();
-        assertThat(artifacts).isNotNull();
-        assertThat(client).isNotNull();
-    }
-
     /**
      * Test which checks the initial balance of an account, uses the webservice to credit the account, then checks the balance again.
      * The test passes if the final balance is equal to the old balance + the credited amount.
@@ -55,11 +52,25 @@ public class SimframeTest{
      * @throws IOException
      * @throws HttpClientException
      * @throws ZosManagerException
+     * @throws TextNotFoundException 
+     * @throws FieldNotFoundException 
+     * @throws NetworkException 
+     * @throws KeyboardLockedException 
+     * @throws TimeoutException 
+     * @throws DatastreamException 
      */
     @Test
-    public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException {
+    public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException {
         //Initial actions to get into banking application
-        login();
+    	terminal.waitForKeyboard()
+        .positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
+        .positionCursorToFieldContaining("Password").tab().type("SYS1")
+        .enter().waitForKeyboard()
+
+        //Open banking application
+        .pf1().waitForKeyboard()
+        .clear().waitForKeyboard()
+        .tab().type("bank").enter().waitForKeyboard();
 
         //Obtain the initial balance
         BigDecimal userBalance = getBalance("123456789");
@@ -77,7 +88,7 @@ public class SimframeTest{
 
         //Invoke the web request
         client.setURI(new URI("http://" + image.getDefaultHostname() + ":2080"));
-        Object response = client.postTextAsXML("updateAccount", textContext, false);
+        client.postTextAsXML("updateAccount", textContext, false);
 
         //Obtain the final balance
         BigDecimal newUserBalance = getBalance("123456789");
@@ -87,47 +98,29 @@ public class SimframeTest{
     }
 
     /**
-     * Initial actions required to log in to system and open the banking application
-     */
-    private void login() {
-        try {
-            //Initial log in to system
-            terminal.waitForKeyboard()
-                    .positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
-                    .positionCursorToFieldContaining("Password").tab().type("SYS1")
-                    .enter().waitForKeyboard()
-
-            //Open banking application
-                    .pf1().waitForKeyboard()
-                    .clear().waitForKeyboard()
-                    .tab().type("bank").enter().waitForKeyboard();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Navigate through the banking application and extract the balance of a given account
      * 
-     * @param accountNum - Account Number of the accont being queried
+     * @param accountNum - Account Number of the account being queried
      * @return Balance of the account being queried
+     * @throws TextNotFoundException 
+     * @throws FieldNotFoundException 
+     * @throws NetworkException 
+     * @throws KeyboardLockedException 
+     * @throws TimeoutException 
+     * @throws DatastreamException 
      */
-    private BigDecimal getBalance(String accountNum) {
+    private BigDecimal getBalance(String accountNum) throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException {
         BigDecimal amount = BigDecimal.ZERO;
-        try {
-            //Open account menu and enter account number
-            terminal.pf1().waitForKeyboard()
-                    .positionCursorToFieldContaining("Account Number").tab()
-                    .type(accountNum).enter().waitForKeyboard();
+        //Open account menu and enter account number
+        terminal.pf1().waitForKeyboard()
+                .positionCursorToFieldContaining("Account Number").tab()
+                .type(accountNum).enter().waitForKeyboard();
 
-            //Retrieve balance from screen
-            amount = new BigDecimal(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
+        //Retrieve balance from screen
+        amount = new BigDecimal(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
 
-            //Return to bank menu
-            terminal.pf3().waitForKeyboard();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        //Return to bank menu
+        terminal.pf3().waitForKeyboard();
         return amount;
     }
 }
