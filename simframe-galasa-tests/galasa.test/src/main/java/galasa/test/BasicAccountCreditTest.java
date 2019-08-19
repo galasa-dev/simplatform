@@ -102,7 +102,7 @@ public class BasicAccountCreditTest{
     /**
      * Navigate through the banking application and extract the balance of a given account
      * 
-     * @param accountNum - Account Number of the accont being queried
+     * @param accountNum - Account Number of the account being queried
      * @return Balance of the account being queried
      */
     private BigDecimal getBalance(String accountNum) {
