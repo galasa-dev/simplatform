@@ -8,15 +8,13 @@ import galasa.manager.ISimBank;
 public class SimBankImpl implements ISimBank{
 
     private String host;
-    private int telnetPort;
     private int webnetPort;
     private String updateAddress;
 
     private ITerminal terminal;
 
-    public SimBankImpl(String hostAddress, int telnet, int webnet, ITerminal term) {
+    public SimBankImpl(String hostAddress, int webnet, ITerminal term) {
         host = hostAddress;
-        telnetPort = telnet;
         webnetPort = webnet;
         updateAddress = "updateAccount";
         terminal = term;
@@ -25,11 +23,6 @@ public class SimBankImpl implements ISimBank{
     @Override
     public String getHost() {
         return host;
-    }
-
-    @Override
-    public int getTelnetPort() {
-        return telnetPort;
     }
 
     @Override
@@ -47,7 +40,7 @@ public class SimBankImpl implements ISimBank{
         return updateAddress;
     }
 
-    public void login() {
+    private void login() {
         try {
             //Initial log in to system
             terminal.waitForKeyboard()

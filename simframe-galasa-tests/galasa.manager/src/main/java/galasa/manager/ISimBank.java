@@ -14,8 +14,6 @@ public interface ISimBank {
 
     public String getUpdateAddress();
 
-    public void login();
-
     public BigDecimal getBalance(String AccNum);
 
 }

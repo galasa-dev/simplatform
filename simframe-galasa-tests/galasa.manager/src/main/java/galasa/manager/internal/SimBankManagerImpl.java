@@ -50,7 +50,7 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 			IIpHost host = image.getIpHost();
 
 			ITerminal terminal = z3270manager.getTerminal();
-			ISimBank bank = new SimBankImpl(host.getHostname(), host.getTelnetPort(), host.getWebnetPort(), terminal);
+			ISimBank bank = new SimBankImpl(host.getHostname(), host.getWebnetPort(), terminal);
 			return bank;
 		} catch(Exception e) {
 			throw new Zos3270ManagerException("Unable to generate Bank for zOS Image tagged " + tag, e);
