@@ -1,5 +1,15 @@
-
 package galasa.test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
 
 import dev.galasa.ResultArchiveStoreContentType;
 import dev.galasa.Test;
@@ -21,18 +31,6 @@ import galasa.manager.IAccount;
 import galasa.manager.ISimBank;
 import galasa.manager.SimBank;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-
-@Test
 public class ProvisionedAccountCreditTests{ 
 
     @ZosImage(imageTag="A")
@@ -50,6 +48,7 @@ public class ProvisionedAccountCreditTests{
     @StoredArtifactRoot
     public Path artifactRoot;
 
+    //Binding to provisioned bank endpoints
     @SimBank(imageTag="A")
     public ISimBank bank;
 

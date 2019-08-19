@@ -1,5 +1,13 @@
-
 package galasa.test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
 
 import dev.galasa.Test;
 import dev.galasa.common.artifact.ArtifactManager;
@@ -21,16 +29,6 @@ import dev.galasa.common.zos3270.Zos3270Terminal;
 import dev.galasa.common.zos3270.spi.DatastreamException;
 import dev.galasa.common.zos3270.spi.NetworkException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-
-@Test
 public class BasicAccountCreditTest{ 
 
     @ZosImage(imageTag="A")
@@ -90,7 +88,7 @@ public class BasicAccountCreditTest{
 
         //Invoke the web request
         client.setURI(new URI("http://" + image.getDefaultHostname() + ":2080"));
-        Object response = client.postTextAsXML("updateAccount", textContext, false);
+        client.postTextAsXML("updateAccount", textContext, false);
 
         //Obtain the final balance
         BigDecimal newUserBalance = getBalance("123456789");
@@ -104,23 +102,25 @@ public class BasicAccountCreditTest{
      * 
      * @param accountNum - Account Number of the account being queried
      * @return Balance of the account being queried
+     * @throws TextNotFoundException 
+     * @throws FieldNotFoundException 
+     * @throws NetworkException 
+     * @throws KeyboardLockedException 
+     * @throws TimeoutException 
+     * @throws DatastreamException 
      */
-    private BigDecimal getBalance(String accountNum) {
+    private BigDecimal getBalance(String accountNum) throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException {
         BigDecimal amount = BigDecimal.ZERO;
-        try {
-            //Open account menu and enter account number
-            terminal.pf1().waitForKeyboard()
-                    .positionCursorToFieldContaining("Account Number").tab()
-                    .type(accountNum).enter().waitForKeyboard();
+        //Open account menu and enter account number
+        terminal.pf1().waitForKeyboard()
+                .positionCursorToFieldContaining("Account Number").tab()
+                .type(accountNum).enter().waitForKeyboard();
 
-            //Retrieve balance from screen
-            amount = new BigDecimal(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
+        //Retrieve balance from screen
+        amount = new BigDecimal(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
 
-            //Return to bank menu
-            terminal.pf3().waitForKeyboard();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        //Return to bank menu
+        terminal.pf3().waitForKeyboard();
         return amount;
     }
 }
