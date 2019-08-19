@@ -1,6 +1,7 @@
 
 package galasa.test;
 
+import dev.galasa.ResultArchiveStoreContentType;
 import dev.galasa.Test;
 import dev.galasa.common.artifact.ArtifactManager;
 import dev.galasa.common.artifact.IArtifactManager;
@@ -22,12 +23,19 @@ import galasa.manager.SimBank;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 @Test
@@ -92,9 +100,19 @@ public class SimframeTestWithManager{
         InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
         String textContext = resources.streamAsString(is);
 
+        //Store the xml request in the RAS
+        Path context = artifactRoot.resolve("webservice").resolve("context.txt");
+        Files.createFile(context, ResultArchiveStoreContentType.TEXT);
+        Files.write(context,textContext.getBytes());
+
         //Invoke the web request
         client.setURI(new URI(bank.getFullAddress()));
-        Object response = client.postTextAsXML(bank.getUpdateAddress(), textContext, false);
+        String response = (String) client.postTextAsXML(bank.getUpdateAddress(), textContext, false);
+
+        //Store the response in the RAS
+        Path resp = artifactRoot.resolve("webservice").resolve("response.txt");
+        Files.createFile(resp, ResultArchiveStoreContentType.TEXT);
+        Files.write(resp, response.getBytes());
 
         //Obtain the final balance
         BigDecimal newUserBalance = bank.getBalance(account.getAccountNumber());
