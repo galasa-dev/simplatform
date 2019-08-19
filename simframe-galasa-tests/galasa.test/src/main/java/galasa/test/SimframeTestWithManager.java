@@ -134,7 +134,7 @@ public class SimframeTestWithManager{
                     .type(accountNum).enter().waitForKeyboard();
 
             //Retrieve balance from screen
-            amount = BigDecimal.valueOf(Double.parseDouble(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim()));
+            amount = new BigDecimal(terminal.retrieveFieldTextAfterFieldWithString("Balance").trim());
 
             //Return to bank menu
             terminal.pf3().waitForKeyboard();
