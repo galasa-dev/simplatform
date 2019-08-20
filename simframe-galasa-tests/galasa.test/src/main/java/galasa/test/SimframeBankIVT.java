@@ -48,13 +48,6 @@ public class SimframeBankIVT{
 
     @HttpClient
     public IHttpClient client;
-    
-    @SimBank(imageTag="A")
-    public ISimBank bank;
-
-    //Provision account data
-    @Account
-    public IAccount account;
 
     @Test
     public void testNotNull() {
