@@ -15,10 +15,8 @@ import dev.galasa.common.ipnetwork.IIpHost;
 import dev.galasa.common.zos.IZosImage;
 import dev.galasa.common.zos.IZosManager;
 import dev.galasa.common.zos.spi.IZosManagerSpi;
-import dev.galasa.common.zos3270.ITerminal;
 import dev.galasa.common.zos3270.IZos3270Manager;
 import dev.galasa.common.zos3270.Zos3270ManagerException;
-import dev.galasa.common.zos3270.Zos3270Terminal;
 import dev.galasa.common.zos3270.spi.IZos3270ManagerSpi;
 import dev.galasa.framework.spi.AbstractManager;
 import dev.galasa.framework.spi.AnnotatedField;
@@ -122,10 +120,7 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 
 	public int getWebnetPort() throws SimBankManagerException {
 		try {
-			String temp = AbstractManager.nulled(this.cps.getProperty("image", "webnet.port", "simframe"));
-			if (temp == null) {
-				return 23;
-			}
+			String temp = AbstractManager.defaultString(this.cps.getProperty("image", "webnet.port", "simframe"), "23");
 			return Integer.parseInt(temp);
 		} catch(Exception e) {
 			throw new SimBankManagerException("Unable to find webnet port in CPS", e);
