@@ -11,13 +11,10 @@ public class SimBankImpl implements ISimBank{
     private int webnetPort;
     private String updateAddress;
 
-    private ITerminal terminal;
-
-    public SimBankImpl(String hostAddress, int webnet, ITerminal term) {
+    public SimBankImpl(String hostAddress, int webnet) {
         host = hostAddress;
         webnetPort = webnet;
         updateAddress = "updateAccount";
-        terminal = term;
     }
 
     @Override
@@ -40,7 +37,7 @@ public class SimBankImpl implements ISimBank{
         return updateAddress;
     }
 
-    private void login() {
+    private void login(ITerminal terminal) {
         try {
             //Initial log in to system
             terminal.waitForKeyboard()
@@ -57,12 +54,12 @@ public class SimBankImpl implements ISimBank{
         }
     }
 
-    public BigDecimal getBalance(String AccNum) {
+    public BigDecimal getBalance(String AccNum, ITerminal terminal) {
         BigDecimal amount = BigDecimal.ZERO;
         try {
             //Check if already logged into system
             if(terminal.waitForKeyboard().retrieveScreen().contains("LOGON"))
-                login();
+                login(terminal);
             //Open account menu and enter account number
             terminal.pf1().waitForKeyboard()
                     .positionCursorToFieldContaining("Account Number").tab()

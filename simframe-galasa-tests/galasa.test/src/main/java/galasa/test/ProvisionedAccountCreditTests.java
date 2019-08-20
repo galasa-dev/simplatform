@@ -69,7 +69,7 @@ public class ProvisionedAccountCreditTests{
     @Test
     public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException {
         //Obtain the initial balance
-        BigDecimal userBalance = bank.getBalance(account.getAccountNumber());
+        BigDecimal userBalance = bank.getBalance(account.getAccountNumber(), terminal);
 
         //Set the amount be credited and call web service
         BigDecimal amount = BigDecimal.valueOf(500.50);
@@ -93,7 +93,7 @@ public class ProvisionedAccountCreditTests{
         storeOutput("webservice", "response.txt", response);
 
         //Obtain the final balance
-        BigDecimal newUserBalance = bank.getBalance(account.getAccountNumber());
+        BigDecimal newUserBalance = bank.getBalance(account.getAccountNumber(), terminal);
 
         //Assert that the correct amount has been credited to the account
         assertThat(newUserBalance).isEqualTo(userBalance.add(amount));

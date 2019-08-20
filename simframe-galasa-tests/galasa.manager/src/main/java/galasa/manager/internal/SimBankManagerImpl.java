@@ -15,14 +15,13 @@ import dev.galasa.common.ipnetwork.IIpHost;
 import dev.galasa.common.zos.IZosImage;
 import dev.galasa.common.zos.IZosManager;
 import dev.galasa.common.zos.spi.IZosManagerSpi;
-import dev.galasa.common.zos3270.ITerminal;
 import dev.galasa.common.zos3270.IZos3270Manager;
 import dev.galasa.common.zos3270.Zos3270ManagerException;
-import dev.galasa.common.zos3270.Zos3270Terminal;
 import dev.galasa.common.zos3270.spi.IZos3270ManagerSpi;
 import dev.galasa.framework.spi.AbstractManager;
 import dev.galasa.framework.spi.AnnotatedField;
 import dev.galasa.framework.spi.GenerateAnnotatedField;
+import dev.galasa.framework.spi.IConfigurationPropertyStoreService;
 import dev.galasa.framework.spi.IFramework;
 import dev.galasa.framework.spi.IManager;
 import dev.galasa.framework.spi.ResourceUnavailableException;
@@ -30,12 +29,16 @@ import galasa.manager.Account;
 import galasa.manager.IAccount;
 import galasa.manager.ISimBank;
 import galasa.manager.SimBank;
+import galasa.manager.SimBankManagerException;
 import galasa.manager.spi.ISimBankManagerSpi;
 
 @Component(service = { IManager.class })
 public class SimBankManagerImpl extends AbstractManager implements ISimBankManagerSpi {
     
 	private static final Log logger = LogFactory.getLog(SimBankManagerImpl.class);
+
+	protected final static String NAMESPACE = "sim";
+	private IConfigurationPropertyStoreService cps;
 	
 	private IZosManagerSpi zosManager;
 	private IZos3270ManagerSpi z3270manager;
@@ -49,8 +52,7 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 			IZosImage image = this.zosManager.getImageForTag(tag);
 			IIpHost host = image.getIpHost();
 
-			ITerminal terminal = z3270manager.getTerminal();
-			ISimBank bank = new SimBankImpl(host.getHostname(), host.getWebnetPort(), terminal);
+			ISimBank bank = new SimBankImpl(host.getHostname(), getWebnetPort());
 			return bank;
 		} catch(Exception e) {
 			throw new Zos3270ManagerException("Unable to generate Bank for zOS Image tagged " + tag, e);
@@ -81,6 +83,12 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 		if (!ourFields.isEmpty()) {
 			youAreRequired(allManagers, activeManagers);
 		}
+
+		try {
+			this.cps = framework.getConfigurationPropertyService(NAMESPACE);
+		} catch (Exception e) {
+			throw new SimBankManagerException("Unable to request framework services", e);
+		}
     }
     
     @Override
@@ -108,5 +116,14 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 		}
 
 		return super.areYouProvisionalDependentOn(otherManager);
+	}
+
+	public int getWebnetPort() throws SimBankManagerException {
+		try {
+			String temp = AbstractManager.defaultString(this.cps.getProperty("image", "webnet.port", "simframe"), "23");
+			return Integer.parseInt(temp);
+		} catch(Exception e) {
+			throw new SimBankManagerException("Unable to find webnet port in CPS", e);
+		}
 	}
 }
