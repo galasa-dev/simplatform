@@ -1,0 +1,36 @@
+
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+	<id>examples</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<baseDirectory>examples</baseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>${basedir}/galasa.test/src</directory>
+			<includes>
+				<include>**</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/galasa.test</directory>
+			<includes>
+				<include>pom-example.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/galasa.manager/src</directory>
+			<includes>
+				<include>**</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/galasa.manager</directory>
+			<includes>
+				<include>pom-example.xml</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>
