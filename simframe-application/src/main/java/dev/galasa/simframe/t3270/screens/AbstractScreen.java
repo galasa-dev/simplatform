@@ -171,7 +171,10 @@ public abstract class AbstractScreen implements IScreen {
 
 			return AttentionIdentification.valueOfAid(aid);
 		} catch(Exception e) {
-			throw new ScreenException("Problem reading screen",e);
+			if (e.getMessage() == "Expected 1 but received only -1 bytes")
+				throw new ScreenException();
+			else
+				throw new ScreenException("Problem reading screen",e);
 		}
 	}
 
