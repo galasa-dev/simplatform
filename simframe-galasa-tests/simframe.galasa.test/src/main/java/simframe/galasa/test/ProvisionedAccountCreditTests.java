@@ -1,4 +1,4 @@
-package galasa.test;
+package simframe.galasa.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
