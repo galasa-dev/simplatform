@@ -1,5 +1,5 @@
 
-package galasa.test;
+package simframe.galasa.test;
 
 import dev.galasa.Test;
 import dev.galasa.common.artifact.ArtifactManager;

@@ -9,25 +9,25 @@
 	<baseDirectory>examples</baseDirectory>
 	<fileSets>
 		<fileSet>
-			<directory>${basedir}/galasa.test/src</directory>
+			<directory>${basedir}/simframe.galasa.test/src</directory>
 			<includes>
 				<include>**</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${basedir}/galasa.test</directory>
+			<directory>${basedir}/simframe.galasa.test</directory>
 			<includes>
 				<include>pom-example.xml</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${basedir}/galasa.manager/src</directory>
+			<directory>${basedir}/simframe,galasa.manager/src</directory>
 			<includes>
 				<include>**</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${basedir}/galasa.manager</directory>
+			<directory>${basedir}/simframe,galasa.manager</directory>
 			<includes>
 				<include>pom-example.xml</include>
 			</includes>
