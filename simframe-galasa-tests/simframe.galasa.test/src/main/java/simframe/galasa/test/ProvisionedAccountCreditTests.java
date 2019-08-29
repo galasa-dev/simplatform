@@ -33,10 +33,10 @@ import galasa.manager.SimBank;
 
 public class ProvisionedAccountCreditTests{ 
 
-    @ZosImage(imageTag="A")
+    @ZosImage(imageTag="simframe")
     public IZosImage image;
 
-    @Zos3270Terminal(imageTag="A")
+    @Zos3270Terminal(imageTag="simframe")
     public ITerminal terminal;
 
     @ArtifactManager
@@ -49,7 +49,7 @@ public class ProvisionedAccountCreditTests{
     public Path artifactRoot;
 
     //Binding to provisioned bank endpoints
-    @SimBank(imageTag="A")
+    @SimBank(imageTag="simframe")
     public ISimBank bank;
 
     //Provision account data

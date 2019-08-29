@@ -51,8 +51,10 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 		try {
 			IZosImage image = this.zosManager.getImageForTag(tag);
 			IIpHost host = image.getIpHost();
+			
+			getFramework().getConfidentialTextService().registerText("SYS1", "IBMUSER password");
 
-			ISimBank bank = new SimBankImpl(host.getHostname(), getWebnetPort());
+			ISimBank bank = new SimBankImpl(host.getHostname(), getWebnetPort(image), "IBMUSER", "SYS1");  // TODO add to credentials
 			return bank;
 		} catch(Exception e) {
 			throw new Zos3270ManagerException("Unable to generate Bank for zOS Image tagged " + tag, e);
@@ -118,9 +120,9 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 		return super.areYouProvisionalDependentOn(otherManager);
 	}
 
-	public int getWebnetPort() throws SimBankManagerException {
+	public int getWebnetPort(IZosImage image) throws SimBankManagerException {
 		try {
-			String temp = AbstractManager.defaultString(this.cps.getProperty("image", "webnet.port", "simframe"), "23");
+			String temp = AbstractManager.defaultString(this.cps.getProperty("image" , "webnet.port", image.getImageID()), "2080");
 			return Integer.parseInt(temp);
 		} catch(Exception e) {
 			throw new SimBankManagerException("Unable to find webnet port in CPS", e);

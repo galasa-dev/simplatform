@@ -1,10 +1,14 @@
 
 package simframe.galasa.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import dev.galasa.Test;
 import dev.galasa.common.artifact.ArtifactManager;
 import dev.galasa.common.artifact.IArtifactManager;
-import dev.galasa.common.artifact.IBundleResources;
 import dev.galasa.common.artifact.TestBundleResourceException;
 import dev.galasa.common.http.HttpClient;
 import dev.galasa.common.http.HttpClientException;
@@ -20,27 +24,16 @@ import dev.galasa.common.zos3270.TimeoutException;
 import dev.galasa.common.zos3270.Zos3270Terminal;
 import dev.galasa.common.zos3270.spi.DatastreamException;
 import dev.galasa.common.zos3270.spi.NetworkException;
-import galasa.manager.Account;
-import galasa.manager.IAccount;
-import galasa.manager.ISimBank;
-import galasa.manager.SimBank;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
+import dev.galasa.core.manager.CoreManager;
+import dev.galasa.core.manager.ICoreManager;
 
 @Test
 public class SimframeBankIVT{ 
 
-    @ZosImage(imageTag="A")
+    @ZosImage(imageTag="simframe")
     public IZosImage image;
 
-    @Zos3270Terminal(imageTag="A")
+    @Zos3270Terminal(imageTag="simframe")
     public ITerminal terminal;
 
     @ArtifactManager
@@ -48,6 +41,9 @@ public class SimframeBankIVT{
 
     @HttpClient
     public IHttpClient client;
+    
+    @CoreManager
+    public ICoreManager coreManager;
 
     @Test
     public void testNotNull() {
@@ -75,6 +71,9 @@ public class SimframeBankIVT{
      */
     @Test
     public void checkBankIsAvailable() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException {
+    	// Register the password to the confidential text filtering service
+    	coreManager.registerConfidentialText("SYS1", "IBMUSER password");
+    	
     	//Logon through the session manager
     	terminal.waitForKeyboard()
         .positionCursorToFieldContaining("Userid").tab().type("IBMUSER")

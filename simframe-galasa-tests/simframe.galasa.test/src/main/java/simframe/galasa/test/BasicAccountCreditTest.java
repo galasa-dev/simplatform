@@ -28,17 +28,22 @@ import dev.galasa.common.zos3270.TimeoutException;
 import dev.galasa.common.zos3270.Zos3270Terminal;
 import dev.galasa.common.zos3270.spi.DatastreamException;
 import dev.galasa.common.zos3270.spi.NetworkException;
+import dev.galasa.core.manager.CoreManager;
+import dev.galasa.core.manager.ICoreManager;
 
 public class BasicAccountCreditTest{ 
 
-    @ZosImage(imageTag="A")
+    @ZosImage(imageTag="simframe")
     public IZosImage image;
 
-    @Zos3270Terminal(imageTag="A")
+    @Zos3270Terminal(imageTag="simframe")
     public ITerminal terminal;
 
     @ArtifactManager
     public IArtifactManager artifacts;
+
+    @CoreManager
+    public ICoreManager coreManager;
 
     @HttpClient
     public IHttpClient client;
@@ -61,7 +66,10 @@ public class BasicAccountCreditTest{
      */
     @Test
     public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException {
-        //Initial actions to get into banking application
+    	// Register the password to the confidential text filtering service
+    	coreManager.registerConfidentialText("SYS1", "IBMUSER password");
+
+    	//Initial actions to get into banking application
     	terminal.waitForKeyboard()
         .positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
         .positionCursorToFieldContaining("Password").tab().type("SYS1")

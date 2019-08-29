@@ -7,14 +7,18 @@ import galasa.manager.ISimBank;
 
 public class SimBankImpl implements ISimBank{
 
-    private String host;
-    private int webnetPort;
-    private String updateAddress;
+    private final String host;
+    private final int webnetPort;
+    private final String updateAddress;
+    private final String username;
+    private final String password;
 
-    public SimBankImpl(String hostAddress, int webnet) {
-        host = hostAddress;
-        webnetPort = webnet;
-        updateAddress = "updateAccount";
+    public SimBankImpl(String hostAddress, int webnet, String username, String password) {
+    	this.host = hostAddress;
+        this.webnetPort = webnet;
+        this.updateAddress = "updateAccount";
+        this.username = username;
+        this.password = password;
     }
 
     @Override
@@ -41,8 +45,8 @@ public class SimBankImpl implements ISimBank{
         try {
             //Initial log in to system
             terminal.waitForKeyboard()
-                    .positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
-                    .positionCursorToFieldContaining("Password").tab().type("SYS1")
+                    .positionCursorToFieldContaining("Userid").tab().type(username)
+                    .positionCursorToFieldContaining("Password").tab().type(password)
                     .enter().waitForKeyboard()
 
             //Open banking application
