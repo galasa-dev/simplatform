@@ -9,9 +9,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 
 import dev.galasa.ResultArchiveStoreContentType;
+import dev.galasa.SetContentType;
 import dev.galasa.Test;
 import dev.galasa.common.artifact.ArtifactManager;
 import dev.galasa.common.artifact.IArtifactManager;
@@ -102,7 +104,9 @@ public class ProvisionedAccountCreditTests{
     private void storeOutput(String folder, String file, String content) throws IOException {
     	//Store the xml request in the test results archive
         Path requestPath = artifactRoot.resolve(folder).resolve(file);
-        Files.createFile(requestPath, ResultArchiveStoreContentType.TEXT);
-        Files.write(requestPath,content.getBytes());
+        Files.write(requestPath, 
+        		content.getBytes(), 
+        		new SetContentType(ResultArchiveStoreContentType.TEXT), 
+        		StandardOpenOption.CREATE);
     }
 }
