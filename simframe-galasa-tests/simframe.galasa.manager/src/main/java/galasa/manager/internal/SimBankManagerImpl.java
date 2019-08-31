@@ -2,6 +2,8 @@ package galasa.manager.internal;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.annotations.Component;
 
 import dev.galasa.ManagerException;
-import dev.galasa.common.ipnetwork.IIpHost;
 import dev.galasa.common.zos.IZosImage;
 import dev.galasa.common.zos.IZosManager;
 import dev.galasa.common.zos.spi.IZosManagerSpi;
@@ -22,62 +23,151 @@ import dev.galasa.framework.spi.AbstractManager;
 import dev.galasa.framework.spi.AnnotatedField;
 import dev.galasa.framework.spi.GenerateAnnotatedField;
 import dev.galasa.framework.spi.IConfigurationPropertyStoreService;
+import dev.galasa.framework.spi.IDynamicStatusStoreService;
 import dev.galasa.framework.spi.IFramework;
 import dev.galasa.framework.spi.IManager;
 import dev.galasa.framework.spi.ResourceUnavailableException;
 import galasa.manager.Account;
 import galasa.manager.IAccount;
 import galasa.manager.ISimBank;
+import galasa.manager.ISimBankTerminal;
 import galasa.manager.SimBank;
 import galasa.manager.SimBankManagerException;
+import galasa.manager.SimBankTerminal;
+import galasa.manager.internal.properties.SimBankDseInstanceName;
+import galasa.manager.internal.properties.SimBankPropertiesSingleton;
 import galasa.manager.spi.ISimBankManagerSpi;
 
 @Component(service = { IManager.class })
 public class SimBankManagerImpl extends AbstractManager implements ISimBankManagerSpi {
-    
+
 	private static final Log logger = LogFactory.getLog(SimBankManagerImpl.class);
 
-	protected final static String NAMESPACE = "sim";
+	public final static String NAMESPACE = "simbank";
 	private IConfigurationPropertyStoreService cps;
-	
+	private IDynamicStatusStoreService dss;
+
 	private IZosManagerSpi zosManager;
 	private IZos3270ManagerSpi z3270manager;
+	
+	private SimBankImpl simBankSingleInstance;
+	
+	private HashMap<String, AccountImpl> accounts = new HashMap<>();
+	
+	private int terminalCount = 0;
+	private ArrayList<SimBankTerminalImpl> terminals = new ArrayList<>();
 
-    @GenerateAnnotatedField(annotation = SimBank.class)
-    public ISimBank generateSimBank(Field field, List<Annotation> annotations) throws Zos3270ManagerException {
+	@Override
+	public void provisionGenerate() throws ManagerException, ResourceUnavailableException {
+		//*** First locate the SimBank annotations and provision,  before anything else id done
+		
+		List<AnnotatedField> foundAnnotatedFields = findAnnotatedFields(SimBankManagerField.class);
+		for(AnnotatedField annotatedField : foundAnnotatedFields) {
+			Field field = annotatedField.getField();
+			List<Annotation> annotations = annotatedField.getAnnotations();
+			
+			if (field.getType() == ISimBank.class) {
+				SimBank annotation = field.getAnnotation(SimBank.class);
+				if (annotation != null) {
+					ISimBank simBank = generateSimBank(field, annotations);
+					registerAnnotatedField(field, simBank);
+				}
+			}
+		}
+		
+		//*** Now generate the rest of the fields
+		generateAnnotatedFields(SimBankManagerField.class);
+	}
+	
+	@GenerateAnnotatedField(annotation = SimBank.class)
+	public ISimBank generateSimBank(Field field, List<Annotation> annotations) throws SimBankManagerException {
 		SimBank bankAnnotation = field.getAnnotation(SimBank.class);
-		String tag = defaultString(bankAnnotation.imageTag(), "primary");
+		
+		if (simBankSingleInstance != null) {
+			return simBankSingleInstance;
+		}
 
 		try {
-			IZosImage image = this.zosManager.getImageForTag(tag);
-			IIpHost host = image.getIpHost();
-			
-			getFramework().getConfidentialTextService().registerText("SYS1", "IBMUSER password");
+			//*** Check to see if we have a dse for this tag
+			String dseInstanceName = SimBankDseInstanceName.get();
+			if (dseInstanceName == null) {
+				throw new SimBankManagerException("The SimBank Manager does not support full provisioning at the moment, provide the DSE property sim.dse.instance.name to indicate the SimBank instance to run against");
+			}
 
-			ISimBank bank = new SimBankImpl(host.getHostname(), getWebnetPort(image), "IBMUSER", "SYS1");  // TODO add to credentials
-			return bank;
+			//*** Retrieve the SimBank instance for the DSE tag
+			SimBankImpl simBank = SimBankImpl.getDSE(this, 
+					dseInstanceName, 
+					bankAnnotation.useTerminal(), 
+					bankAnnotation.useJdbc());
+			this.simBankSingleInstance = simBank;
+			
+			logger.info("SimBank instance " + simBank.getInstanceId() + " provisioned for this run");
+			
+			return simBank;
+		} catch(SimBankManagerException e) {
+			throw e;
 		} catch(Exception e) {
-			throw new Zos3270ManagerException("Unable to generate Bank for zOS Image tagged " + tag, e);
+			throw new SimBankManagerException("Unable to generate Sim Bank", e);
 		}
 	}
 	
 	@GenerateAnnotatedField(annotation = Account.class)
-    public IAccount generateSimBankAccount(Field field, List<Annotation> annotations) {
-        IAccount account = new AccountImpl("123456789");
-		return account;
-    }
-
-    @Override
-    public void provisionGenerate() throws ManagerException, ResourceUnavailableException {
-		generateAnnotatedFields(SimBankManagerField.class);
-    }
-    
-    @Override
-	public void provisionStop() {
+	public IAccount generateSimBankAccount(Field field, List<Annotation> annotations) throws SimBankManagerException {
+		Account accountAnnotation = field.getAnnotation(Account.class);
+		AccountImpl account = AccountImpl.generate(this, 
+				accountAnnotation.existing(), 
+				accountAnnotation.accountType());
 		
-    }
-    
-    @Override
+		if (simBankSingleInstance == null) {
+			throw new SimBankManagerException("An instance of the SimBank has not been requested");
+		}
+		accounts.put(account.getAccountNumber(), account);
+		
+		logger.info("Provisioned account " + account.getAccountNumber());
+		return account;
+	}
+
+	@GenerateAnnotatedField(annotation = SimBankTerminal.class)
+	public ISimBankTerminal generateSimBankTerminal(Field field, List<Annotation> annotations) throws SimBankManagerException {
+		if (simBankSingleInstance == null) {
+			throw new SimBankManagerException("An instance of the SimBank has not been requested");
+		}
+		
+		SimBankTerminalImpl newTerminal = simBankSingleInstance.allocateTerminal(terminalCount++);
+		terminals.add(newTerminal);
+		
+		
+		logger.info("Provisioned SimBank terminal " + newTerminal.getId());
+		return newTerminal;
+	}
+
+	@Override
+	public void provisionStart() throws ManagerException, ResourceUnavailableException {
+		if (this.simBankSingleInstance != null) {
+			this.simBankSingleInstance.start();
+		}
+	}
+	
+	
+	@Override
+	public void provisionDiscard() {
+		
+		for(AccountImpl account : accounts.values()) {
+			account.discard();
+		}
+		
+		for(SimBankTerminalImpl terminal : terminals) {
+			terminal.disconnect();
+		}
+		
+		if (this.simBankSingleInstance != null) {
+			this.simBankSingleInstance.discard();
+		}
+	}
+	
+	
+
+	@Override
 	public void initialise(@NotNull IFramework framework, @NotNull List<IManager> allManagers,
 			@NotNull List<IManager> activeManagers, @NotNull Class<?> testClass) throws ManagerException {
 		super.initialise(framework, allManagers, activeManagers, testClass);
@@ -88,12 +178,14 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 
 		try {
 			this.cps = framework.getConfigurationPropertyService(NAMESPACE);
+			this.dss = framework.getDynamicStatusStoreService(NAMESPACE);
+			SimBankPropertiesSingleton.setCps(cps);
 		} catch (Exception e) {
 			throw new SimBankManagerException("Unable to request framework services", e);
 		}
-    }
-    
-    @Override
+	}
+
+	@Override
 	public void youAreRequired(@NotNull List<IManager> allManagers, @NotNull List<IManager> activeManagers)
 			throws ManagerException {
 		if (activeManagers.contains(this)) {
@@ -127,5 +219,21 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 		} catch(Exception e) {
 			throw new SimBankManagerException("Unable to find webnet port in CPS", e);
 		}
+	}
+	
+	public IZosManagerSpi getZosManager() {
+		return zosManager;
+	}
+
+	public SimBankImpl getSimBank() {
+		return this.simBankSingleInstance;
+	}
+
+	public IDynamicStatusStoreService getDSS() {
+		return this.dss;
+	}
+
+	public IConfigurationPropertyStoreService getCPS() {
+		return this.cps;
 	}
 }

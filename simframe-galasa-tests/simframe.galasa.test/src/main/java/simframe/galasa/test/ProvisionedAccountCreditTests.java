@@ -6,11 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+
+import org.apache.commons.logging.Log;
 
 import dev.galasa.ResultArchiveStoreContentType;
 import dev.galasa.SetContentType;
@@ -18,28 +19,23 @@ import dev.galasa.Test;
 import dev.galasa.common.artifact.ArtifactManager;
 import dev.galasa.common.artifact.IArtifactManager;
 import dev.galasa.common.artifact.IBundleResources;
-import dev.galasa.common.artifact.TestBundleResourceException;
 import dev.galasa.common.http.HttpClient;
-import dev.galasa.common.http.HttpClientException;
 import dev.galasa.common.http.IHttpClient;
-import dev.galasa.common.zos.IZosImage;
-import dev.galasa.common.zos.ZosImage;
-import dev.galasa.common.zos.ZosManagerException;
-import dev.galasa.common.zos3270.ITerminal;
-import dev.galasa.common.zos3270.Zos3270Terminal;
+import dev.galasa.core.manager.Logger;
 import dev.galasa.core.manager.StoredArtifactRoot;
 import galasa.manager.Account;
+import galasa.manager.AccountType;
 import galasa.manager.IAccount;
 import galasa.manager.ISimBank;
 import galasa.manager.SimBank;
 
 public class ProvisionedAccountCreditTests{ 
 
-    @ZosImage(imageTag="simframe")
-    public IZosImage image;
-
-    @Zos3270Terminal(imageTag="simframe")
-    public ITerminal terminal;
+    @SimBank
+    public ISimBank bank;
+    
+    @Account(existing=false, accountType=AccountType.HighValue)
+    public IAccount account;
 
     @ArtifactManager
     public IArtifactManager artifacts;
@@ -49,32 +45,26 @@ public class ProvisionedAccountCreditTests{
 
     @StoredArtifactRoot
     public Path artifactRoot;
-
-    //Binding to provisioned bank endpoints
-    @SimBank(imageTag="simframe")
-    public ISimBank bank;
-
-    //Provision account data
-    @Account
-    public IAccount account;
+    
+    @Logger
+    public Log logger;
 
     /**
      * Test which checks the initial balance of an account, uses the webservice to credit the account, then checks the balance again.
      * The test passes if the final balance is equal to the old balance + the credited amount.
-     * 
-     * @throws TestBundleResourceException
-     * @throws URISyntaxException
-     * @throws IOException
-     * @throws HttpClientException
-     * @throws ZosManagerException
+
+     * @throws Exception catchall exception
      */
     @Test
-    public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException {
-        //Obtain the initial balance
-        BigDecimal userBalance = bank.getBalance(account.getAccountNumber(), terminal);
-
+    public void updateAccountWebServiceTest() throws Exception {
+    	//Obtain the initial balance
+        BigDecimal userBalance = account.getBalance();
+        
+        logger.info("Pre-test balance is " + userBalance.toString());
+        
         //Set the amount be credited and call web service
         BigDecimal amount = BigDecimal.valueOf(500.50);
+        logger.info("Will credit account with " + amount.toString());
         HashMap<String,Object> parameters = new HashMap<String,Object>();
         parameters.put("ACCOUNT_NUMBER", account.getAccountNumber());
         parameters.put("AMOUNT", amount.toString());
@@ -83,6 +73,8 @@ public class ProvisionedAccountCreditTests{
         IBundleResources resources = artifacts.getBundleResources(this.getClass());
         InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
         String textContent = resources.streamAsString(is);
+        
+        logger.info("Credit actioned");
 
         //Store the xml request in the test results archive
         storeOutput("webservice", "request.txt", textContent);
@@ -95,11 +87,15 @@ public class ProvisionedAccountCreditTests{
         storeOutput("webservice", "response.txt", response);
 
         //Obtain the final balance
-        BigDecimal newUserBalance = bank.getBalance(account.getAccountNumber(), terminal);
+        BigDecimal newUserBalance = account.getBalance();
+        logger.info("Post-test balance is " + newUserBalance.toString());
 
         //Assert that the correct amount has been credited to the account
         assertThat(newUserBalance).isEqualTo(userBalance.add(amount));
+        
+        logger.info("Balances matched");
     }
+    
     
     private void storeOutput(String folder, String file, String content) throws IOException {
     	//Store the xml request in the test results archive
@@ -109,4 +105,6 @@ public class ProvisionedAccountCreditTests{
         		new SetContentType(ResultArchiveStoreContentType.TEXT), 
         		StandardOpenOption.CREATE);
     }
+
+    
 }

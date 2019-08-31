@@ -24,6 +24,11 @@
 			<artifactId>org.osgi.service.component.annotations</artifactId>
 			<version>1.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyclient</artifactId>
+			<version>10.14.2.0</version>
+		</dependency>
 	</dependencies>
-		
+
 </project>
