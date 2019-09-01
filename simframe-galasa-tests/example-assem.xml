@@ -21,13 +21,13 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${basedir}/simframe,galasa.manager/src</directory>
+			<directory>${basedir}/simframe.galasa.manager/src</directory>
 			<includes>
 				<include>**</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${basedir}/simframe,galasa.manager</directory>
+			<directory>${basedir}/simframe.galasa.manager</directory>
 			<includes>
 				<include>pom-example.xml</include>
 			</includes>
