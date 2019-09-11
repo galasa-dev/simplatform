@@ -7,7 +7,7 @@ import dev.galasa.common.zos3270.AttentionIdentification;
 import dev.galasa.common.zos3270.internal.comms.NetworkServer;
 import dev.galasa.common.zos3270.internal.datastream.CommandEraseWrite;
 import dev.galasa.common.zos3270.internal.datastream.WriteControlCharacter;
-import dev.galasa.common.zos3270.internal.terminal.fields.FieldText;
+import dev.galasa.common.zos3270.spi.Field;
 import dev.galasa.common.zos3270.spi.Screen;
 
 public class SessionManagerMenu extends AbstractScreen {
@@ -22,13 +22,7 @@ public class SessionManagerMenu extends AbstractScreen {
 		try {
 			this.screen = buildScreen(getClass().getSimpleName());
 
-			makeTextField(screen, 1,0);
-			makeTextField(screen, 72,0);
-			makeTextField(screen, 18,21);
-			makeTextField(screen, 1,23);
-
-			FieldText newTerminalField = (FieldText) screen.locateFieldsAt(calcPos(1, 0));
-			newTerminalField.setContents(network.getDeviceName());
+			this.screen.setBuffer(1, 0, network.getDeviceName());
 		} catch(Exception e) {
 			throw new ScreenException("Problem building screen", e);
 		}
@@ -52,7 +46,7 @@ public class SessionManagerMenu extends AbstractScreen {
 				}
 
 				if (aid == AttentionIdentification.ENTER) {
-					FieldText applicationField   = (FieldText) screen.locateFieldsAt(calcPos(28, 21));
+					Field applicationField   = screen.getFieldAt(28, 21);
 					String application = applicationField.getFieldWithoutNulls().trim().toUpperCase();
 
 					if ("BANKTEST".equals(application)) {
@@ -60,9 +54,8 @@ public class SessionManagerMenu extends AbstractScreen {
 					}
 				}
 
-				FieldText errorMessage = (FieldText) screen.locateFieldsAt(calcPos(1, 23));
-				errorMessage.nullify();
-				errorMessage.setContents("Invalid Application");
+				screen.nullify(1, 23, 79);
+				screen.setBuffer(1, 23, "Invalid Application");
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -74,8 +67,7 @@ public class SessionManagerMenu extends AbstractScreen {
 	private void writeScreen() throws ScreenException {
 		LocalTime time = LocalTime.now();
 
-		FieldText timeField = (FieldText) screen.locateFieldsAt(calcPos(72, 0));
-		timeField.setContents(time.format(dtf));
+		screen.setBuffer(72, 0, time.format(dtf));
 
 		writeScreen(new CommandEraseWrite(), 
 				new WriteControlCharacter(false, false, false, false, false, false, true, true),

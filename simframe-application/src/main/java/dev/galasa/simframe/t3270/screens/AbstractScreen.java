@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,15 +14,13 @@ import dev.galasa.common.zos3270.internal.comms.NetworkThread;
 import dev.galasa.common.zos3270.internal.datastream.BufferAddress;
 import dev.galasa.common.zos3270.internal.datastream.CommandEraseWrite;
 import dev.galasa.common.zos3270.internal.datastream.Order;
-import dev.galasa.common.zos3270.internal.datastream.OrderRepeatToAddress;
 import dev.galasa.common.zos3270.internal.datastream.OrderSetBufferAddress;
 import dev.galasa.common.zos3270.internal.datastream.OrderStartField;
 import dev.galasa.common.zos3270.internal.datastream.WriteControlCharacter;
-import dev.galasa.common.zos3270.internal.terminal.fields.Field;
-import dev.galasa.common.zos3270.internal.terminal.fields.FieldChars;
-import dev.galasa.common.zos3270.internal.terminal.fields.FieldStartOfField;
-import dev.galasa.common.zos3270.internal.terminal.fields.FieldText;
-import dev.galasa.common.zos3270.spi.DatastreamException;
+import dev.galasa.common.zos3270.spi.BufferChar;
+import dev.galasa.common.zos3270.spi.BufferHolder;
+import dev.galasa.common.zos3270.spi.BufferStartOfField;
+import dev.galasa.common.zos3270.spi.Field;
 import dev.galasa.common.zos3270.spi.Screen;
 
 public abstract class AbstractScreen implements IScreen {
@@ -44,28 +41,15 @@ public abstract class AbstractScreen implements IScreen {
 			outboundBuffer.write(commandEraseWrite.getBytes());
 			outboundBuffer.write(writeControlCharacter.getBytes());
 
-			for(Field field : screen.getFields()) {
-				if (field instanceof FieldStartOfField) {
-					FieldStartOfField fsf = (FieldStartOfField) field;
-					OrderSetBufferAddress sba = new OrderSetBufferAddress(new BufferAddress(fsf.getStart()));
-					outboundBuffer.write(sba.getCharRepresentation());
-					OrderStartField sf = new OrderStartField(fsf.isProtected(), fsf.isNumeric(), fsf.isDisplay(), fsf.isIntenseDisplay(), fsf.isSelectorPen(), fsf.isFieldModifed());
+			for(Field field : screen.calculateFields()) {
+				OrderSetBufferAddress sba = new OrderSetBufferAddress(new BufferAddress(field.getStart()));
+				outboundBuffer.write(sba.getCharRepresentation());
+				if (!field.isDummyField()) {
+					OrderStartField sf = new OrderStartField(field.isProtected(), field.isNumeric(), field.isDisplay(), field.isIntenseDisplay(), field.isSelectorPen(), field.isFieldModifed());
 					outboundBuffer.write(sf.getBytes());
-				} else if (field instanceof FieldText) {
-					byte[] fieldText = field.getFieldEbcdicWithoutNulls();
-					outboundBuffer.write(fieldText);
-				} else if (field instanceof FieldChars) {
-					FieldChars fc = (FieldChars) field;
-					int end = fc.getEnd() + 1;
-					if (end >= 1920) {
-						end = end - 1920;
-					}
-					OrderRepeatToAddress ra = new OrderRepeatToAddress(fc.getCharacter(), new BufferAddress(end));
-					outboundBuffer.write(ra.getBytes());
-				} else {
-					throw new UnsupportedOperationException("Unsupported field " + field.getClass().getName());
 				}
 
+				outboundBuffer.write(field.getFieldWithNulls());
 			}
 
 			network.sendDatastream(outboundBuffer.toByteArray());
@@ -77,7 +61,7 @@ public abstract class AbstractScreen implements IScreen {
 	protected Screen buildScreen(String screenName) throws ScreenException {
 		log.info("Building Screen: " + screenName);
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/screens/" + screenName)))) {	
-			LinkedList<Field> fields = new LinkedList<>();
+			BufferHolder[] buffer = new BufferHolder[1920];
 			String line = null;
 			int cursorPosition = 0;
 			while((line = br.readLine()) != null) {
@@ -98,45 +82,23 @@ public abstract class AbstractScreen implements IScreen {
 					char c = line.charAt(i);
 
 					if (c == ']') {
-						fields.add(new FieldStartOfField(cursorPosition, true, false, true, false, false, false));
+						buffer[cursorPosition] = new BufferStartOfField(cursorPosition, true, false, true, false, false, false);
 					} else if (c == '@') {
-						fields.add(new FieldStartOfField(cursorPosition, true, false, true, true, false, false));
+						buffer[cursorPosition] = new BufferStartOfField(cursorPosition, true, false, true, true, false, false);
 					} else if (c == '[') {
-						fields.add(new FieldStartOfField(cursorPosition, false, false, true, false, false, true));
+						buffer[cursorPosition] = new BufferStartOfField(cursorPosition, false, false, true, false, false, true);
 					} else if (c == '{') {
-						fields.add(new FieldStartOfField(cursorPosition, false, false, false, false, false, true));
+						buffer[cursorPosition] = new BufferStartOfField(cursorPosition, false, false, false, false, false, true);
 					} else {
-						fields.add(new FieldChars(c, cursorPosition, cursorPosition));
+						buffer[cursorPosition] = new BufferChar(c);
 					}
 
 					cursorPosition++;
 				}
 			}
 
-			int pos = 0;
-			//*** Merge suitable fields,  text and chars
-			while(pos < fields.size()) { //NOSONAR
-				int nextPos = pos + 1;
-				if (nextPos >= fields.size()) {
-					break;
-				}
-
-				Field thisField = fields.get(pos);
-				Field nextField = fields.get(nextPos);
-
-				if ((thisField instanceof FieldText) 
-						|| (thisField instanceof FieldChars)) {
-					if ((nextField instanceof FieldText)  //NOSONAR
-							|| (nextField instanceof FieldChars)) {
-						thisField.merge(fields, nextField);
-						continue; // Go round again without incrementing position
-					}
-				}
-				pos++;
-			}
-
-			Screen screen = new Screen(80, 24);
-			screen.setFields(fields);
+			Screen screen = new Screen(80, 24, null);
+			screen.setBuffer(buffer);
 
 			return screen;
 		} catch(Exception e) {
@@ -182,14 +144,5 @@ public abstract class AbstractScreen implements IScreen {
 	protected int calcPos(int col, int row) {
 		return col + (row * 80);
 	}
-
-	protected void makeTextField(Screen screen, int col, int row) throws DatastreamException {
-		Field field = screen.locateFieldsAt(calcPos(col, row));
-		if (field instanceof FieldChars) {
-			screen.convertCharsToText((FieldChars) field);
-		}
-	}
-
-
 
 }

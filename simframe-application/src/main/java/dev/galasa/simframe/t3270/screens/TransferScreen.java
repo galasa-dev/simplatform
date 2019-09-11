@@ -3,15 +3,15 @@ package dev.galasa.simframe.t3270.screens;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import dev.galasa.common.zos3270.AttentionIdentification;
+import dev.galasa.common.zos3270.internal.comms.NetworkServer;
+import dev.galasa.common.zos3270.internal.datastream.CommandEraseWrite;
+import dev.galasa.common.zos3270.internal.datastream.WriteControlCharacter;
+import dev.galasa.common.zos3270.spi.Field;
+import dev.galasa.common.zos3270.spi.Screen;
 import dev.galasa.simframe.application.Bank;
 import dev.galasa.simframe.data.Account;
 import dev.galasa.simframe.exceptions.InsufficientBalanceException;
-import dev.galasa.common.zos3270.internal.comms.NetworkServer;
-import dev.galasa.common.zos3270.AttentionIdentification;
-import dev.galasa.common.zos3270.internal.datastream.CommandEraseWrite;
-import dev.galasa.common.zos3270.internal.datastream.WriteControlCharacter;
-import dev.galasa.common.zos3270.internal.terminal.fields.FieldText;
-import dev.galasa.common.zos3270.spi.Screen;
 
 public class TransferScreen extends AbstractScreen {
 
@@ -28,12 +28,6 @@ public class TransferScreen extends AbstractScreen {
 
 		try {
 			this.screen = buildScreen(getClass().getSimpleName());
-
-			makeTextField(screen, 33,4);
-			makeTextField(screen, 33,5);
-			makeTextField(screen, 33,6);
-			makeTextField(screen, 3,8);
-			
 		} catch(Exception e) {
 			throw new ScreenException("Problem building screen", e);
 		}
@@ -53,9 +47,9 @@ public class TransferScreen extends AbstractScreen {
 				}
 				
 				if(aid == AttentionIdentification.ENTER) {
-					FieldText accountField1 = (FieldText) screen.locateFieldsAt(calcPos(33,4));
-					FieldText accountField2 = (FieldText) screen.locateFieldsAt(calcPos(33,5));
-					FieldText transferField = (FieldText) screen.locateFieldsAt(calcPos(33,6));
+					Field accountField1   = screen.getFieldAt(33,4);
+					Field accountField2   = screen.getFieldAt(33,5);
+					Field transferField   = screen.getFieldAt(33,6);
 					String accountNumber1 = accountField1.getFieldWithoutNulls().trim().toUpperCase();
 					String accountNumber2 = accountField2.getFieldWithoutNulls().trim().toUpperCase();
 					String transferAmount = transferField.getFieldWithoutNulls().trim();
@@ -90,19 +84,14 @@ public class TransferScreen extends AbstractScreen {
 	private void writeScreen() throws ScreenException {
 		LocalTime time = LocalTime.now();
 
-		FieldText timeField = (FieldText) screen.locateFieldsAt(calcPos(72, 0));
-		timeField.setContents(time.format(dtf));
+		screen.setBuffer(72, 0, time.format(dtf));
 		
-		FieldText errorField = (FieldText) screen.locateFieldsAt(calcPos(3, 8));
-		errorField.setContents("                                   ");
-		errorField.setContents(errorMessage);
+		screen.setBuffer(3, 8, "                 ");
+		screen.setBuffer(3, 8, errorMessage);
 		
 		if(validFields) {
-			FieldText account1Field = (FieldText) screen.locateFieldsAt(calcPos(33, 4));
-			account1Field.setContents(account1.getAccountNumber());
-			
-			FieldText account2Field = (FieldText) screen.locateFieldsAt(calcPos(33, 5));
-			account2Field.setContents(account2.getAccountNumber());
+			screen.setBuffer(33,4, account1.getAccountNumber());
+			screen.setBuffer(33,5, account2.getAccountNumber());
 		}
 
 		writeScreen(new CommandEraseWrite(), 
@@ -113,7 +102,7 @@ public class TransferScreen extends AbstractScreen {
 	
 	private Boolean isNumeric(String str) {
 		try {
-			double d = Double.parseDouble(str);
+			Double.parseDouble(str);
 		} catch(NumberFormatException | NullPointerException e) {
 			return false;
 		}

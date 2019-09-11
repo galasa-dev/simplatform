@@ -7,7 +7,6 @@ import dev.galasa.common.zos3270.AttentionIdentification;
 import dev.galasa.common.zos3270.internal.comms.NetworkServer;
 import dev.galasa.common.zos3270.internal.datastream.CommandEraseWrite;
 import dev.galasa.common.zos3270.internal.datastream.WriteControlCharacter;
-import dev.galasa.common.zos3270.internal.terminal.fields.FieldText;
 import dev.galasa.common.zos3270.spi.Screen;
 
 public class BankMainMenu extends AbstractScreen {
@@ -21,10 +20,6 @@ public class BankMainMenu extends AbstractScreen {
 
 		try {
 			this.screen = buildScreen(getClass().getSimpleName());
-
-			makeTextField(screen, 72,0);
-			makeTextField(screen, 6,2);
-			makeTextField(screen, 2,3);
 		} catch(Exception e) {
 			throw new ScreenException("Problem building screen", e);
 		}
@@ -58,8 +53,7 @@ public class BankMainMenu extends AbstractScreen {
 	private void writeScreen() throws ScreenException {
 		LocalTime time = LocalTime.now();
 
-		FieldText timeField = (FieldText) screen.locateFieldsAt(calcPos(72, 0));
-		timeField.setContents(time.format(dtf));
+		screen.setBuffer(72, 0, time.format(dtf));
 
 		writeScreen(new CommandEraseWrite(), 
 				new WriteControlCharacter(false, false, false, false, false, false, true, true),
