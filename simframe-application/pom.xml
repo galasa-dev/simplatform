@@ -10,6 +10,17 @@
 
 	<name>simframe</name>
 
+	<distributionManagement>
+		<repository>
+			<id>galasa.repo</id>
+			<url>${galasa.distribution.repo}</url>
+		</repository>
+		<snapshotRepository>
+			<id>galasa.repo</id>
+			<url>${galasa.distribution.repo}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
