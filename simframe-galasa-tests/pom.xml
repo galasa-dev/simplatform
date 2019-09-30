@@ -72,32 +72,32 @@
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.zos.manager</artifactId>
+			<artifactId>dev.galasa.zos.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.ipnetwork.manager</artifactId>
+			<artifactId>dev.galasa.ipnetwork.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.http.manager</artifactId>
+			<artifactId>dev.galasa.http.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.artifact.manager</artifactId>
+			<artifactId>dev.galasa.artifact.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.linux.manager</artifactId>
+			<artifactId>dev.galasa.linux.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.openstack.manager</artifactId>
+			<artifactId>dev.galasa.openstack.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -112,17 +112,17 @@
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.zos3270.manager</artifactId>
+			<artifactId>dev.galasa.zos3270.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.zosbatch.zosmf.manager</artifactId>
+			<artifactId>dev.galasa.zosbatch.zosmf.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
-			<artifactId>dev.galasa.common.zosmf.manager</artifactId>
+			<artifactId>dev.galasa.zosmf.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
