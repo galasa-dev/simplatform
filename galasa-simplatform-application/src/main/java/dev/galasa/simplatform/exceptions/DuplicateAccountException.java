@@ -1,0 +1,9 @@
+package dev.galasa.simplatform.exceptions;
+
+public class DuplicateAccountException extends Exception {
+
+	public DuplicateAccountException(String message) {
+		super(message);
+	}
+
+}
