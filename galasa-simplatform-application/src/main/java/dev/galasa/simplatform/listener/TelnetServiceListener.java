@@ -2,9 +2,9 @@ package dev.galasa.simplatform.listener;
 
 import java.net.Socket;
 
-import dev.galasa.common.zos3270.internal.comms.NetworkServer;
 import dev.galasa.simplatform.t3270.screens.IScreen;
 import dev.galasa.simplatform.t3270.screens.SessionManagerLogon;
+import dev.galasa.zos3270.internal.comms.NetworkServer;
 
 public class TelnetServiceListener implements IListener {
 	private Socket socket;

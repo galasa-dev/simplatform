@@ -13,12 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.annotations.Component;
 
 import dev.galasa.ManagerException;
-import dev.galasa.common.zos.IZosImage;
-import dev.galasa.common.zos.IZosManager;
-import dev.galasa.common.zos.spi.IZosManagerSpi;
-import dev.galasa.common.zos3270.IZos3270Manager;
-import dev.galasa.common.zos3270.Zos3270ManagerException;
-import dev.galasa.common.zos3270.spi.IZos3270ManagerSpi;
 import dev.galasa.framework.spi.AbstractManager;
 import dev.galasa.framework.spi.AnnotatedField;
 import dev.galasa.framework.spi.GenerateAnnotatedField;
@@ -37,6 +31,12 @@ import dev.galasa.simbank.manager.SimBankTerminal;
 import dev.galasa.simbank.manager.internal.properties.SimBankDseInstanceName;
 import dev.galasa.simbank.manager.internal.properties.SimBankPropertiesSingleton;
 import dev.galasa.simbank.manager.spi.ISimBankManagerSpi;
+import dev.galasa.zos.IZosImage;
+import dev.galasa.zos.IZosManager;
+import dev.galasa.zos.spi.IZosManagerSpi;
+import dev.galasa.zos3270.IZos3270Manager;
+import dev.galasa.zos3270.Zos3270ManagerException;
+import dev.galasa.zos3270.spi.IZos3270ManagerSpi;
 
 @Component(service = { IManager.class })
 public class SimBankManagerImpl extends AbstractManager implements ISimBankManagerSpi {

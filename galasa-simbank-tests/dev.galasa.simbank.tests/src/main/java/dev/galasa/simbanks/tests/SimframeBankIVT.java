@@ -7,25 +7,25 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import dev.galasa.Test;
-import dev.galasa.common.artifact.ArtifactManager;
-import dev.galasa.common.artifact.IArtifactManager;
-import dev.galasa.common.artifact.TestBundleResourceException;
-import dev.galasa.common.http.HttpClient;
-import dev.galasa.common.http.HttpClientException;
-import dev.galasa.common.http.IHttpClient;
-import dev.galasa.common.zos.IZosImage;
-import dev.galasa.common.zos.ZosImage;
-import dev.galasa.common.zos.ZosManagerException;
-import dev.galasa.common.zos3270.FieldNotFoundException;
-import dev.galasa.common.zos3270.ITerminal;
-import dev.galasa.common.zos3270.KeyboardLockedException;
-import dev.galasa.common.zos3270.TextNotFoundException;
-import dev.galasa.common.zos3270.TimeoutException;
-import dev.galasa.common.zos3270.Zos3270Terminal;
-import dev.galasa.common.zos3270.spi.DatastreamException;
-import dev.galasa.common.zos3270.spi.NetworkException;
+import dev.galasa.artifact.ArtifactManager;
+import dev.galasa.artifact.IArtifactManager;
+import dev.galasa.artifact.TestBundleResourceException;
 import dev.galasa.core.manager.CoreManager;
 import dev.galasa.core.manager.ICoreManager;
+import dev.galasa.http.HttpClient;
+import dev.galasa.http.HttpClientException;
+import dev.galasa.http.IHttpClient;
+import dev.galasa.zos.IZosImage;
+import dev.galasa.zos.ZosImage;
+import dev.galasa.zos.ZosManagerException;
+import dev.galasa.zos3270.FieldNotFoundException;
+import dev.galasa.zos3270.ITerminal;
+import dev.galasa.zos3270.KeyboardLockedException;
+import dev.galasa.zos3270.TextNotFoundException;
+import dev.galasa.zos3270.TimeoutException;
+import dev.galasa.zos3270.Zos3270Terminal;
+import dev.galasa.zos3270.spi.DatastreamException;
+import dev.galasa.zos3270.spi.NetworkException;
 
 @Test
 public class SimframeBankIVT{ 

@@ -4,19 +4,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dev.galasa.ICredentialsUsernamePassword;
-import dev.galasa.common.zos3270.FieldNotFoundException;
-import dev.galasa.common.zos3270.KeyboardLockedException;
-import dev.galasa.common.zos3270.TextNotFoundException;
-import dev.galasa.common.zos3270.TimeoutException;
-import dev.galasa.common.zos3270.Zos3270ManagerException;
-import dev.galasa.common.zos3270.spi.DatastreamException;
-import dev.galasa.common.zos3270.spi.NetworkException;
-import dev.galasa.common.zos3270.spi.Zos3270TerminalImpl;
 import dev.galasa.framework.spi.ConfigurationPropertyStoreException;
 import dev.galasa.framework.spi.IFramework;
 import dev.galasa.simbank.manager.ISimBankTerminal;
 import dev.galasa.simbank.manager.SimBankManagerException;
 import dev.galasa.simbank.manager.internal.properties.SimBankApplicationName;
+import dev.galasa.zos3270.FieldNotFoundException;
+import dev.galasa.zos3270.KeyboardLockedException;
+import dev.galasa.zos3270.TextNotFoundException;
+import dev.galasa.zos3270.TimeoutException;
+import dev.galasa.zos3270.Zos3270ManagerException;
+import dev.galasa.zos3270.spi.DatastreamException;
+import dev.galasa.zos3270.spi.NetworkException;
+import dev.galasa.zos3270.spi.Zos3270TerminalImpl;
 
 public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBankTerminal {
 	

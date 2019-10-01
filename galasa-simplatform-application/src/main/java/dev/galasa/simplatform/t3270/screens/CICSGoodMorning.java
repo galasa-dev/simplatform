@@ -3,11 +3,11 @@ package dev.galasa.simplatform.t3270.screens;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import dev.galasa.common.zos3270.AttentionIdentification;
-import dev.galasa.common.zos3270.internal.comms.NetworkServer;
-import dev.galasa.common.zos3270.internal.datastream.CommandEraseWrite;
-import dev.galasa.common.zos3270.internal.datastream.WriteControlCharacter;
-import dev.galasa.common.zos3270.spi.Screen;
+import dev.galasa.zos3270.AttentionIdentification;
+import dev.galasa.zos3270.internal.comms.NetworkServer;
+import dev.galasa.zos3270.internal.datastream.CommandEraseWrite;
+import dev.galasa.zos3270.internal.datastream.WriteControlCharacter;
+import dev.galasa.zos3270.spi.Screen;
 
 public class CICSGoodMorning extends AbstractScreen {
 

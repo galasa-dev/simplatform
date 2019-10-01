@@ -7,21 +7,21 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.logging.Logger;
 
-import dev.galasa.common.zos3270.AttentionIdentification;
-import dev.galasa.common.zos3270.internal.comms.Network;
-import dev.galasa.common.zos3270.internal.comms.NetworkServer;
-import dev.galasa.common.zos3270.internal.comms.NetworkThread;
-import dev.galasa.common.zos3270.internal.datastream.BufferAddress;
-import dev.galasa.common.zos3270.internal.datastream.CommandEraseWrite;
-import dev.galasa.common.zos3270.internal.datastream.Order;
-import dev.galasa.common.zos3270.internal.datastream.OrderSetBufferAddress;
-import dev.galasa.common.zos3270.internal.datastream.OrderStartField;
-import dev.galasa.common.zos3270.internal.datastream.WriteControlCharacter;
-import dev.galasa.common.zos3270.spi.BufferChar;
-import dev.galasa.common.zos3270.spi.BufferHolder;
-import dev.galasa.common.zos3270.spi.BufferStartOfField;
-import dev.galasa.common.zos3270.spi.Field;
-import dev.galasa.common.zos3270.spi.Screen;
+import dev.galasa.zos3270.AttentionIdentification;
+import dev.galasa.zos3270.internal.comms.Network;
+import dev.galasa.zos3270.internal.comms.NetworkServer;
+import dev.galasa.zos3270.internal.comms.NetworkThread;
+import dev.galasa.zos3270.internal.datastream.BufferAddress;
+import dev.galasa.zos3270.internal.datastream.CommandEraseWrite;
+import dev.galasa.zos3270.internal.datastream.Order;
+import dev.galasa.zos3270.internal.datastream.OrderSetBufferAddress;
+import dev.galasa.zos3270.internal.datastream.OrderStartField;
+import dev.galasa.zos3270.internal.datastream.WriteControlCharacter;
+import dev.galasa.zos3270.spi.BufferChar;
+import dev.galasa.zos3270.spi.BufferHolder;
+import dev.galasa.zos3270.spi.BufferStartOfField;
+import dev.galasa.zos3270.spi.Field;
+import dev.galasa.zos3270.spi.Screen;
 
 public abstract class AbstractScreen implements IScreen {
 
