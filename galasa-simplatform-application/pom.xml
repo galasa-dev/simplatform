@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>dev.galasa.simframe</groupId>
-	<artifactId>simframe</artifactId>
+	<groupId>dev.galasa</groupId>
+	<artifactId>galasa-simplatform</artifactId>
 	<version>0.3.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>simframe</name>
+	<name>SimPlatform</name>
 
 	<distributionManagement>
 		<repository>
@@ -83,7 +83,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>dev.galasa.simframe.main.Simframe</mainClass>
+							<mainClass>dev.galasa.simplatform.main.Simplatform</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
