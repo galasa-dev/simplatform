@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   	   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="dev.galasa.eclipse.simbank.SimbankLauncher"
+            delegateDescription="Run SimBank"
+            delegateName="SimBank Launcher"
+            id="dev.galasa.eclipse.simbank.SimbankLauncher"
+            modes="run"
+            name="Galasa SimBank">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/galasa-dark.png"
+            configTypeID="dev.galasa.eclipse.simbank.SimbankLauncher"
+            id="dev.galasa.eclipse.simbank.SimbankLauncher.image">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="dev.galasa.eclipse.simbank.SimbankLauncher"
+            class="dev.galasa.eclipse.simbank.SimbankLaunchTabGroup"
+            id="dev.galasa.eclipse.simbank.SimbankLaunchTabGroup">
+         <launchMode
+               mode="run">
+         </launchMode>
+      </launchConfigurationTabGroup>
+   </extension>      
+</plugin>

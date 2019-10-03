@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="dev.galasa.simbank.feature"
+      label="Galasa SimBank"
+      version="0.3.0.qualifier"
+      provider-name="IBM">
+
+   <license url="http://www.example.com/license">
+      LICENSE INFORMATION
+
+The Programs listed below are licensed under the following License Information terms and conditions in addition to the Program license terms previously agreed to by Client and IBM. If Client does not have previously agreed to license terms in effect for the Program, the International License Agreement for Early Release of Programs (Z125-5544-05) applies.
+
+Program Name (Program Number):
+Galasa Beta V1.1 (Early Release)
+
+The following standard terms apply to Licensee&apos;s use of the Program.
+
+Test Period
+
+The test period begins on the date that Licensee agrees to the terms of this Agreement and ends on 2019-12-31.
+
+Prohibited Uses
+
+Licensee may not use or authorize others to use the Program if failure of the Program could lead to death, bodily injury, or property or environmental damage.
+
+Confidentiality
+
+Licensee agrees to treat the following as &quot;IBM Confidential Information&quot; regardless of whether they contain restrictive markings indicating the confidential nature thereof or have been identified as IBM Confidential Information prior to disclosure: (a) the Program, (b) any information provided to Licensee by IBM with regard to the Program including, but not limited to, Program related materials such as specifications, plans, trends, strategies, benchmarks, performance characteristics, comparisons and other assessments of the Program, (c) any information related to Licensee&apos;s access to the Program including, but not limited to, passwords or other access codes, and (d) all data, feedback, suggestions and/or written materials that Licensee provides to IBM related to the Program. Licensee is authorized to use the IBM Confidential Information for the purpose for which it was disclosed or otherwise for the benefit of IBM. Notwithstanding any other terms of this Agreement, Licensee agrees not to communicate, publish, disseminate or otherwise discuss with or disclose to any third party the IBM Confidential Information (including but not limited to articles, papers or other written materials pertaining to the IBM Confidential Information) prior to IBM making such IBM Confidential Information publicly available without a non-disclosure obligation.
+
+Licensee agrees to use the same care and discretion to avoid disclosure of the IBM Confidential Information as Licensee uses with Licensee&apos;s own similar information that Licensee does not wish to disclose, but in no event will such degree of care be less than reasonable care. Licensee&apos;s obligations with respect to the IBM Confidential Information will continue for a period of two years from Licensee&apos;s receipt of the IBM Confidential Information. Licensee agrees not to disclose to IBM any information that is considered confidential or proprietary to Licensee or any third party except under a signed, separate, written confidential agreement.
+
+Notwithstanding the existence of any confidentiality or other agreement Licensee may have with IBM pertaining to confidential information, the preceding paragraphs will govern the treatment of the IBM Confidential Information.
+
+Source Components and Sample Materials
+
+The Program may include some components in source code form (&quot;Source Components&quot;) and other materials identified as Sample Materials. Licensee may copy and modify Source Components and Sample Materials for internal use only provided such use is within the limits of the license rights under this Agreement, provided however that Licensee may not alter or delete any copyright information or notices contained in the Source Components or Sample Materials. IBM provides the Source Components and Sample Materials without obligation of support and &quot;AS IS&quot;, WITH NO WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING THE WARRANTY OF TITLE, NON-INFRINGEMENT OR NON-INTERFERENCE AND THE IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+L/N:  L-APIG-BF3HMA
+D/N:  L-APIG-BF3HMA
+P/N:  L-APIG-BF3HMA
+   </license>
+
+   <plugin
+         id="dev.galasa.simbank.ui"
+         download-size="0"
+         install-size="0"
+         version="0.3.0.qualifier"/>
+</feature>
