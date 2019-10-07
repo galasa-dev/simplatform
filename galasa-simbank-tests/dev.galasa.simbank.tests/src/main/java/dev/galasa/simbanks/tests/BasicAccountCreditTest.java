@@ -63,9 +63,10 @@ public class BasicAccountCreditTest{
      * @throws KeyboardLockedException 
      * @throws TimeoutException 
      * @throws DatastreamException 
+     * @throws InterruptedException 
      */
     @Test
-    public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException {
+    public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException, InterruptedException {
     	// Register the password to the confidential text filtering service
     	coreManager.registerConfidentialText("SYS1", "IBMUSER password");
 
@@ -116,8 +117,9 @@ public class BasicAccountCreditTest{
      * @throws KeyboardLockedException 
      * @throws TimeoutException 
      * @throws DatastreamException 
+     * @throws InterruptedException 
      */
-    private BigDecimal getBalance(String accountNum) throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException {
+    private BigDecimal getBalance(String accountNum) throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException, InterruptedException {
         BigDecimal amount = BigDecimal.ZERO;
         //Open account menu and enter account number
         terminal.pf1().waitForKeyboard()

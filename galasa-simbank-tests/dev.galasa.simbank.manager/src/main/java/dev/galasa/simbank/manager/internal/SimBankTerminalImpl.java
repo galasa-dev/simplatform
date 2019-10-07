@@ -26,14 +26,14 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
 	private final String application;
 
 	public SimBankTerminalImpl(String id, String host, String application, ICredentialsUsernamePassword credentials, int port, boolean tls, IFramework framework)
-			throws Zos3270ManagerException {
+			throws Zos3270ManagerException, InterruptedException {
 		super(id, host, port, tls, framework);
 		this.credentials = credentials;
 		this.application = application;
 	}
 
 	@Override
-	public void gotoMainMenu() throws TimeoutException, KeyboardLockedException, DatastreamException, NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException {
+	public void gotoMainMenu() throws TimeoutException, KeyboardLockedException, DatastreamException, NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException, InterruptedException {
 		
 		waitForKeyboard();
 		
@@ -56,7 +56,7 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
 		}
 	}
 
-	private void logonSessionManager() throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException {
+	private void logonSessionManager() throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException, InterruptedException {
 		verifyTextInField(("SIMFRAME LOGON SCREEN"))
 		.positionCursorToFieldContaining("Userid")
 		.tab()
@@ -70,7 +70,7 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
 		selectionApplication();
 	}
 
-	private void selectionApplication() throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException {
+	private void selectionApplication() throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException, InterruptedException {
 		verifyTextInField("SIMFRAME MAIN MENU")
 		.positionCursorToFieldContaining("===>")
 		.tab()
@@ -81,7 +81,7 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
 		enterCICSTransaction();
 	}
 
-	private void enterCICSTransaction() throws TimeoutException, KeyboardLockedException, NetworkException, TextNotFoundException, FieldNotFoundException {
+	private void enterCICSTransaction() throws TimeoutException, KeyboardLockedException, NetworkException, TextNotFoundException, FieldNotFoundException, InterruptedException {
 		verifyTextInField("DFHZC2312")
 		.clear()
 		.waitForKeyboard()

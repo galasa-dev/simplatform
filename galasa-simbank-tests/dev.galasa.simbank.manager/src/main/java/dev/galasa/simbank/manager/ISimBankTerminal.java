@@ -12,6 +12,6 @@ import dev.galasa.zos3270.spi.NetworkException;
 public interface ISimBankTerminal extends ITerminal {
 
 	void gotoMainMenu() throws TimeoutException, KeyboardLockedException, DatastreamException, NetworkException,
-			FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException;
+			FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException, InterruptedException;
 
 }
