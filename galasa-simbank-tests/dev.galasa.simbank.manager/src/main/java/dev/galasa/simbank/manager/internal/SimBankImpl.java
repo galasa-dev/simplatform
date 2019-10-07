@@ -1,6 +1,5 @@
 package dev.galasa.simbank.manager.internal;
 
-import java.math.BigDecimal;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dev.galasa.ICredentials;
 import dev.galasa.ICredentialsUsernamePassword;
-import dev.galasa.simbank.manager.IAccount;
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.SimBankManagerException;
 import dev.galasa.simbank.manager.internal.properties.SimBankApplicationName;
@@ -21,7 +19,6 @@ import dev.galasa.simbank.manager.internal.properties.SimBankDatabasePort;
 import dev.galasa.simbank.manager.internal.properties.SimBankWebNetPort;
 import dev.galasa.simbank.manager.internal.properties.SimBankZosImage;
 import dev.galasa.zos.IZosImage;
-import dev.galasa.zos3270.Zos3270ManagerException;
 
 public class SimBankImpl implements ISimBank{
 
@@ -164,7 +161,7 @@ public class SimBankImpl implements ISimBank{
 
 	}
 
-	public void discard() {
+	public void discard() throws InterruptedException {
 		if (this.controlTerminal != null) {
 			this.controlTerminal.disconnect();
 			this.controlTerminal = null;

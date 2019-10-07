@@ -68,9 +68,10 @@ public class SimframeBankIVT{
      * @throws KeyboardLockedException 
      * @throws TimeoutException 
      * @throws DatastreamException 
+     * @throws InterruptedException 
      */
     @Test
-    public void checkBankIsAvailable() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException {
+    public void checkBankIsAvailable() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException, InterruptedException {
     	// Register the password to the confidential text filtering service
     	coreManager.registerConfidentialText("SYS1", "IBMUSER password");
     	
