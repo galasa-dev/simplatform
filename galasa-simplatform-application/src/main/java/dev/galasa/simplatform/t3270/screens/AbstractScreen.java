@@ -13,12 +13,12 @@ import dev.galasa.zos3270.internal.comms.NetworkServer;
 import dev.galasa.zos3270.internal.comms.NetworkThread;
 import dev.galasa.zos3270.internal.datastream.BufferAddress;
 import dev.galasa.zos3270.internal.datastream.CommandEraseWrite;
-import dev.galasa.zos3270.internal.datastream.Order;
+import dev.galasa.zos3270.internal.datastream.AbstractOrder;
 import dev.galasa.zos3270.internal.datastream.OrderSetBufferAddress;
 import dev.galasa.zos3270.internal.datastream.OrderStartField;
 import dev.galasa.zos3270.internal.datastream.WriteControlCharacter;
 import dev.galasa.zos3270.spi.BufferChar;
-import dev.galasa.zos3270.spi.BufferHolder;
+import dev.galasa.zos3270.spi.IBufferHolder;
 import dev.galasa.zos3270.spi.BufferStartOfField;
 import dev.galasa.zos3270.spi.Field;
 import dev.galasa.zos3270.spi.Screen;
@@ -61,7 +61,7 @@ public abstract class AbstractScreen implements IScreen {
 	protected Screen buildScreen(String screenName) throws ScreenException {
 		log.info("Building Screen: " + screenName);
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/screens/" + screenName)))) {	
-			BufferHolder[] buffer = new BufferHolder[1920];
+			IBufferHolder[] buffer = new IBufferHolder[1920];
 			String line = null;
 			int cursorPosition = 0;
 			while((line = br.readLine()) != null) {
@@ -124,7 +124,7 @@ public abstract class AbstractScreen implements IScreen {
 				buffer.get(cursor);
 
 				if (buffer.hasRemaining()) {
-					List<Order> orders = NetworkThread.processOrders(buffer);
+					List<AbstractOrder> orders = NetworkThread.processOrders(buffer);
 
 
 					screen.processOrders(orders);
