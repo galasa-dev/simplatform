@@ -82,7 +82,7 @@ public class SimframeBankIVT{
         .enter().waitForKeyboard();
     	
     	//Assert that the session manager has a bank session available
-        assertThat(terminal.retrieveScreen()).containsOnlyOnce("SIMFRAME MAIN MENU");
+        assertThat(terminal.retrieveScreen()).containsOnlyOnce("SIMPLATFORM MAIN MENU");
     	assertThat(terminal.retrieveScreen()).containsOnlyOnce("BANKTEST");
     	
         //Open banking application

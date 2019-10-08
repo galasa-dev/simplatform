@@ -29,6 +29,7 @@ import dev.galasa.simbank.manager.IAccount;
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.SimBank;
 
+@Test
 public class ProvisionedAccountCreditTests{ 
 
     @SimBank
