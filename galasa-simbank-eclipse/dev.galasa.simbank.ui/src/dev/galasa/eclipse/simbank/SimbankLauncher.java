@@ -28,8 +28,6 @@ import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 import org.osgi.framework.Bundle;
 
-import dev.galasa.eclipse.Activator;
-
 public class SimbankLauncher extends JavaLaunchDelegate {
 
 	private MessageConsole console;
@@ -100,18 +98,18 @@ public class SimbankLauncher extends JavaLaunchDelegate {
 
 	private File findSimbankJar() throws CoreException {
 		try {
-			Bundle bundle = Activator.getInstance().getBundle();
+			Bundle bundle = SimBankActivator.getInstance().getBundle();
 			IPath path = new Path("lib/galasa-simplatform.jar");
 			URL bootUrl = FileLocator.find(bundle, path, null);
 			if (bootUrl == null) {
 				throw new CoreException(new Status(Status.ERROR,
-						Activator.PLUGIN_ID, "The galasa-simplatform.jar is missing from the plugin"));
+						SimBankActivator.PLUGIN_ID, "The galasa-simplatform.jar is missing from the plugin"));
 			}
 			bootUrl = FileLocator.toFileURL(bootUrl);
 			return Paths.get(bootUrl.toURI()).toFile().getAbsoluteFile();
 		} catch (Exception e) {
 			throw new CoreException(new Status(Status.ERROR,
-					Activator.PLUGIN_ID, "Problem locating the galasa-simplatform.jar in the plugin", e));
+					SimBankActivator.PLUGIN_ID, "Problem locating the galasa-simplatform.jar in the plugin", e));
 		}
 	}
 
@@ -124,7 +122,7 @@ public class SimbankLauncher extends JavaLaunchDelegate {
 		IConsoleManager consoleManager = consolePlugin.getConsoleManager();
 		IConsole[] existingConsoles = consoleManager.getConsoles();
 		for (IConsole existingConsole : existingConsoles) {
-			if (existingConsole.getName().equals(Activator.PLUGIN_NAME)) {
+			if (existingConsole.getName().equals(SimBankActivator.PLUGIN_NAME)) {
 				console = (MessageConsole) existingConsole;
 				break;
 			}
@@ -132,7 +130,7 @@ public class SimbankLauncher extends JavaLaunchDelegate {
 
 		// Not found, create a new one
 		if (console == null) {
-			console = new MessageConsole(Activator.PLUGIN_NAME, null);
+			console = new MessageConsole(dev.galasa.eclipse.Activator.PLUGIN_NAME, null);
 			consoleManager.addConsoles(new IConsole[] { console });
 		}
 

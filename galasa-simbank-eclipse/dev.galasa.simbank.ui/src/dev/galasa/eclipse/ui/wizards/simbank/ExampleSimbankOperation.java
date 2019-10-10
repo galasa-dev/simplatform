@@ -29,7 +29,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob;
 import org.osgi.framework.Bundle;
 
-import dev.galasa.eclipse.Activator;
+import dev.galasa.eclipse.simbank.SimBankActivator;
 
 public class ExampleSimbankOperation implements IRunnableWithProgress {
 
@@ -60,12 +60,12 @@ public class ExampleSimbankOperation implements IRunnableWithProgress {
 			managerProject.create(monitor);
 			managerProject.open(monitor);
 
-			Bundle bundle = Activator.getInstance().getBundle();
+			Bundle bundle = SimBankActivator.getInstance().getBundle();
 			IPath path = new Path("lib/galasa-simbanktests-parent-examples.zip");
 			URL zipUrl = FileLocator.find(bundle, path, null);
 			if (zipUrl == null) {
 				throw new CoreException(new Status(Status.ERROR,
-						Activator.PLUGIN_ID, "The galasa-simbanktests-parent-examples.zip file is missing from the plugin"));
+						SimBankActivator.PLUGIN_ID, "The galasa-simbanktests-parent-examples.zip file is missing from the plugin"));
 			}
 			zipUrl = FileLocator.toFileURL(zipUrl);
 			java.nio.file.Path pathZip = Paths.get(zipUrl.toURI());
@@ -139,7 +139,7 @@ public class ExampleSimbankOperation implements IRunnableWithProgress {
 			job.schedule();
 						
 		} catch(Throwable t) {
-			Activator.log(t);
+			SimBankActivator.log(t);
 		}
 
 	}

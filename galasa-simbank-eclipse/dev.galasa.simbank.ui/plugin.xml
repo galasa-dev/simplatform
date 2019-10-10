@@ -30,5 +30,20 @@
                mode="run">
          </launchMode>
       </launchConfigurationTabGroup>
-   </extension>      
+   </extension>  
+   
+   <extension point="org.eclipse.ui.newWizards">
+        <wizard
+            name="SimFrame example projects"
+            class="dev.galasa.eclipse.ui.wizards.simbank.ExampleSimbankWizard"
+            category="org.eclipse.ui.Examples/dev.galasa.eclipse.wizards.examples"
+            id="dev.galasa.eclipse.ui.wizards.simbank.ExampleSimbankWizard"
+            project="true"
+            icon="icons/galasa-dark.png">
+            <description>
+                Create example test projects that use SimBank to demonstrate the capabilities of Galasa 
+            </description>
+        </wizard>
+    </extension>
+       
 </plugin>
