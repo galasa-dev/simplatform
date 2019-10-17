@@ -132,7 +132,8 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
             throw new SimBankManagerException("An instance of the SimBank has not been requested");
         }
 
-        SimBankTerminalImpl newTerminal = simBankSingleInstance.allocateTerminal(terminalCount++);
+        terminalCount++;
+        SimBankTerminalImpl newTerminal = simBankSingleInstance.allocateTerminal(terminalCount);
         terminals.add(newTerminal);
 
         logger.info("Provisioned SimBank terminal " + newTerminal.getId());
@@ -155,6 +156,7 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
             }
 
             for (SimBankTerminalImpl terminal : terminals) {
+                terminal.flushTerminalCache();
                 terminal.disconnect();
             }
 
@@ -236,5 +238,9 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 
     public IConfigurationPropertyStoreService getCPS() {
         return this.cps;
+    }
+
+    public void registerTerminal(SimBankTerminalImpl terminal) {
+        this.terminals.add(terminal);
     }
 }
