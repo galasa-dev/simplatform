@@ -30,10 +30,10 @@ import dev.galasa.zos3270.spi.NetworkException;
 @Test
 public class SimframeBankIVT{ 
 
-    @ZosImage(imageTag="simframe")
+    @ZosImage(imageTag="simbank")
     public IZosImage image;
 
-    @Zos3270Terminal(imageTag="simframe")
+    @Zos3270Terminal(imageTag="simbank")
     public ITerminal terminal;
 
     @ArtifactManager
