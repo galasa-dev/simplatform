@@ -25,7 +25,7 @@ public class SimBankZosImage extends CpsProperties {
 	
 	public static String get(@NotNull String instance) throws ConfigurationPropertyStoreException, SimBankManagerException {
 		return getStringWithDefault(SimBankPropertiesSingleton.cps(),
-				               "SIMFRAME",
+				               "SIMBANK",
 				               "instance", 
 				               "zos.image",
 				               instance);
