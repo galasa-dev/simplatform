@@ -23,7 +23,7 @@ public class SimBankCredentials extends CpsProperties {
 	
 	public static String get(@NotNull String instance) throws ConfigurationPropertyStoreException, SimBankManagerException {
 		return getStringWithDefault(SimBankPropertiesSingleton.cps(),
-				               "SIMFRAME",
+				               "SIMBANK",
 				               "instance", 
 				               "credentials.id",
 				               instance);
