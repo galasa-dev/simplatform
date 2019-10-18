@@ -36,23 +36,23 @@
 			<artifactId>dev.galasa.zos3270.manager</artifactId>
 			<version>0.3.0-SNAPSHOT</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>1.2</version>
 		</dependency>
-		
+
 		<dependency>
-    		<groupId>org.apache.derby</groupId>
-    		<artifactId>derby</artifactId>
-    		<version>10.14.2.0</version>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.14.2.0</version>
 		</dependency>
-		
+
 		<dependency>
-    		<groupId>org.apache.derby</groupId>
-    		<artifactId>derbynet</artifactId>
-    		<version>10.14.2.0</version>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbynet</artifactId>
+			<version>10.14.2.0</version>
 		</dependency>
 	</dependencies>
 
@@ -72,6 +72,16 @@
 								<excludes>
 								</excludes>
 							</artifactSet>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 					</execution>
 				</executions>
