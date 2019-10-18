@@ -28,7 +28,7 @@ import dev.galasa.zos3270.spi.DatastreamException;
 import dev.galasa.zos3270.spi.NetworkException;
 
 @Test
-public class SimframeBankIVT{ 
+public class SimBankIVT{ 
 
     @ZosImage(imageTag="simbank")
     public IZosImage image;
