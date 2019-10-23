@@ -34,7 +34,7 @@
    
    <extension point="org.eclipse.ui.newWizards">
         <wizard
-            name="SimFrame example projects"
+            name="SimBank example projects"
             class="dev.galasa.eclipse.ui.wizards.simbank.ExampleSimbankWizard"
             category="org.eclipse.ui.Examples/dev.galasa.eclipse.wizards.examples"
             id="dev.galasa.eclipse.ui.wizards.simbank.ExampleSimbankWizard"
