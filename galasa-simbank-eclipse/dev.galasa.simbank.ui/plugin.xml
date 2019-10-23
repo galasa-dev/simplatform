@@ -15,7 +15,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icons/galasa-dark.png"
+            icon="icons/galasa-dark-new.png"
             configTypeID="dev.galasa.eclipse.simbank.SimbankLauncher"
             id="dev.galasa.eclipse.simbank.SimbankLauncher.image">
       </launchConfigurationTypeImage>
@@ -39,7 +39,7 @@
             category="org.eclipse.ui.Examples/dev.galasa.eclipse.wizards.examples"
             id="dev.galasa.eclipse.ui.wizards.simbank.ExampleSimbankWizard"
             project="true"
-            icon="icons/galasa-dark.png">
+            icon="icons/galasa-dark-new.png">
             <description>
                 Create example test projects that use SimBank to demonstrate the capabilities of Galasa 
             </description>
