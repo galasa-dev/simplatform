@@ -93,7 +93,6 @@ public class SimBankIVT{
         //Assert that the bank menu is showing
         assertThat(terminal.retrieveScreen()).containsOnlyOnce("Options     Description        PFKey ");
         assertThat(terminal.retrieveScreen()).containsOnlyOnce("BROWSE      Browse Accounts    PF1");
-        assertThat(terminal.retrieveScreen()).containsOnlyOnce("UPDATE      Update Accounts    PF2");
         assertThat(terminal.retrieveScreen()).containsOnlyOnce("TRANSF      Transfer Money     PF4");
     }
 }
