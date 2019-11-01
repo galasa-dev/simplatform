@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.simplatform.t3270.screens;
 
 import java.io.BufferedReader;
@@ -25,124 +30,127 @@ import dev.galasa.zos3270.spi.Screen;
 
 public abstract class AbstractScreen implements IScreen {
 
-	protected final NetworkServer network;
-	protected Logger log;
+    protected final NetworkServer network;
+    protected Logger              log;
 
-	public AbstractScreen(NetworkServer network) {
-		this.network = network;
-		this.log = Logger.getLogger("Simplatform");
-	}
+    public AbstractScreen(NetworkServer network) {
+        this.network = network;
+        this.log = Logger.getLogger("Simplatform");
+    }
 
-	protected void writeScreen(CommandEraseWrite commandEraseWrite, 
-			WriteControlCharacter writeControlCharacter,
-			Screen screen) throws ScreenException {
-		try {
-			ByteArrayOutputStream outboundBuffer = new ByteArrayOutputStream();
-			outboundBuffer.write(commandEraseWrite.getBytes());
-			outboundBuffer.write(writeControlCharacter.getBytes());
+    protected void writeScreen(CommandEraseWrite commandEraseWrite, WriteControlCharacter writeControlCharacter,
+            Screen screen) throws ScreenException {
+        try {
+            ByteArrayOutputStream outboundBuffer = new ByteArrayOutputStream();
+            outboundBuffer.write(commandEraseWrite.getBytes());
+            outboundBuffer.write(writeControlCharacter.getBytes());
 
-			for(Field field : screen.calculateFields()) {
-				OrderSetBufferAddress sba = new OrderSetBufferAddress(new BufferAddress(field.getStart()));
-				outboundBuffer.write(sba.getCharRepresentation());
-				if (!field.isDummyField()) {
-					OrderStartField sf = new OrderStartField(field.isProtected(), field.isNumeric(), field.isDisplay(), field.isIntenseDisplay(), field.isSelectorPen(), field.isFieldModifed());
-					outboundBuffer.write(sf.getBytes());
-				}
+            for (Field field : screen.calculateFields()) {
+                OrderSetBufferAddress sba = new OrderSetBufferAddress(new BufferAddress(field.getStart()));
+                outboundBuffer.write(sba.getCharRepresentation());
+                if (!field.isDummyField()) {
+                    OrderStartField sf = new OrderStartField(field.isProtected(), field.isNumeric(), field.isDisplay(),
+                            field.isIntenseDisplay(), field.isSelectorPen(), field.isFieldModifed());
+                    outboundBuffer.write(sf.getBytes());
+                }
 
-				outboundBuffer.write(field.getFieldWithNulls());
-			}
+                outboundBuffer.write(field.getFieldWithNulls());
+            }
 
-			network.sendDatastream(outboundBuffer.toByteArray());
-		} catch(Exception e) {
-			throw new ScreenException("Problem writing screen",e);
-		}
-	}
+            network.sendDatastream(outboundBuffer.toByteArray());
+        } catch (Exception e) {
+            throw new ScreenException("Problem writing screen", e);
+        }
+    }
 
-	protected Screen buildScreen(String screenName) throws ScreenException {
-		log.info("Building Screen: " + screenName);
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/screens/" + screenName)))) {	
-			IBufferHolder[] buffer = new IBufferHolder[1920];
-			String line = null;
-			int cursorPosition = 0;
-			while((line = br.readLine()) != null) {
-				String controlChar = line.substring(0, 1);
-				if (!"S".equals(controlChar)) {
-					continue;
-				}
-				int lineLength = line.length();
-				if (lineLength > 81) {
-					lineLength = 81;
-				}
-				line = line.substring(1,lineLength);
-				while(line.length() < 80) {
-					line += " ";
-				}
+    protected Screen buildScreen(String screenName) throws ScreenException {
+        log.info("Building Screen: " + screenName);
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream("/screens/" + screenName)))) {
+            IBufferHolder[] buffer = new IBufferHolder[1920];
+            String line = null;
+            int cursorPosition = 0;
+            while ((line = br.readLine()) != null) {
+                String controlChar = line.substring(0, 1);
+                if (!"S".equals(controlChar)) {
+                    continue;
+                }
+                int lineLength = line.length();
+                if (lineLength > 81) {
+                    lineLength = 81;
+                }
+                line = line.substring(1, lineLength);
+                while (line.length() < 80) {
+                    line += " ";
+                }
 
-				for(int i = 0; i < 80; i++) {
-					char c = line.charAt(i);
+                for (int i = 0; i < 80; i++) {
+                    char c = line.charAt(i);
 
-					if (c == ']') {
-						buffer[cursorPosition] = new BufferStartOfField(cursorPosition, true, false, true, false, false, false);
-					} else if (c == '@') {
-						buffer[cursorPosition] = new BufferStartOfField(cursorPosition, true, false, true, true, false, false);
-					} else if (c == '[') {
-						buffer[cursorPosition] = new BufferStartOfField(cursorPosition, false, false, true, false, false, true);
-					} else if (c == '{') {
-						buffer[cursorPosition] = new BufferStartOfField(cursorPosition, false, false, false, false, false, true);
-					} else {
-						buffer[cursorPosition] = new BufferChar(c);
-					}
+                    if (c == ']') {
+                        buffer[cursorPosition] = new BufferStartOfField(cursorPosition, true, false, true, false, false,
+                                false);
+                    } else if (c == '@') {
+                        buffer[cursorPosition] = new BufferStartOfField(cursorPosition, true, false, true, true, false,
+                                false);
+                    } else if (c == '[') {
+                        buffer[cursorPosition] = new BufferStartOfField(cursorPosition, false, false, true, false,
+                                false, true);
+                    } else if (c == '{') {
+                        buffer[cursorPosition] = new BufferStartOfField(cursorPosition, false, false, false, false,
+                                false, true);
+                    } else {
+                        buffer[cursorPosition] = new BufferChar(c);
+                    }
 
-					cursorPosition++;
-				}
-			}
+                    cursorPosition++;
+                }
+            }
 
-			Screen screen = new Screen(80, 24, null);
-			screen.setBuffer(buffer);
+            Screen screen = new Screen(80, 24, null);
+            screen.setBuffer(buffer);
 
-			return screen;
-		} catch(Exception e) {
-			throw new ScreenException("Unable to format the screen", e);
-		}
-	}
+            return screen;
+        } catch (Exception e) {
+            throw new ScreenException("Unable to format the screen", e);
+        }
+    }
 
+    protected AttentionIdentification receiveScreen(Screen screen) throws ScreenException {
+        try {
+            Network.expect(network.getInputStream(), (byte) 0); // Should be D3270
 
-	protected AttentionIdentification receiveScreen(Screen screen) throws ScreenException {
-		try {
-			Network.expect(network.getInputStream(), (byte)0); // Should be D3270
+            ByteBuffer buffer = NetworkThread.readTerminatedMessage(network.getInputStream());
+            buffer.get(); // Request
+            buffer.get(); // Response
+            buffer.get(); // SEQ
+            buffer.get(); // SEQ
 
-			ByteBuffer buffer = NetworkThread.readTerminatedMessage(network.getInputStream());
-			buffer.get();  // Request
-			buffer.get();  // Response 
-			buffer.get();  // SEQ
-			buffer.get();  // SEQ
+            byte aid = buffer.get();
 
-			byte aid = buffer.get();
+            if (buffer.hasRemaining()) {
+                byte[] cursor = new byte[2];
+                buffer.get(cursor);
 
-			if (buffer.hasRemaining()) {
-				byte[] cursor = new byte[2];
-				buffer.get(cursor);
+                if (buffer.hasRemaining()) {
+                    List<AbstractOrder> orders = NetworkThread.processOrders(buffer);
 
-				if (buffer.hasRemaining()) {
-					List<AbstractOrder> orders = NetworkThread.processOrders(buffer);
+                    screen.processOrders(orders);
+                }
+            }
 
+            return AttentionIdentification.valueOfAid(aid);
+        } catch (Exception e) {
+            // Empty exception thrown to prevent error trace on a client disconnecting
+            if (e.getMessage() == "Expected 1 but received only -1 bytes")
+                throw new ScreenException();
+            else
+                throw new ScreenException("Problem reading screen", e);
+        }
+    }
 
-					screen.processOrders(orders);
-				}
-			}
-
-			return AttentionIdentification.valueOfAid(aid);
-		} catch(Exception e) {
-			//Empty exception thrown to prevent error trace on a client disconnecting 
-			if (e.getMessage() == "Expected 1 but received only -1 bytes")
-				throw new ScreenException();
-			else
-				throw new ScreenException("Problem reading screen",e);
-		}
-	}
-
-	protected int calcPos(int col, int row) {
-		return col + (row * 80);
-	}
+    protected int calcPos(int col, int row) {
+        return col + (row * 80);
+    }
 
 }

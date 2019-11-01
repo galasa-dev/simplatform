@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.simbank.manager;
 
 import java.lang.annotation.ElementType;
@@ -9,9 +14,9 @@ import dev.galasa.framework.spi.ValidAnnotatedFields;
 import dev.galasa.simbank.manager.internal.SimBankManagerField;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ ElementType.FIELD })
 @SimBankManagerField
 @ValidAnnotatedFields({ ISimBankTerminal.class })
 public @interface SimBankTerminal {
-	
+
 }

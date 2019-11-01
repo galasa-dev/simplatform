@@ -1,4 +1,8 @@
-
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.simbanks.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,69 +32,68 @@ import dev.galasa.zos3270.spi.DatastreamException;
 import dev.galasa.zos3270.spi.NetworkException;
 
 @Test
-public class SimBankIVT{ 
+public class SimBankIVT {
 
-    @ZosImage(imageTag="simbank")
-    public IZosImage image;
+    @ZosImage(imageTag = "simbank")
+    public IZosImage        image;
 
-    @Zos3270Terminal(imageTag="simbank")
-    public ITerminal terminal;
+    @Zos3270Terminal(imageTag = "simbank")
+    public ITerminal        terminal;
 
     @ArtifactManager
     public IArtifactManager artifacts;
 
     @HttpClient
-    public IHttpClient client;
-    
+    public IHttpClient      client;
+
     @CoreManager
-    public ICoreManager coreManager;
+    public ICoreManager     coreManager;
 
     @Test
     public void testNotNull() {
-        //Check all objects loaded
+        // Check all objects loaded
         assertThat(terminal).isNotNull();
         assertThat(artifacts).isNotNull();
         assertThat(client).isNotNull();
     }
 
     /**
-     * Test which checks the initial balance of an account, uses the webservice to credit the account, then checks the balance again.
-     * The test passes if the final balance is equal to the old balance + the credited amount.
+     * Test which checks the initial balance of an account, uses the webservice to
+     * credit the account, then checks the balance again. The test passes if the
+     * final balance is equal to the old balance + the credited amount.
      * 
      * @throws TestBundleResourceException
      * @throws URISyntaxException
      * @throws IOException
      * @throws HttpClientException
      * @throws ZosManagerException
-     * @throws TextNotFoundException 
-     * @throws FieldNotFoundException 
-     * @throws NetworkException 
-     * @throws KeyboardLockedException 
-     * @throws TimeoutException 
-     * @throws DatastreamException 
-     * @throws InterruptedException 
+     * @throws TextNotFoundException
+     * @throws FieldNotFoundException
+     * @throws NetworkException
+     * @throws KeyboardLockedException
+     * @throws TimeoutException
+     * @throws DatastreamException
+     * @throws InterruptedException
      */
     @Test
-    public void checkBankIsAvailable() throws TestBundleResourceException, URISyntaxException, IOException, HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException, TextNotFoundException, InterruptedException {
-    	// Register the password to the confidential text filtering service
-    	coreManager.registerConfidentialText("SYS1", "IBMUSER password");
-    	
-    	//Logon through the session manager
-    	terminal.waitForKeyboard()
-        .positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
-        .positionCursorToFieldContaining("Password").tab().type("SYS1")
-        .enter().waitForKeyboard();
-    	
-    	//Assert that the session manager has a bank session available
+    public void checkBankIsAvailable() throws TestBundleResourceException, URISyntaxException, IOException,
+            HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException,
+            NetworkException, FieldNotFoundException, TextNotFoundException, InterruptedException {
+        // Register the password to the confidential text filtering service
+        coreManager.registerConfidentialText("SYS1", "IBMUSER password");
+
+        // Logon through the session manager
+        terminal.waitForKeyboard().positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
+                .positionCursorToFieldContaining("Password").tab().type("SYS1").enter().waitForKeyboard();
+
+        // Assert that the session manager has a bank session available
         assertThat(terminal.retrieveScreen()).containsOnlyOnce("SIMPLATFORM MAIN MENU");
-    	assertThat(terminal.retrieveScreen()).containsOnlyOnce("BANKTEST");
-    	
-        //Open banking application
-        terminal.pf1().waitForKeyboard()
-        .clear().waitForKeyboard()
-        .tab().type("bank").enter().waitForKeyboard();
-    	
-        //Assert that the bank menu is showing
+        assertThat(terminal.retrieveScreen()).containsOnlyOnce("BANKTEST");
+
+        // Open banking application
+        terminal.pf1().waitForKeyboard().clear().waitForKeyboard().tab().type("bank").enter().waitForKeyboard();
+
+        // Assert that the bank menu is showing
         assertThat(terminal.retrieveScreen()).containsOnlyOnce("Options     Description        PFKey ");
         assertThat(terminal.retrieveScreen()).containsOnlyOnce("BROWSE      Browse Accounts    PF1");
         assertThat(terminal.retrieveScreen()).containsOnlyOnce("TRANSF      Transfer Money     PF4");

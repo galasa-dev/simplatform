@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.simbank.manager;
 
 import java.lang.annotation.Retention;
@@ -10,12 +15,13 @@ import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.internal.SimBankManagerField;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ ElementType.FIELD })
 @SimBankManagerField
 @ValidAnnotatedFields({ ISimBank.class })
 public @interface SimBank {
 
     boolean useTerminal() default true;
-    boolean useJdbc()     default true;
-    
+
+    boolean useJdbc() default true;
+
 }
