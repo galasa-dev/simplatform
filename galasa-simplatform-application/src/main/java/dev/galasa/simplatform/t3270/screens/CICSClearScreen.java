@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.simplatform.t3270.screens;
 
 import java.util.logging.Level;
@@ -11,48 +16,48 @@ import dev.galasa.zos3270.spi.Field;
 import dev.galasa.zos3270.spi.Screen;
 
 public class CICSClearScreen extends AbstractScreen {
-	
-	private static final Logger logger = Logger.getLogger("Simplatform");
 
-	private final Screen screen;
+    private static final Logger logger = Logger.getLogger("Simplatform");
 
-	public CICSClearScreen(NetworkServer network) throws ScreenException {
-		super(network);
+    private final Screen        screen;
 
-		try {
-			this.screen = buildScreen(getClass().getSimpleName());
-		} catch (Exception e) {
-			throw new ScreenException("Problem building screen", e);
-		}
-	}
+    public CICSClearScreen(NetworkServer network) throws ScreenException {
+        super(network);
 
-	@Override
-	public IScreen run() {
+        try {
+            this.screen = buildScreen(getClass().getSimpleName());
+        } catch (Exception e) {
+            throw new ScreenException("Problem building screen", e);
+        }
+    }
 
-		try {
-			while (true) {
-				writeScreen();
+    @Override
+    public IScreen run() {
 
-				AttentionIdentification aid = receiveScreen(screen);
+        try {
+            while (true) {
+                writeScreen();
 
-				if (aid == AttentionIdentification.ENTER) {
-					Field transactionField = screen.getFieldAt(0, 0);
-					String application = transactionField.getFieldWithoutNulls().trim().toUpperCase();
+                AttentionIdentification aid = receiveScreen(screen);
 
-					if ("BANK".equals(application)) {
-						return new BankMainMenu(network);
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, "Problem writing screen", e);
-			return null;
-		}
-	}
+                if (aid == AttentionIdentification.ENTER) {
+                    Field transactionField = screen.getFieldAt(0, 0);
+                    String application = transactionField.getFieldWithoutNulls().trim().toUpperCase();
 
-	private void writeScreen() throws ScreenException {
-		writeScreen(new CommandEraseWrite(),
-				new WriteControlCharacter(false, false, false, false, false, false, true, true), screen);
-	}
+                    if ("BANK".equals(application)) {
+                        return new BankMainMenu(network);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Problem writing screen", e);
+            return null;
+        }
+    }
+
+    private void writeScreen() throws ScreenException {
+        writeScreen(new CommandEraseWrite(),
+                new WriteControlCharacter(false, false, false, false, false, false, true, true), screen);
+    }
 
 }

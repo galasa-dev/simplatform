@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.simbank.manager.internal.properties;
 
 import javax.validation.constraints.NotNull;
@@ -9,7 +14,8 @@ import dev.galasa.simbank.manager.SimBankManagerException;
 /**
  * SimBank Application Name for the Session Manager logon
  * <p>
- * The property is:-<br><br>
+ * The property is:-<br>
+ * <br>
  * simbank.instance.[instance].application.name
  * </p>
  * <p>
@@ -20,13 +26,11 @@ import dev.galasa.simbank.manager.SimBankManagerException;
  *
  */
 public class SimBankApplicationName extends CpsProperties {
-	
-	public static String get(@NotNull String instance) throws ConfigurationPropertyStoreException, SimBankManagerException {
-		return getStringWithDefault(SimBankPropertiesSingleton.cps(),
-				               "BANKTEST",
-				               "instance", 
-				               "application.name",
-				               instance);
-	}
+
+    public static String get(@NotNull String instance)
+            throws ConfigurationPropertyStoreException, SimBankManagerException {
+        return getStringWithDefault(SimBankPropertiesSingleton.cps(), "BANKTEST", "instance", "application.name",
+                instance);
+    }
 
 }
