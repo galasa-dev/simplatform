@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.eclipse.simbank;
 
 import java.io.File;
@@ -30,127 +35,123 @@ import org.osgi.framework.Bundle;
 
 public class SimbankLauncher extends JavaLaunchDelegate {
 
-	private MessageConsole console;
-	private PrintStream consoleDefault;
-	private PrintStream consoleRed;
-	private PrintStream consoleBlue;
+    private MessageConsole console;
+    private PrintStream    consoleDefault;
+    private PrintStream    consoleRed;
+    private PrintStream    consoleBlue;
 
-	@Override
-	public void launch(ILaunchConfiguration configuration, String mode,
-			ILaunch launch, IProgressMonitor monitor)
-					throws CoreException {
-		//*** Activate message console
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				activateMessageConsole();
-			}
-		});
+    @Override
+    public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
+            throws CoreException {
+        // *** Activate message console
+        Display.getDefault().syncExec(new Runnable() {
+            @Override
+            public void run() {
+                activateMessageConsole();
+            }
+        });
 
-		consoleDefault.append("\nLaunching SimBank\n");
-		
-		//*** Find all the information necessary to run
-		File simbankJarFile = findSimbankJar();
-		consoleDefault.append("Simbank jar is located at " + simbankJarFile.toURI().toString() + "\n");
-		
-		//*** Setup the Java running environment		
-		IVMRunner runner = getVMRunner(configuration, mode);
+        consoleDefault.append("\nLaunching SimBank\n");
 
-		//*** Only need the boot.jar on the classpath
-		String[] classpath = new String[1];
-		classpath[0] = simbankJarFile.toString();
-		
-		//*** From the config get any environment properties
-		String[] envp = getEnvironment(configuration);
+        // *** Find all the information necessary to run
+        File simbankJarFile = findSimbankJar();
+        consoleDefault.append("Simbank jar is located at " + simbankJarFile.toURI().toString() + "\n");
 
-		//*** Setup our program arguments
-		ArrayList<String> programArguments = new ArrayList<String>();
+        // *** Setup the Java running environment
+        IVMRunner runner = getVMRunner(configuration, mode);
 
-		//*** Get the vm args from the config
-		ArrayList<String> vmArguments = new ArrayList<String>();
-		String userVMArgs = getVMArguments(configuration); 
-		if(userVMArgs!=null && !userVMArgs.isEmpty()) {
-			String args[] = userVMArgs.split(" ");
-			for(String s : args) {
-				vmArguments.add(s.trim());
-			}
-		}
-		// VM-specific attributes
-		Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
+        // *** Only need the boot.jar on the classpath
+        String[] classpath = new String[1];
+        classpath[0] = simbankJarFile.toString();
 
-		//*** As can only use a classpath,  need to provide main class
-		String mainTypeName = "dev.galasa.simplatform.main.Simplatform";
+        // *** From the config get any environment properties
+        String[] envp = getEnvironment(configuration);
 
-		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(
-				mainTypeName, classpath);
-		runConfig.setVMArguments((String[]) vmArguments
-				.toArray(new String[vmArguments.size()]));
-		runConfig.setProgramArguments((String[]) programArguments
-				.toArray(new String[programArguments.size()]));
-		runConfig.setEnvironment(envp);
-		//		runConfig.setWorkingDirectory(workingDirName);
-		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
-		
-		setDefaultSourceLocator(launch, configuration);
+        // *** Setup our program arguments
+        ArrayList<String> programArguments = new ArrayList<String>();
 
-		runner.run(runConfig, launch, monitor);
-	}
+        // *** Get the vm args from the config
+        ArrayList<String> vmArguments = new ArrayList<String>();
+        String userVMArgs = getVMArguments(configuration);
+        if (userVMArgs != null && !userVMArgs.isEmpty()) {
+            String args[] = userVMArgs.split(" ");
+            for (String s : args) {
+                vmArguments.add(s.trim());
+            }
+        }
+        // VM-specific attributes
+        Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
-	private File findSimbankJar() throws CoreException {
-		try {
-			Bundle bundle = SimBankActivator.getInstance().getBundle();
-			IPath path = new Path("lib/galasa-simplatform.jar");
-			URL bootUrl = FileLocator.find(bundle, path, null);
-			if (bootUrl == null) {
-				throw new CoreException(new Status(Status.ERROR,
-						SimBankActivator.PLUGIN_ID, "The galasa-simplatform.jar is missing from the plugin"));
-			}
-			bootUrl = FileLocator.toFileURL(bootUrl);
-			return Paths.get(bootUrl.toURI()).toFile().getAbsoluteFile();
-		} catch (Exception e) {
-			throw new CoreException(new Status(Status.ERROR,
-					SimBankActivator.PLUGIN_ID, "Problem locating the galasa-simplatform.jar in the plugin", e));
-		}
-	}
+        // *** As can only use a classpath, need to provide main class
+        String mainTypeName = "dev.galasa.simplatform.main.Simplatform";
 
-	/**
-	 * Activate message console
-	 */
-	private void activateMessageConsole() {
-		// Look for existing console
-		ConsolePlugin consolePlugin = ConsolePlugin.getDefault();
-		IConsoleManager consoleManager = consolePlugin.getConsoleManager();
-		IConsole[] existingConsoles = consoleManager.getConsoles();
-		for (IConsole existingConsole : existingConsoles) {
-			if (existingConsole.getName().equals(SimBankActivator.PLUGIN_NAME)) {
-				console = (MessageConsole) existingConsole;
-				break;
-			}
-		}
+        VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
+        runConfig.setVMArguments((String[]) vmArguments.toArray(new String[vmArguments.size()]));
+        runConfig.setProgramArguments((String[]) programArguments.toArray(new String[programArguments.size()]));
+        runConfig.setEnvironment(envp);
+        // runConfig.setWorkingDirectory(workingDirName);
+        runConfig.setVMSpecificAttributesMap(vmAttributesMap);
 
-		// Not found, create a new one
-		if (console == null) {
-			console = new MessageConsole(dev.galasa.eclipse.Activator.PLUGIN_NAME, null);
-			consoleManager.addConsoles(new IConsole[] { console });
-		}
+        setDefaultSourceLocator(launch, configuration);
 
-		// activate console
-		console.activate();
+        runner.run(runConfig, launch, monitor);
+    }
 
-		// Create the default PrintStream
-		MessageConsoleStream  messageConsoleStreamDefault = console.newMessageStream();
-		messageConsoleStreamDefault.setColor(null);
-		consoleDefault = new PrintStream(messageConsoleStreamDefault, true);
+    private File findSimbankJar() throws CoreException {
+        try {
+            Bundle bundle = SimBankActivator.getInstance().getBundle();
+            IPath path = new Path("lib/galasa-simplatform.jar");
+            URL bootUrl = FileLocator.find(bundle, path, null);
+            if (bootUrl == null) {
+                throw new CoreException(new Status(Status.ERROR, SimBankActivator.PLUGIN_ID,
+                        "The galasa-simplatform.jar is missing from the plugin"));
+            }
+            bootUrl = FileLocator.toFileURL(bootUrl);
+            return Paths.get(bootUrl.toURI()).toFile().getAbsoluteFile();
+        } catch (Exception e) {
+            throw new CoreException(new Status(Status.ERROR, SimBankActivator.PLUGIN_ID,
+                    "Problem locating the galasa-simplatform.jar in the plugin", e));
+        }
+    }
 
-		// Create a PrintStream for Red text
-		MessageConsoleStream  messageConsoleStreamRed = console.newMessageStream();
-		messageConsoleStreamRed.setColor(new Color(null, new RGB(255, 0, 0)));
-		consoleRed = new PrintStream(messageConsoleStreamRed, true);
+    /**
+     * Activate message console
+     */
+    private void activateMessageConsole() {
+        // Look for existing console
+        ConsolePlugin consolePlugin = ConsolePlugin.getDefault();
+        IConsoleManager consoleManager = consolePlugin.getConsoleManager();
+        IConsole[] existingConsoles = consoleManager.getConsoles();
+        for (IConsole existingConsole : existingConsoles) {
+            if (existingConsole.getName().equals(SimBankActivator.PLUGIN_NAME)) {
+                console = (MessageConsole) existingConsole;
+                break;
+            }
+        }
 
-		// Create a PrintStream for Blue text
-		MessageConsoleStream  messageConsoleStreamBlue = console.newMessageStream();
-		messageConsoleStreamBlue.setColor(new Color(null, new RGB(0, 0, 255)));
-		consoleBlue = new PrintStream(messageConsoleStreamBlue, true);
-	}
+        // Not found, create a new one
+        if (console == null) {
+            console = new MessageConsole(dev.galasa.eclipse.Activator.PLUGIN_NAME, null);
+            consoleManager.addConsoles(new IConsole[] { console });
+        }
+
+        // activate console
+        console.activate();
+
+        // Create the default PrintStream
+        MessageConsoleStream messageConsoleStreamDefault = console.newMessageStream();
+        messageConsoleStreamDefault.setColor(null);
+        consoleDefault = new PrintStream(messageConsoleStreamDefault, true);
+
+        // Create a PrintStream for Red text
+        MessageConsoleStream messageConsoleStreamRed = console.newMessageStream();
+        messageConsoleStreamRed.setColor(new Color(null, new RGB(255, 0, 0)));
+        consoleRed = new PrintStream(messageConsoleStreamRed, true);
+
+        // Create a PrintStream for Blue text
+        MessageConsoleStream messageConsoleStreamBlue = console.newMessageStream();
+        messageConsoleStreamBlue.setColor(new Color(null, new RGB(0, 0, 255)));
+        consoleBlue = new PrintStream(messageConsoleStreamBlue, true);
+    }
 
 }

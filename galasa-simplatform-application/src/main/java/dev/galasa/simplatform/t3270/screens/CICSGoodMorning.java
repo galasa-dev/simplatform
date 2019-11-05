@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.simplatform.t3270.screens;
 
 import java.time.LocalTime;
@@ -11,50 +16,48 @@ import dev.galasa.zos3270.spi.Screen;
 
 public class CICSGoodMorning extends AbstractScreen {
 
-	private final Screen screen;
-	
-	private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private final Screen            screen;
 
-	public CICSGoodMorning(NetworkServer network) throws ScreenException {
-		super(network);
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-		try {
-			this.screen = buildScreen(getClass().getSimpleName());
-		} catch(Exception e) {
-			throw new ScreenException("Problem building screen", e);
-		}
-	}
+    public CICSGoodMorning(NetworkServer network) throws ScreenException {
+        super(network);
 
-	@Override
-	public IScreen run() {
+        try {
+            this.screen = buildScreen(getClass().getSimpleName());
+        } catch (Exception e) {
+            throw new ScreenException("Problem building screen", e);
+        }
+    }
 
-		try {
-			while(true) {
-				writeScreen();
+    @Override
+    public IScreen run() {
 
-				AttentionIdentification aid = receiveScreen(screen);
-				
-				if (aid == AttentionIdentification.CLEAR) {
-					return new CICSClearScreen(network);
-				}
+        try {
+            while (true) {
+                writeScreen();
 
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-			System.err.println("Problem writing screen");
-			return null;
-		}
-	}
+                AttentionIdentification aid = receiveScreen(screen);
 
-	private void writeScreen() throws ScreenException {
-		LocalTime time = LocalTime.now();
-		
-		screen.setBuffer(37, 0, time.format(dtf));
-		
-		writeScreen(new CommandEraseWrite(), 
-				new WriteControlCharacter(false, false, false, false, false, false, true, true),
-				screen
-				);
-	}
+                if (aid == AttentionIdentification.CLEAR) {
+                    return new CICSClearScreen(network);
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Problem writing screen");
+            return null;
+        }
+    }
+
+    private void writeScreen() throws ScreenException {
+        LocalTime time = LocalTime.now();
+
+        screen.setBuffer(37, 0, time.format(dtf));
+
+        writeScreen(new CommandEraseWrite(),
+                new WriteControlCharacter(false, false, false, false, false, false, true, true), screen);
+    }
 
 }

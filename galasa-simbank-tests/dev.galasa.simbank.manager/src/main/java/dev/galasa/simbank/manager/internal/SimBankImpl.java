@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.simbank.manager.internal;
 
 import java.net.URI;
@@ -21,49 +26,42 @@ import dev.galasa.simbank.manager.internal.properties.SimBankWebNetPort;
 import dev.galasa.simbank.manager.internal.properties.SimBankZosImage;
 import dev.galasa.zos.IZosImage;
 
-public class SimBankImpl implements ISimBank{
+public class SimBankImpl implements ISimBank {
 
-    private final Log logger = LogFactory.getLog(SimBankImpl.class);
+    private final Log                          logger        = LogFactory.getLog(SimBankImpl.class);
 
-    private final SimBankManagerImpl manager;
-    private final String instanceId;
-    private final String host;
-    private final int webnetPort;
-    private final int telnetPort;
-    private final boolean telnetSecure;
-    private final int databasePort;
-    private final String updateAddress = "updateAccount";
+    private final SimBankManagerImpl           manager;
+    private final String                       instanceId;
+    private final String                       host;
+    private final int                          webnetPort;
+    private final int                          telnetPort;
+    private final boolean                      telnetSecure;
+    private final int                          databasePort;
+    private final String                       updateAddress = "updateAccount";
     private final ICredentialsUsernamePassword credentials;
-    private final boolean useTerminal;
-    private final boolean useJdbc;
-    private URI     jdbcUri;
+    private final boolean                      useTerminal;
+    private final boolean                      useJdbc;
+    private URI                                jdbcUri;
 
-    private SimBankTerminalImpl controlTerminal;
-    private Connection          controlJdbc;
+    private SimBankTerminalImpl                controlTerminal;
+    private Connection                         controlJdbc;
 
-    private SimBankImpl(SimBankManagerImpl manager, 
-            String instanceId,
-            String hostname, 
-            int telnetPort, 
-            boolean telnetSecure,
-            int databasePort, 
-            int webnetPort, 
-            String applicationName,
-            ICredentialsUsernamePassword credentials, 
-            boolean useTerminal, 
-            boolean useJdbc) {
-        this.instanceId   = instanceId;
-        this.manager      = manager;
-        this.host         = hostname;
-        this.webnetPort   = webnetPort;
-        this.telnetPort   = telnetPort;
+    private SimBankImpl(SimBankManagerImpl manager, String instanceId, String hostname, int telnetPort,
+            boolean telnetSecure, int databasePort, int webnetPort, String applicationName,
+            ICredentialsUsernamePassword credentials, boolean useTerminal, boolean useJdbc) {
+        this.instanceId = instanceId;
+        this.manager = manager;
+        this.host = hostname;
+        this.webnetPort = webnetPort;
+        this.telnetPort = telnetPort;
         this.telnetSecure = telnetSecure;
         this.databasePort = databasePort;
-        this.credentials  = credentials;
-        this.useTerminal  = useTerminal;
-        this.useJdbc      = useJdbc;
+        this.credentials = credentials;
+        this.useTerminal = useTerminal;
+        this.useJdbc = useJdbc;
 
-        this.manager.getFramework().getConfidentialTextService().registerText(credentials.getPassword(), credentials.getUsername() + " password");
+        this.manager.getFramework().getConfidentialTextService().registerText(credentials.getPassword(),
+                credentials.getUsername() + " password");
     }
 
     @Override
@@ -78,7 +76,7 @@ public class SimBankImpl implements ISimBank{
 
     @Override
     public String getFullAddress() {
-        return "http://"+host+":"+webnetPort;
+        return "http://" + host + ":" + webnetPort;
     }
 
     @Override
@@ -86,10 +84,7 @@ public class SimBankImpl implements ISimBank{
         return updateAddress;
     }
 
-
-    public static SimBankImpl getDSE(SimBankManagerImpl manager, 
-            String dseInstanceName, 
-            boolean useTerminal, 
+    public static SimBankImpl getDSE(SimBankManagerImpl manager, String dseInstanceName, boolean useTerminal,
             boolean useJdbc) throws SimBankManagerException {
 
         try {
@@ -108,22 +103,16 @@ public class SimBankImpl implements ISimBank{
 
             ICredentials credentials = manager.getFramework().getCredentialsService().getCredentials(credentialsId);
             if (credentials == null) {
-                throw new SimBankManagerException("Missing credentials for id " + credentialsId + " for SimBank instance " + dseInstanceName);
+                throw new SimBankManagerException(
+                        "Missing credentials for id " + credentialsId + " for SimBank instance " + dseInstanceName);
             }
             if (!(credentials instanceof ICredentialsUsernamePassword)) {
-                throw new SimBankManagerException("Invalidcredentials for id " + credentialsId + " for SimBank instance " + dseInstanceName + ", needs to Username and Password");
+                throw new SimBankManagerException("Invalidcredentials for id " + credentialsId
+                        + " for SimBank instance " + dseInstanceName + ", needs to Username and Password");
             }
 
-            SimBankImpl simBank = new SimBankImpl(manager, 
-                    dseInstanceName,
-                    hostname, 
-                    telnetPort,
-                    telnetSecure,
-                    databasePort, 
-                    webnetPort, 
-                    applicationName, 
-                    (ICredentialsUsernamePassword)credentials,
-                    useTerminal,
+            SimBankImpl simBank = new SimBankImpl(manager, dseInstanceName, hostname, telnetPort, telnetSecure,
+                    databasePort, webnetPort, applicationName, (ICredentialsUsernamePassword) credentials, useTerminal,
                     useJdbc);
 
             if (useJdbc) {
@@ -141,7 +130,7 @@ public class SimBankImpl implements ISimBank{
     }
 
     public void start() throws SimBankManagerException {
-        //*** Connect a control terminal and make sure the application is up
+        // *** Connect a control terminal and make sure the application is up
         if (useTerminal) {
             this.controlTerminal = connectTerminal("simbank-ctrl");
             logger.info("Connected to SimBank Terminal");
@@ -154,9 +143,10 @@ public class SimBankImpl implements ISimBank{
             Class<?> load = org.apache.derby.jdbc.ClientDriver.class;
             load.newInstance();
 
-            jdbcUri = new URI("jdbc:derby://" + host + ":" + Integer.toString(databasePort) + "/galasaBankDB;create=false");			
+            jdbcUri = new URI(
+                    "jdbc:derby://" + host + ":" + Integer.toString(databasePort) + "/galasaBankDB;create=false");
             controlJdbc = DriverManager.getConnection(jdbcUri.toString(), new Properties());
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new SimBankManagerException("Unable to connect to SimBank database", e);
         }
 
@@ -179,13 +169,8 @@ public class SimBankImpl implements ISimBank{
 
     private SimBankTerminalImpl connectTerminal(String id) throws SimBankManagerException {
         try {
-            SimBankTerminalImpl terminal = new SimBankTerminalImpl(id, 
-                    host,
-                    instanceId,
-                    credentials,
-                    telnetPort, 
-                    telnetSecure, 
-                    manager.getFramework());
+            SimBankTerminalImpl terminal = new SimBankTerminalImpl(id, host, instanceId, credentials, telnetPort,
+                    telnetSecure, manager.getFramework());
             manager.registerTerminal(terminal);
             terminal.connect();
 
@@ -194,9 +179,9 @@ public class SimBankImpl implements ISimBank{
             terminal.gotoMainMenu();
 
             return terminal;
-        } catch(SimBankManagerException e) {
+        } catch (SimBankManagerException e) {
             throw e;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new SimBankManagerException("Unable to connect terminal", e);
         }
 
@@ -231,13 +216,8 @@ public class SimBankImpl implements ISimBank{
         try {
             String id = "simbank-" + terminalNumber;
 
-            SimBankTerminalImpl terminal = new SimBankTerminalImpl(id, 
-                    host,
-                    instanceId,
-                    credentials,
-                    telnetPort, 
-                    telnetSecure, 
-                    manager.getFramework());
+            SimBankTerminalImpl terminal = new SimBankTerminalImpl(id, host, instanceId, credentials, telnetPort,
+                    telnetSecure, manager.getFramework());
             manager.registerTerminal(terminal);
             terminal.connect();
 
@@ -245,7 +225,7 @@ public class SimBankImpl implements ISimBank{
 
             terminal.gotoMainMenu();
             return terminal;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new SimBankManagerException("Unable to provision a new SimBank terminal", e);
         }
     }

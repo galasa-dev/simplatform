@@ -1,3 +1,8 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
+ */
 package dev.galasa.simplatform.main;
 
 import java.net.Inet4Address;
@@ -17,44 +22,47 @@ import dev.galasa.simplatform.loader.CSVLoader;
 
 public class Simplatform {
 
-	public static void main(String[] args) {
-		System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %2$s %5$s%6$s%n");
+    public static void main(String[] args) {
+        System.setProperty("java.util.logging.SimpleFormatter.format",
+                "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %2$s %5$s%6$s%n");
 
-		Logger log = Logger.getLogger("Simplatform");
-		log.addHandler(new ConsoleHandler() {
-			{setOutputStream(System.out);}
-		});
+        Logger log = Logger.getLogger("Simplatform");
+        log.addHandler(new ConsoleHandler() {
+            {
+                setOutputStream(System.out);
+            }
+        });
 
-		log.info("Starting Simplatform ...");
+        log.info("Starting Simplatform ...");
 
-		CSVLoader.load(null,null);
+        CSVLoader.load(null, null);
 
-		log.info("Loading services...");
+        log.info("Loading services...");
 
-		List<Listener> listeners = new ArrayList<>();
+        List<Listener> listeners = new ArrayList<>();
 
-		listeners.add(new Listener(2080, WebServiceListener.class.getName()));
-		listeners.add(new Listener(2023, TelnetServiceListener.class.getName()));
+        listeners.add(new Listener(2080, WebServiceListener.class.getName()));
+        listeners.add(new Listener(2023, TelnetServiceListener.class.getName()));
 
-		log.info("... services loaded");
+        log.info("... services loaded");
 
-		for(Listener l : listeners) {	
-			new Thread(l).start();
-		}
+        for (Listener l : listeners) {
+            new Thread(l).start();
+        }
 
-		log.info("Starting Derby Network server....");
+        log.info("Starting Derby Network server....");
 
-		try {
-			InetAddress addr = Inet4Address.getByName("0.0.0.0");
-			NetworkServerControl server = new NetworkServerControl(addr, 2027);
-			server.start (null);
-		} catch(Exception e) {
-			log.log(Level.SEVERE, "Failed to start the Derby server",e);
-		}
-		
-		log.info("... Derby Network server started on port 2027");
-		
-		log.info("... Simplatform started");
-	}
+        try {
+            InetAddress addr = Inet4Address.getByName("0.0.0.0");
+            NetworkServerControl server = new NetworkServerControl(addr, 2027);
+            server.start(null);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed to start the Derby server", e);
+        }
+
+        log.info("... Derby Network server started on port 2027");
+
+        log.info("... Simplatform started");
+    }
 
 }

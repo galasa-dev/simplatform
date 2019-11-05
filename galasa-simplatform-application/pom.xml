@@ -8,7 +8,7 @@
 	<version>0.3.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>SimPlatform</name>
+	<name>Galasa SimPlatform</name>
 
 	<distributionManagement>
 		<repository>
