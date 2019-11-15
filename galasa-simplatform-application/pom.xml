@@ -59,11 +59,11 @@
 
 	<distributionManagement>
 		<repository>
-			<id>galasa.repo</id>
+			<id>galasa.release.repo</id>
 			<url>${galasa.release.repo}</url>
 		</repository>
 		<snapshotRepository>
-			<id>galasa.repo</id>
+			<id>galasa.snapshot.repo</id>
 			<url>${galasa.snapshot.repo}</url>
 		</snapshotRepository>
 	</distributionManagement>
