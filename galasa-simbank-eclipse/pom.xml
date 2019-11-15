@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-eclipse-parent</artifactId>
-		<version>0.3.0-SNAPSHOT</version>
+		<version>0.3.0</version>
 	</parent>
 
 	<artifactId>galasa-simbank-eclipse</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.0</version>
 	<packaging>pom</packaging>
 	<name>Galasa Simbank Eclipse Parent</name>
 
@@ -18,14 +18,14 @@
 		<module>dev.galasa.simbank.ui</module>
 		<module>dev.galasa.simbank.feature</module>
 	</modules>
-	
+
 	<dependencies>
-	<dependency>
-		<groupId>dev.galasa</groupId>
-		<artifactId>dev.galasa.eclipse</artifactId>
-		<version>0.3.0-SNAPSHOT</version>
-		<type>eclipse-plugin</type>
-	</dependency>
+		<dependency>
+			<groupId>dev.galasa</groupId>
+			<artifactId>dev.galasa.eclipse</artifactId>
+			<version>[0.3.0,1.0.0)</version>
+			<type>eclipse-plugin</type>
+		</dependency>
 	</dependencies>
 
 </project>
