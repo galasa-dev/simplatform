@@ -5,19 +5,66 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simplatform</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.0</version>
 	<packaging>jar</packaging>
 
 	<name>Galasa SimPlatform</name>
+	<description>The SimPlatform and SimBank applications to allow for Galasa tutorials and samples</description>
+	<url>https://galasa.dev</url>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 2.0</name>
+			<url>https://www.eclipse.org/legal/epl-2.0/t</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Michael Baylis</name>
+			<email>Michael.Baylis@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>William Yates</name>
+			<email>wyates@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>David Roberts</name>
+			<email>david.roberts@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>James Davies</name>
+			<email>james.davies@ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<url>https://github.com/galasa-dev/framework</url>
+		<connection>scm:git:git:://github.com/galasa-dev/framework</connection>
+		<developerConnection>scm:git:git:://github.com/galasa-dev/framework</developerConnection>
+	</scm>
+
+	<issueManagement>
+		<url>https://github.com/galasa-dev/projectmanagement/issues</url>
+		<system>GitHub</system>
+	</issueManagement>
 
 	<distributionManagement>
 		<repository>
 			<id>galasa.repo</id>
-			<url>${galasa.distribution.repo}</url>
+			<url>${galasa.release.repo}</url>
 		</repository>
 		<snapshotRepository>
 			<id>galasa.repo</id>
-			<url>${galasa.distribution.repo}</url>
+			<url>${galasa.snapshot.repo}</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -34,7 +81,7 @@
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.zos3270.manager</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>0.3.0</version>
 		</dependency>
 
 		<dependency>
@@ -97,6 +144,27 @@
 						</manifest>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							</gpgArguments>
+							<passphraseServerId>gpg.passphrase</passphraseServerId>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

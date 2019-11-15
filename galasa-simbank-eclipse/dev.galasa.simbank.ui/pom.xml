@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simbank-eclipse</artifactId>
-		<version>0.3.0-SNAPSHOT</version>
+		<version>0.3.0</version>
 	</parent>
 
 	<artifactId>dev.galasa.simbank.ui</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.0</version>
 	<packaging>eclipse-plugin</packaging>
 	<name>Galasa SimBank UI</name>
 
@@ -31,12 +31,12 @@
 								<item>
 									<groupId>dev.galasa</groupId>
 									<artifactId>galasa-simplatform</artifactId>
-									<version>0.3.0-SNAPSHOT</version>
+									<version>0.3.0</version>
 								</item>
 								<item>
 									<groupId>dev.galasa</groupId>
 									<artifactId>galasa-simbanktests-parent</artifactId>
-									<version>0.3.0-SNAPSHOT</version>
+									<version>0.3.0</version>
 									<classifier>examples</classifier>
 									<type>zip</type>
 								</item>

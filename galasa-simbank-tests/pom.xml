@@ -5,10 +5,57 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simbanktests-parent</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.0</version>
 	<packaging>pom</packaging>
 
 	<name>Galasa Sample SimBank Tests</name>
+	<description>Sample test to run with Galasa against the SimBank application</description>
+	<url>https://galasa.dev</url>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 2.0</name>
+			<url>https://www.eclipse.org/legal/epl-2.0/t</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Michael Baylis</name>
+			<email>Michael.Baylis@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>William Yates</name>
+			<email>wyates@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>David Roberts</name>
+			<email>david.roberts@uk.ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>James Davies</name>
+			<email>james.davies@ibm.com</email>
+			<organization>IBM</organization>
+			<organizationUrl>https://www.ibm.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<url>https://github.com/galasa-dev/framework</url>
+		<connection>scm:git:git:://github.com/galasa-dev/framework</connection>
+		<developerConnection>scm:git:git:://github.com/galasa-dev/framework</developerConnection>
+	</scm>
+
+	<issueManagement>
+		<url>https://github.com/galasa-dev/projectmanagement/issues</url>
+		<system>GitHub</system>
+	</issueManagement>
 
 	<modules>
 		<module>dev.galasa.simbank.tests</module>
@@ -19,11 +66,11 @@
 	<distributionManagement>
 		<repository>
 			<id>galasa.repo</id>
-			<url>${galasa.distribution.repo}</url>
+			<url>${galasa.release.repo}</url>
 		</repository>
 		<snapshotRepository>
 			<id>galasa.repo</id>
-			<url>${galasa.distribution.repo}</url>
+			<url>${galasa.snapshot.repo}</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -35,9 +82,6 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 
-		<dev.galasa.ivt.core>0.3.0-SNAPSHOT</dev.galasa.ivt.core>
-		<dev.galasa.ivt.obr>0.3.0-SNAPSHOT</dev.galasa.ivt.obr>
-
 		<unpackBundle>true</unpackBundle>
 	</properties>
 
@@ -46,7 +90,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>galasa-bom</artifactId>
-				<version>0.3.0-SNAPSHOT</version>
+				<version>0.3.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -213,6 +257,27 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							</gpgArguments>
+							<passphraseServerId>gpg.passphrase</passphraseServerId>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
