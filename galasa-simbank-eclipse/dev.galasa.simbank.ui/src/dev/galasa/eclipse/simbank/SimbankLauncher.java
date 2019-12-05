@@ -7,6 +7,8 @@ package dev.galasa.eclipse.simbank;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -107,7 +109,7 @@ public class SimbankLauncher extends JavaLaunchDelegate {
                         "The galasa-simplatform.jar is missing from the plugin"));
             }
             bootUrl = FileLocator.toFileURL(bootUrl);
-            return Paths.get(bootUrl.toURI()).toFile().getAbsoluteFile();
+            return Paths.get(toUri(bootUrl)).toFile().getAbsoluteFile();
         } catch (Exception e) {
             throw new CoreException(new Status(Status.ERROR, SimBankActivator.PLUGIN_ID,
                     "Problem locating the galasa-simplatform.jar in the plugin", e));
@@ -153,5 +155,14 @@ public class SimbankLauncher extends JavaLaunchDelegate {
         messageConsoleStreamBlue.setColor(new Color(null, new RGB(0, 0, 255)));
         consoleBlue = new PrintStream(messageConsoleStreamBlue, true);
     }
+    
+    public static URI toUri(URL url) throws URISyntaxException {
+        String sUrl = url.toString();
+        
+        sUrl = sUrl.replaceAll(" ", "%20");
+        
+        return new URI(sUrl);
+    }
+
 
 }

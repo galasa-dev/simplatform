@@ -6,20 +6,21 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simbanktests-parent</artifactId>
-		<version>0.3.0</version>
+		<version>0.3.1</version>
 	</parent>
 	
 	<name>Galasa SimBank Example Tests</name>
 
 	<artifactId>dev.galasa.simbank.tests</artifactId>
-	<version>0.3.0</version>
+	<!-- If updating version, reflect in dev.galasa.simbank.feature and dev.galasa.simbank.obr -->
+	<version>0.3.1</version>
 	<packaging>bundle</packaging>
 
 	<dependencies>
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.simbank.manager</artifactId>
-			<version>0.3.0</version>
+			<version>0.3.1</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

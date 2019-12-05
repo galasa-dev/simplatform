@@ -7,6 +7,8 @@ package dev.galasa.eclipse.ui.wizards.simbank;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -72,7 +74,7 @@ public class ExampleSimbankOperation implements IRunnableWithProgress {
                         "The galasa-simbanktests-parent-examples.zip file is missing from the plugin"));
             }
             zipUrl = FileLocator.toFileURL(zipUrl);
-            java.nio.file.Path pathZip = Paths.get(zipUrl.toURI());
+            java.nio.file.Path pathZip = Paths.get(toUri(zipUrl));
 
             try (ZipFile zip = new ZipFile(pathZip.toFile())) {
                 Enumeration<? extends ZipEntry> entries = zip.entries();
@@ -153,5 +155,14 @@ public class ExampleSimbankOperation implements IRunnableWithProgress {
         }
 
     }
+    
+    public static URI toUri(URL url) throws URISyntaxException {
+        String sUrl = url.toString();
+        
+        sUrl = sUrl.replaceAll(" ", "%20");
+        
+        return new URI(sUrl);
+    }
+
 
 }
