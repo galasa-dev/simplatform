@@ -2,7 +2,7 @@
 <feature
       id="dev.galasa.simbank.feature"
       label="Galasa SimBank"
-      version="0.3.1"
+      version="0.4.0.qualifier"
       provider-name="IBM">
 
    <copyright>
@@ -295,6 +295,6 @@ version(s), and exceptions or additional permissions here}.&quot;
          id="dev.galasa.simbank.ui"
          download-size="0"
          install-size="0"
-         version="0.3.1.qualifier"/>
+         version="0.4.0.qualifier"/>
 
 </feature>
