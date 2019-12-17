@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -33,7 +34,7 @@ import dev.galasa.simplatform.exceptions.InsufficientBalanceException;
 public class WebServiceListener implements IListener {
     private Socket       socket;
     private List<String> headers = new ArrayList<>();
-    private String       payload = new String();
+    private String       payload = "";
 
     private String       accountNumber;
     private double       value;
@@ -45,13 +46,13 @@ public class WebServiceListener implements IListener {
             processInput();
             String path = findPath();
             if (!"/updateAccount".equals(path.trim())) {
-                log.warning("Request was not sent to path /updateAccount, it was: " + path + " returning 404");
+                log.log(Level.WARNING, () -> String.format("Request was not sent to path /updateAccount, it was: %1$s returning 404", path));
                 return404();
                 return;
             }
 
             if (!"POST".equals(getMethod())) {
-                log.warning("Request was not using POST HTTP verb, it was: " + getMethod() + " returning 405");
+            	log.log(Level.WARNING, () -> String.format("Request was not using POST HTTP verb, it was: %1$s returning 405", getMethod()));
                 return405();
                 return;
             }
@@ -59,7 +60,7 @@ public class WebServiceListener implements IListener {
             try {
                 parseRequest();
             } catch (Exception e) {
-                log.warning("Exception found while reading request" + " returning 500");
+                log.warning("Exception found while reading request, returning 500");
                 return500();
                 return;
             }
@@ -67,7 +68,7 @@ public class WebServiceListener implements IListener {
             try {
                 updateAccount();
             } catch (InsufficientBalanceException e) {
-                log.warning("Account did not have adequate balance" + " returning 400");
+                log.warning("Account did not have adequate balance, returning 400");
                 return400();
                 return;
             } catch (AccountNotFoundException e) {
@@ -188,10 +189,10 @@ public class WebServiceListener implements IListener {
         return "";
     }
 
-    private void processInput() {
+    private void processInput() throws InterruptedException {
         BufferedReader br = null;
         try {
-            log.info("Received HTTP request from address: " + socket.getInetAddress().toString());
+        	log.log(Level.WARNING, () -> String.format("Received HTTP request from address: %1$s", socket.getInetAddress().toString()));
             InputStream input = socket.getInputStream();
             br = new BufferedReader(new InputStreamReader(input));
         } catch (IOException e) {
@@ -202,21 +203,18 @@ public class WebServiceListener implements IListener {
         boolean readAllHeaders = false;
         try {
             while (!br.ready()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-
-                }
-
+            	Thread.sleep(1000);
             }
             while (br.ready()) {
                 String data = br.readLine();
-                if (readAllHeaders)
+                if (readAllHeaders) {
+                    log.info(data);
                     payload += data;
-                else {
+                } else {
                     if (data.equals("")) {
                         readAllHeaders = true;
                     } else {
+						log.info(data);
                         headers.add(data);
                     }
 
@@ -224,7 +222,6 @@ public class WebServiceListener implements IListener {
             }
         } catch (IOException e) {
             log.warning("Unable to access input stream from HTTP");
-            return;
         }
 
     }
