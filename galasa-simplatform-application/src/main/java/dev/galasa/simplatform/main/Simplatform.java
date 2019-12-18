@@ -15,10 +15,9 @@ import java.util.logging.Logger;
 
 import org.apache.derby.drda.NetworkServerControl;
 
-import dev.galasa.simplatform.listener.AccountTransferListener;
 import dev.galasa.simplatform.listener.Listener;
+import dev.galasa.simplatform.listener.ListenerManager;
 import dev.galasa.simplatform.listener.TelnetServiceListener;
-import dev.galasa.simplatform.listener.WebServiceListener;
 import dev.galasa.simplatform.loader.CSVLoader;
 
 public class Simplatform {
@@ -42,8 +41,7 @@ public class Simplatform {
 
         List<Listener> listeners = new ArrayList<>();
 
-        listeners.add(new Listener(2080, WebServiceListener.class.getName()));
-        listeners.add(new Listener(2180, AccountTransferListener.class.getName()));
+        listeners.add(new Listener(2080, ListenerManager.class.getName()));
         listeners.add(new Listener(2023, TelnetServiceListener.class.getName()));
 
         log.info("... services loaded");
