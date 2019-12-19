@@ -28,6 +28,8 @@ import dev.galasa.simplatform.exceptions.InsufficientBalanceException;
 
 public class AccountTransferListener extends ListenerManager {
 	
+	/* The manager variable is the instance of ListenerManager which is currently being talked to */
+	/* This allows us to send our response to the listener which then sends it back to our requester */
 	private ListenerManager manager;
 	
 	private String payload = new String();

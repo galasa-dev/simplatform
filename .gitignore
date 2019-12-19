@@ -20,3 +20,4 @@ bin/
 lib/
 dependency-reduced-pom.xml
 velocity.log
+build.sh

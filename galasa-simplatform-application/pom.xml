@@ -75,10 +75,10 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-		
+
 		<sonar.sources>src/main</sonar.sources>
-        <sonar.tests>src/test</sonar.tests>
-        
+		<sonar.tests>src/test</sonar.tests>
+
 		<!-- Below property indicates the pattern of the test suite -->
 		<runSuite>**/*Suite.class</runSuite>
 		<!-- Sonar-JaCoCo properties -->
@@ -86,7 +86,7 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.language>java</sonar.language>
-        
+
 
 		<gpg.skip>true</gpg.skip>
 		<gpg.executable>/usr/bin/gpg2</gpg.executable>
@@ -107,11 +107,11 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.zos3270.manager</artifactId>
-			<version>0.4.0-SNAPSHOT</version>
+			<version>0.3.0</version>
 		</dependency>
 
 		<dependency>
@@ -134,7 +134,7 @@
 	</dependencies>
 
 	<build>
-	
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -144,22 +144,22 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		
+
 		<plugins>
 
-		<!-- Below plugin ensures the execution of test cases during maven build -->
-		<plugin>
+			<!-- Below plugin ensures the execution of test cases during maven build -->
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M4</version>
 				<dependencies>
-				  <dependency>
-					<groupId>org.apache.maven.surefire</groupId>
-					<artifactId>surefire-junit47</artifactId>
-					<version>3.0.0-M4</version>
-				  </dependency>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>3.0.0-M4</version>
+					</dependency>
 				</dependencies>
-			  </plugin>
+			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -179,7 +179,7 @@
 					</execution>
 				</executions>
 			</plugin>
-		
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>

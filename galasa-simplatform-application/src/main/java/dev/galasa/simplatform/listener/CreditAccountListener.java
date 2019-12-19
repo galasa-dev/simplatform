@@ -28,6 +28,8 @@ import dev.galasa.simplatform.exceptions.InsufficientBalanceException;
 
 public class CreditAccountListener extends ListenerManager {
 	
+	/* The manager variable is the instance of ListenerManager which is currently being talked to */
+	/* This allows us to send our response to the listener which then sends it back to our requester */
 	private ListenerManager manager;
 	
 	private String payload = new String();
@@ -62,11 +64,13 @@ public class CreditAccountListener extends ListenerManager {
                 updateAccount();
                 
             } catch (InsufficientBalanceException e) {
+            	/* Error with the balance of the account we are trying to change */
                 log.warning("Account did not have adequate balance" + " returning 400");
                 manager.return400();
                 return;
                 
             } catch (AccountNotFoundException e) {
+            	/* The account we are trying to update, does not exist */
                 log.warning("Account did not exist" + " returning 400");
                 manager.return400();
                 return;

@@ -50,12 +50,12 @@ public class ListenerManager implements IListener{
             switch(path) {
             
             case "/updateAccount":   	
-            	/* Initialize the CreditAccountListener and send payload */
+            	/* Initialise the CreditAccountListener and send payload */
             	new CreditAccountListener().sendRequest(this, payload);
             	break;
             	
             case "/processTransfer":
-            	/* Initialize the AccountTransferListener and send payload */
+            	/* Initialise the AccountTransferListener and send payload */
             	new AccountTransferListener().sendRequest(this, payload);
             	break;
             	
