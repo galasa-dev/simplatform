@@ -8,6 +8,7 @@ package dev.galasa.simplatform.listener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Listener implements Runnable {
@@ -18,15 +19,15 @@ public class Listener implements Runnable {
 
     ServerSocket   server;
 
-    public Listener(int port, String className) {
-        log.info("Loading service: " + className + " listening on port: " + port);
+    public Listener(int port, String className) throws IOException {
+        log.info(() -> "Loading service: " + className);
         this.port = port;
         this.className = className;
         try {
             server = new ServerSocket(port);
+            log.info(() -> "Service: " + className + " listening on port: " + this.port);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	throw new IOException(String.format("Service: %1$s unable to listen on port: %2$d", className, this.port), e);
         }
     }
 
@@ -36,10 +37,12 @@ public class Listener implements Runnable {
             try {
                 s = server.accept();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            	log.log(Level.SEVERE, "Problem with server", e);
             }
             IListener listener = getObject(className);
+            if (listener == null) {
+            	break;
+            }
             listener.setSocket(s);
             new Thread(listener).start();
         }
@@ -51,7 +54,7 @@ public class Listener implements Runnable {
         try {
             obj = Class.forName(name).newInstance();
         } catch (Exception e) {
-            System.out.println("Could not load class: " + name);
+        	log.log(Level.SEVERE, String.format("Could not load class: %1$s", name));
             return null;
         }
 

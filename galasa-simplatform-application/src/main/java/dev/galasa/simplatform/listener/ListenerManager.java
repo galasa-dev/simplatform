@@ -15,6 +15,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /*
@@ -61,7 +62,7 @@ public class ListenerManager implements IListener{
             	
             default:
             	/* Request has not been recognised */
-            	log.warning("Illegal type of request, " + path + " was read, expected, /updateAccount, /processTransfer");
+                log.log(Level.WARNING, () -> String.format("Request was not sent to path /updateAccount or /processTransfer, it was: %1$s returning 404", path));
             	return;
             }
             
@@ -101,7 +102,7 @@ public class ListenerManager implements IListener{
 	private void processInput() {
 		BufferedReader br = null;
 		try {
-			log.info("Received HTTP request from address: " + socket.getInetAddress().toString());
+        	log.log(Level.WARNING, () -> String.format("Received HTTP request from address: %1$s", socket.getInetAddress().toString()));
 			InputStream input = socket.getInputStream();
 			br = new BufferedReader(new InputStreamReader(input));
 		} catch (IOException e) {
