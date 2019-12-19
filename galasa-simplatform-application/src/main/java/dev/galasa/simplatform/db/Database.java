@@ -13,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Database {
@@ -26,12 +27,14 @@ public class Database {
     private Connection          conn          = null;
 
     private Logger              log;
+	private String exceptionMessage;
 
     public Database() {
         log = Logger.getLogger("Simplatform");
         setDerbyHome();
         try {
             conn = DriverManager.getConnection(connectionURL);
+            conn.setAutoCommit(true);
             createTable();
         } catch (SQLException e) {
             log.severe("Unable to connect to embedded DB - exit");
@@ -82,13 +85,17 @@ public class Database {
         }
     }
 
-    public void execute(String sql) {
+    public boolean execute(String sql) {
+    	boolean sucess = true;
+    	exceptionMessage = null;
         try {
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
         } catch (SQLException se) {
-
+        	logException(sql, se);
+        	sucess = false;
         }
+        return sucess;
     }
 
     public ResultSet getExecutionResults(String sql) {
@@ -99,5 +106,14 @@ public class Database {
             return null;
         }
     }
+
+	public String getExceptionMessage() {
+		return exceptionMessage;
+	}
+
+	private void logException(String sql, SQLException e) {
+    	exceptionMessage = "SQLCODE=" + e.getErrorCode() + "; SQLSTATE=" + e.getSQLState() + "; " + e.getMessage();
+    	log.log(Level.SEVERE, exceptionMessage, e);
+	}
 
 }
