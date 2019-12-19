@@ -19,16 +19,20 @@ public class BatchJobExecutionTask extends TimerTask {
 	public void run() {		
 		batchJob.getTimer().cancel();
 		
-        // Job is now active	    	
-		batchJob.setStatus("ACTIVE");
-		
-		// Check JCL meets our requirements
-		batchJob.parseJclPhase1();
-		if (batchJob.jclError()) {
-    		return;
+		try {
+	        // Job is now active	    	
+			batchJob.setStatus("ACTIVE");
+			
+			// Check JCL meets our requirements
+			batchJob.parseJclPhase1();
+			if (batchJob.jclError()) {
+	    		return;
+			}
+			
+			// Process the SIMBANK job control cards to update accounts
+			batchJob.processSimbankAccounts();
+		} catch (Exception e) {
+			batchJob.writeStackTraceToOutput(e);
 		}
-		
-		// Process the SIMBANK job control cards to update accounts
-		batchJob.processSimbankAccounts();
 	}
 }

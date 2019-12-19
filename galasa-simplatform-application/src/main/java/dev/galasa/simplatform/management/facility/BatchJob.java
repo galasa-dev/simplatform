@@ -9,15 +9,22 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Timer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import dev.galasa.simplatform.application.Bank;
+import dev.galasa.simplatform.exceptions.DuplicateAccountException;
 
 public class BatchJob {
 	
@@ -113,10 +120,10 @@ public class BatchJob {
 		
 		// JESMSGLG
 		jobOutputFile = new BatchJobOutputFile("JES2", getJobid(), Jobfile.JESMSGLG.toString(), Jobfile.JESMSGLG.fileNumber(), getJobname(), null);		
-		jobOutputFile.addRecord("1               G A L A S A  J O B  L O G  --  S Y S T E M  G L S A  --  N O D E  G A L A S A");
+		jobOutputFile.addRecord("1            S Y M P L A T F O R M  J O B  L O G  --  S Y S T E M  S Y M P  --  N O D E  G A L A S A");
 		jobOutputFile.addRecord("0");
 		jobOutputFile.addRecord(String.format(" %1$s %2$s ---- %3$s ----", getJesTime(), getJobid(), getJesDate()));
-		jobOutputFile.addRecord(String.format(" %1$s %2$s  GALASA01I USERID %3$s IS ASSIGNED TO THIS JOB.", getJesTime(), getJobid(), StringUtils.rightPad(getOwner(), 8)));
+		jobOutputFile.addRecord(String.format(" %1$s %2$s  SYMP0001I USERID %3$s IS ASSIGNED TO THIS JOB.", getJesTime(), getJobid(), StringUtils.rightPad(getOwner(), 8)));
 		jobOutputFiles.put(jobOutputFile.getId(), jobOutputFile);
 	
 		// JESJCL
@@ -136,8 +143,8 @@ public class BatchJob {
 		
 		// JESMSGLG
 		jobOutputFile = jobOutputFiles.get(Jobfile.JESMSGLG.fileNumber());
-		jobOutputFile.addRecord(String.format(" %1$s %2$s  GALASA02I %3$-8s STARTED - INIT 21   - CLASS A        - SYS GLSA", getJesTime(), getJobid(), getJobname()));
-		jobOutputFile.addRecord(String.format(" %1$s %2$s  GALASA03I %3$-8s - STARTED", getJesTime(), getJobid(), getJobname()));
+		jobOutputFile.addRecord(String.format(" %1$s %2$s  SYMP0002I %3$-8s STARTED - INIT 21   - CLASS A        - SYS GLSA", getJesTime(), getJobid(), getJobname()));
+		jobOutputFile.addRecord(String.format(" %1$s %2$s  SYMP0003I %3$-8s - STARTED", getJesTime(), getJobid(), getJobname()));
 		
 		// JESYSMSG
 		jobOutputFile = jobOutputFiles.get(Jobfile.JESYSMSG.fileNumber());
@@ -145,20 +152,20 @@ public class BatchJob {
 			jobOutputFile = new BatchJobOutputFile("JES2",getJobid(), Jobfile.JESYSMSG.toString(), Jobfile.JESYSMSG.fileNumber(), getJobname(), null);
 			jobOutputFiles.put(jobOutputFile.getId(), jobOutputFile);
 		}
-		jobOutputFile.addRecord(String.format(" GALASA04I ALLOC. FOR %1$s %2$s", getJobname(), getStepname()));
-		jobOutputFile.addRecord(" GALASA05I JES2 ALLOCATED TO SYSOUT");
-		jobOutputFile.addRecord(" GALASA05I JES2 ALLOCATED TO DATAIN");
+		jobOutputFile.addRecord(String.format(" SYMP0004I ALLOC. FOR %1$s %2$s", getJobname(), getStepname()));
+		jobOutputFile.addRecord(" SYMP0005I JES2 ALLOCATED TO SYSOUT");
+		jobOutputFile.addRecord(" SYMP0005I JES2 ALLOCATED TO DATAIN");
 	}
 
 	protected void jobOutputEndJob() {
 		for (BatchJobOutputFile jobOutputFile : jobOutputFiles.values()) {
 			switch (jobOutputFile.getDdname()) {
 				case "JESMSGLG":
-					jobOutputFile.addRecord(String.format(" %1$s %2$s  GALASA06I %3$-8s - ENDED", getJesTime(), getJobid(), getJobname()));
-					jobOutputFile.addRecord(String.format(" %1$s %2$s  GALASA07I %3$-8s ENDED - RC=%4$s", getJesTime(), getJobid(), getJobname(), getRetcode()));
+					jobOutputFile.addRecord(String.format(" %1$s %2$s  SYMP0006I %3$-8s - ENDED", getJesTime(), getJobid(), getJobname()));
+					jobOutputFile.addRecord(String.format(" %1$s %2$s  SYMP0007I %3$-8s ENDED - RC=%4$s", getJesTime(), getJobid(), getJobname(), getRetcode()));
 					break;
 				case "JESYSMSG":
-					jobOutputFile.addRecord(String.format(" GALASA08I %1$-8s %2$-8s - STEP WAS EXECUTED - COND CODE %3$s", getJobname(), getStepname(), getRetcode()));
+					jobOutputFile.addRecord(String.format(" SYMP0008I %1$-8s %2$-8s - STEP WAS EXECUTED - COND CODE %3$s", getJobname(), getStepname(), getRetcode()));
 					break;
 				default:
 					break;
@@ -283,7 +290,7 @@ public class BatchJob {
 		// Job name length
 		String label = jclRecords[0].substring(2, getJcl().indexOf(' '));
 		if (label.length() > 8) {
-			writeJclError(1, "GALASA09I INVALID LABEL");
+			writeJclError(1, "SYMP0009I INVALID LABEL");
 		}
 		
 		for (int i = 1; i < jclRecords.length; i++) {
@@ -297,9 +304,9 @@ public class BatchJob {
 		
 		jobOutputPhase1();
 		if (program != null && !program.equals("SIMBANK")) {
-			writeJclError(programStmtNo, "GALASA16I EXEC PGM MUST BE \"SIMBANK\"");
+			writeJclError(programStmtNo, "SYMP0016I EXEC PGM MUST BE \"SIMBANK\"");
 		} else if (datain == null) {
-			writeJclError(0, "GALASA17I DATAIN DD STATEMENT MISSING");
+			writeJclError(0, "SYMP0017I DATAIN DD STATEMENT MISSING");
 		}
 	}
 
@@ -307,19 +314,19 @@ public class BatchJob {
 		if (jclRecords[i].contains("PGM=")) {
 			// Multiple steps
 			if (program != null) {
-				writeJclError(i, "GALASA11I JCL CONTAINS MORE THAN ONE STEP");
+				writeJclError(i, "SYMP0011I JCL CONTAINS MORE THAN ONE STEP");
 				return;
 			}
 			program = StringUtils.substringAfter(jclRecords[i], "PGM=");
 			programStmtNo = i;
 			// Program name
 			if (program == null || program.startsWith(" ")) {
-				writeJclError(i, "GALASA12I FORMAT ERROR IN THE PGM FIELD");
+				writeJclError(i, "SYMP0012I FORMAT ERROR IN THE PGM FIELD");
 				return;
 			}
 			program = StringUtils.stripEnd(program, ", ");
 			if (program.length() > 8) {
-				writeJclError(i, "GALASA13I EXCESSIVE PARAMETER LENGTH IN THE PGM FIELD");
+				writeJclError(i, "SYMP0013I EXCESSIVE PARAMETER LENGTH IN THE PGM FIELD");
 				return;
 			}
 		}
@@ -330,7 +337,7 @@ public class BatchJob {
 
 	private void processDatain(String[] jclRecords, int i) {
 		if (datain != null) {
-			writeJclError(i, "GALASA14I MORE THAN ONE DATAIN DD STATEMENT");
+			writeJclError(i, "SYMP0014I MORE THAN ONE DATAIN DD STATEMENT");
 			return;
 		}
 		datain = new ArrayList<>();
@@ -355,7 +362,7 @@ public class BatchJob {
 
 	private void jesmsglgJclError() {
 		BatchJobOutputFile jobOutputFile = jobOutputFiles.get(Jobfile.JESMSGLG.fileNumber());
-		jobOutputFile.addRecord(String.format(" %1$s %2$-8s  GALASA16I INVALID - JOB NOT RUN - JCL ERROR", getJesTime(), getJobid()));
+		jobOutputFile.addRecord(String.format(" %1$s %2$-8s  SYMP0016I INVALID - JOB NOT RUN - JCL ERROR", getJesTime(), getJobid()));
 	}
 
 	private void jesysmsgWrite(String text) {
@@ -426,17 +433,147 @@ public class BatchJob {
 	protected void processSimbankAccounts() {
 		log.info("Processing SIMBANK accounts...");
 		
-		// SYSOUT
-		BatchJobOutputFile jobOutputFile = new BatchJobOutputFile(getStepname(), getJobid(), Jobfile.SYSOUT.toString(), Jobfile.SYSOUT.fileNumber(), getJobname(), null);
-		jobOutputFile.addRecord(" ------------------------------ SIMBANK ------------------------------");
-		jobOutputFile.addRecord(" Updating SIMBANK accounts");
+		Map<String, String> invalidRecords = new LinkedHashMap<>();
+		Map<String, String> openedAccounts = new LinkedHashMap<>();
+		String recordCounter;
+		int i = 0;
 		for (String record : datain) {
-			jobOutputFile.addRecord(" " + record);
+			recordCounter = StringUtils.leftPad(Integer.toString(++i), 6, "0");
+			if (validRecord(record, recordCounter, invalidRecords)) {
+				openBankAccount(recordCounter, record, openedAccounts, invalidRecords);
+			}
 		}
-		jobOutputFiles.put(jobOutputFile.getId(), jobOutputFile);
-		setRetcode("0000");
+		writeSysoutreport(openedAccounts, invalidRecords);
 		setStatus(STATUS_OUTPUT);
 		jobOutputEndJob();
 		refreshJobStatus();
+	}
+
+	private boolean validRecord(String record, String recordCounter, Map<String, String> invalidRecords) {
+		boolean valid = true;
+		if (record.length() > 80) {
+			invalidRecords.put(recordCounter, String.format("%1$-79s/ INVALID INPUT - Input record > 80 characters", record.substring(0, 79)));
+			valid = false;
+		} else if (record.startsWith(" ")) {
+			invalidRecords.put(recordCounter, String.format("%1$-80s INVALID INPUT - Input record must start in first column", record));
+			valid = false;
+		} else {
+			valid = validFields(record, recordCounter, invalidRecords);
+		}
+		if (valid) {
+			String[] fields = record.trim().split(",");
+			if (fields.length != 3) {
+				invalidRecords.put(recordCounter, String.format("%1$-80s INVALID INPUT - Input record format is Account,SortCode,Amount", record));
+				valid = false;
+			} else {
+				valid = validFields(record, recordCounter, invalidRecords);
+			}
+		}
+		return valid;
+	}
+
+	private boolean validFields(String record, String recordCounter, Map<String, String> invalidRecords) {
+		Double maxBalance = 1.0E8;
+		boolean valid = true;
+		String[] fields = record.trim().split(",");
+		if (fields.length != 3) {
+			invalidRecords.put(recordCounter, String.format("%1$-80s INVALID INPUT - Input record format is Account,SortCode,Amount", record));
+			valid = false;
+		} else {
+			String accountNumber = fields[0];
+			String sortCode = fields[1];
+			Double balance = toDouble(fields[2]);
+			StringBuilder errorMessage = new StringBuilder();
+			if (!StringUtils.isNumeric(accountNumber)) {
+				errorMessage.append("Account number must be numeric. ");
+			} else if (accountNumber.length() != 9) {
+				errorMessage.append("Account number must be 9 numeric digits. ");
+			} else if (!sortCode.matches("[0-9][0-9]-[0-9][0-9]-[0-9][0-9]")) {
+				errorMessage.append("SortCode must of the format 99-99-99. ");
+			} else if (balance == null) {
+				errorMessage.append("Amount must be a Double.");
+			}
+			
+			if (errorMessage.length() != 0) {
+				invalidRecords.put(recordCounter, String.format("%1$-80s INVALID INPUT - %2$s", record, errorMessage));
+				valid = false;
+			} else if (balance >= maxBalance) {
+				invalidRecords.put(recordCounter, String.format("%1$-80s INVALID INPUT - Amount exceeds %2$,.2f", record, maxBalance-1));
+				valid = false;
+			}
+		}
+		return valid;
+	}
+
+	private void openBankAccount(String recordCounter, String record, Map<String, String> openedAccounts, Map<String, String> invalidRecords) {
+		String[] fields = record.trim().split(",");
+		String accountNumber = fields[0];
+		String sortCode = fields[1];
+		Double balance = Double.parseDouble(fields[2]);
+		Bank bank = new Bank();
+		try {
+			boolean successful = bank.openAccount(accountNumber, sortCode, balance);
+			if (!successful) {
+				invalidRecords.put(recordCounter, String.format("%1$-80s DATABASE ERROR - %2$s", record, bank.getDatabaseException()));
+			} else if (!bank.accountExists(accountNumber)) {
+				invalidRecords.put(recordCounter, String.format("%1$-80s UNKNOWN ERROR - Account not opened", record));
+			}
+		} catch (DuplicateAccountException e) {
+			invalidRecords.put(recordCounter, String.format("%1$-80s INVALID INPUT - Account exists", record));
+			return;
+		}
+		openedAccounts.put(recordCounter, String.format("%1$-14s   %2$-9s   %3$,15.2f - Account opened", accountNumber, sortCode, balance));
+	}
+
+	private void writeSysoutreport(Map<String, String> openedAccounts, Map<String, String> invalidRecords) {
+		BatchJobOutputFile jobOutputFile = new BatchJobOutputFile(getStepname(), getJobid(), Jobfile.SYSOUT.toString(), Jobfile.SYSOUT.fileNumber(), getJobname(), null);
+		jobOutputFile.addRecord("1------------------------------ SIMBANK ------------------------------");
+		jobOutputFile.addRecord("0Processing SIMBANK accounts");
+		jobOutputFile.addRecord(" Record Number   Account Number   Sort-code   Opening balance");
+		jobOutputFile.addRecord(" =============   ==============   =========   ===============");
+		
+		for (Entry<String, String> entry : openedAccounts.entrySet()) {
+			jobOutputFile.addRecord(String.format(" %1$-13s   %2$s", entry.getKey(), entry.getValue()));
+		}
+
+		if (openedAccounts.size() == 0) {
+			jobOutputFile.addRecord("0ERROR: No valid input records supplied");
+		}
+		jobOutputFile.addRecord(String.format("0  Records read     %6d", openedAccounts.size() + invalidRecords.size()));
+		jobOutputFile.addRecord(String.format("   Records rejected %6d", invalidRecords.size()));
+		jobOutputFile.addRecord(String.format("   Accounts opened  %6d", openedAccounts.size()));
+		jobOutputFiles.put(jobOutputFile.getId(), jobOutputFile);
+		if (invalidRecords.size() == 0) {
+			setRetcode("0000");
+		} else {
+			jobOutputFile.addRecord("1------------------------------ SIMBANK ------------------------------");
+			jobOutputFile.addRecord("0                            Error Report");
+			jobOutputFile.addRecord(" Record");
+			jobOutputFile.addRecord(String.format(" Number %1$-80s Message", "Record"));
+			jobOutputFile.addRecord(String.format(" %1s %2s %3s", StringUtils.repeat('=', 6), StringUtils.repeat('=', 80), StringUtils.repeat('=', 150)));
+			for (Entry<String, String> entry : invalidRecords.entrySet()) {
+				jobOutputFile.addRecord(String.format(" %1s %2s", entry.getKey(), entry.getValue()));				
+			}
+			if (openedAccounts.size() == 0) {
+				setRetcode("0080");
+			} else {
+				setRetcode("0004");
+			}
+		}
+	}
+
+	public void writeStackTraceToOutput(Exception e) {
+		log.log(Level.SEVERE, "Exception in Symbank batch processing", e);
+		setStatus(STATUS_OUTPUT);
+		BatchJobOutputFile jobOutputFile = jobOutputFiles.get(Jobfile.JESMSGLG.fileNumber());
+		jobOutputFile.addRecord(ExceptionUtils.getStackTrace(e));
+	}
+	
+	private Double toDouble(String s) {
+		try {
+			return Double.parseDouble(s);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 }

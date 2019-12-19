@@ -81,13 +81,13 @@ public class Bank {
         this.openAccount(account, sortCode, 0);
     }
 
-    public void openAccount(String account, String sortCode, double amount) throws DuplicateAccountException {
+    public boolean openAccount(String account, String sortCode, double amount) throws DuplicateAccountException {
         if (accountExists(account)) {
             log.info("Account: " + account + " already exists at this bank");
             throw new DuplicateAccountException("Account: " + account + " already exists at this bank");
         }
         log.info("Creating account: " + account);
-        database.execute("INSERT INTO ACCOUNTS ( ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES ('" + account + "','"
+        return database.execute("INSERT INTO ACCOUNTS ( ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES ('" + account + "','"
                 + sortCode + "'," + amount + ")");
     }
 
@@ -102,5 +102,9 @@ public class Bank {
                 + account.getBalance().toPlainString() + " WHERE ACCOUNT_NUM = '" + account.getAccountNumber() + "'";
         database.execute(query);
     }
+
+	public String getDatabaseException() {
+		return database.getExceptionMessage();
+	}
 
 }
