@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -34,41 +35,43 @@ public class ListenerManager implements IListener{
 	
 	private Socket socket;
 	private List<String> headers = new ArrayList<>();
+	
+	/* Contains a list of all the listeners, along with their path names */
+	/* Value is of type ListenerManager as they are children of our manager */
+	private HashMap<String, ListenerManager> listeners = new HashMap<>();
+	
 	private String payload = new String();
 	
-    private Logger log = Logger.getLogger("Simplatform");
+    public Logger log = Logger.getLogger("Simplatform");
+	
+	/* The manager variable is the instance of ListenerManager which is currently being talked to */
+	/* This allows us to send our response to the listener which then sends it back to our requester */
+	protected ListenerManager manager;
 
 	public void run() {
+		
+		/* Register the listeners within Listener Manager */
+		/* Key - Path     Value - Listener Class */
+		listeners.put("/updateAccount", new CreditAccountListener());
+		listeners.put("/processTransfer", new AccountTransferListener());
+		
 		try {
-			
 			/* Attempt to read the request listened by the server */
 			processInput();
 			
 			/* Interpret which sort of sub-listener we will need to call upon */
             String path = findPath().trim();
             
-            /* Switching through the different path options */
-            switch(path) {
-            
-            case "/updateAccount":   	
-            	/* Initialise the CreditAccountListener and send payload */
-            	new CreditAccountListener().sendRequest(this, payload);
-            	break;
-            	
-            case "/processTransfer":
-            	/* Initialise the AccountTransferListener and send payload */
-            	new AccountTransferListener().sendRequest(this, payload);
-            	break;
-            	
-            default:
-            	/* Request has not been recognised */
-                log.log(Level.WARNING, () -> String.format("Request was not sent to path /updateAccount or /processTransfer, it was: %1$s returning 404", path));
-            	return;
+            for (String s : listeners.keySet()) {
+            	if (s.equals(path)) {
+            		ListenerManager listener = listeners.get(s);
+            		listener.sendRequest(this, payload);
+            	}
             }
             
 		} catch (Exception e) {
-			log.severe("The request was not readable. Something has gone, very... wrong.");
-			e.printStackTrace();
+			log.severe("The request was not readable. Severe Exception caught");
+			this.return500();
 			return;
 		}
 	}
@@ -97,6 +100,9 @@ public class ListenerManager implements IListener{
 		ps.flush();
 		socket.close();
     }
+    
+    /* Dummy method which allows us to access our sub listeners init method */
+    protected void sendRequest(ListenerManager manager, String payload) throws IOException{}
 	
     /* Reads the key information from the XML Request */
 	private void processInput() {
@@ -116,6 +122,8 @@ public class ListenerManager implements IListener{
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
+					log.severe("HTTP Stream has been interrupted");
+					return;
 				}
 
 			}
@@ -142,22 +150,31 @@ public class ListenerManager implements IListener{
 		this.socket = socket;
 	}
 
-	public void return500() throws IOException {
-		OutputStream output = socket.getOutputStream();
-		PrintStream ps = new PrintStream(output);
-		ps.println("HTTP/1.1 500 Internal Server Error");
-		ps.println("\r\n");
-		ps.flush();
-		socket.close();
+	public void return500() {
+		try {
+			OutputStream output = socket.getOutputStream();
+			PrintStream ps = new PrintStream(output);
+			ps.println("HTTP/1.1 500 Internal Server Error");
+			ps.println("\r\n");
+			ps.flush();
+			socket.close();
+		} catch (IOException e) {
+			log.severe("IO Exception - Socket Failure");
+		}
 	}
 
-	public void return400() throws IOException {
-		OutputStream output = socket.getOutputStream();
-		PrintStream ps = new PrintStream(output);
-		ps.println("HTTP/1.1 400 Method Not Allowed");
-		ps.println("\r\n");
-		ps.flush();
-		socket.close();
+	public void return400() {
+		try {
+			OutputStream output = socket.getOutputStream();
+			PrintStream ps = new PrintStream(output);
+			ps.println("HTTP/1.1 400 Method Not Allowed");
+			ps.println("\r\n");
+			ps.flush();
+			socket.close();	
+		} catch (IOException e) {
+			log.severe("IO Exception - Socket Failure");
+		}
+
 	}
 
 }

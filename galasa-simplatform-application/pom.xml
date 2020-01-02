@@ -76,17 +76,8 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 
-		<sonar.sources>src/main</sonar.sources>
-		<sonar.tests>src/test</sonar.tests>
-
 		<!-- Below property indicates the pattern of the test suite -->
 		<runSuite>**/*Suite.class</runSuite>
-		<!-- Sonar-JaCoCo properties -->
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.language>java</sonar.language>
-
 
 		<gpg.skip>true</gpg.skip>
 		<gpg.executable>/usr/bin/gpg2</gpg.executable>

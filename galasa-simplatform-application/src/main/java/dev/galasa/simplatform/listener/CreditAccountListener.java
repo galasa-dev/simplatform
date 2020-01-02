@@ -6,7 +6,7 @@
 package dev.galasa.simplatform.listener;
 
 import java.io.ByteArrayInputStream;
-import java.util.logging.Logger;
+import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,17 +28,13 @@ import dev.galasa.simplatform.exceptions.InsufficientBalanceException;
 
 public class CreditAccountListener extends ListenerManager {
 	
-	/* The manager variable is the instance of ListenerManager which is currently being talked to */
-	/* This allows us to send our response to the listener which then sends it back to our requester */
-	private ListenerManager manager;
-	
-	private String payload = new String();
 	private String accountNumber;
 	private double value;
 	
-	private Logger log = Logger.getLogger("Simplatform");
-
-    public void sendRequest(ListenerManager manager, String payload) {
+	/* Payload which the child classes will load into */
+	private String payload = new String();
+	
+    public void sendRequest(ListenerManager manager, String payload) throws IOException {
     	/* Setting data passed from the ListenerManager */
     	this.payload = payload;
     	this.manager = manager;
@@ -47,7 +43,7 @@ public class CreditAccountListener extends ListenerManager {
     	process();
     }
     
-    public void process() {
+    public void process() throws IOException {
         try {
             try {
             	/* Attempts to parse the key information from XML */
@@ -81,10 +77,14 @@ public class CreditAccountListener extends ListenerManager {
             manager.sendResponse(formResponse());
 
         } catch (Exception e) {
-            log.severe("Stuff went really wrong");
-            e.printStackTrace();
+            log.severe("Severe Exception");
+            manager.return500();
             return;
         }
+    }
+    
+    public static String getPath() {
+    	return "/updateAccount";
     }
     
     /* Creates the XML response payload ready for manager to process */
