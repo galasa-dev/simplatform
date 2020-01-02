@@ -30,6 +30,7 @@ import org.w3c.dom.NodeList;
 import dev.galasa.simplatform.application.Bank;
 import dev.galasa.simplatform.exceptions.AccountNotFoundException;
 import dev.galasa.simplatform.exceptions.InsufficientBalanceException;
+import dev.galasa.simplatform.main.Simplatform;
 
 public class WebServiceListener implements IListener {
     private Socket       socket;
@@ -91,7 +92,7 @@ public class WebServiceListener implements IListener {
             OutputStream output = socket.getOutputStream();
             PrintStream ps = new PrintStream(output);
             ps.println("HTTP/1.1 200 OK");
-            ps.println("Server: Simulplatform 0.3.0");
+            ps.println("Server: Simulplatform " + Simplatform.getVersion());
             ps.println("Content-Length: " + xmlText.length());
             ps.println("Content-Type: application/soap+xml; charset=\"utf-8\"\r\n");
             ps.println(xmlText);
