@@ -27,6 +27,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.google.gson.JsonObject;
 
+import dev.galasa.simplatform.main.Simplatform;
 import dev.galasa.simplatform.management.facility.BatchJob;
 import dev.galasa.simplatform.saf.SecurityAuthorizationFacility;
 
@@ -47,7 +48,8 @@ public class ManagementFacilityListener implements IListener {
 	private static final String HEADER_HTTP_401_UNAUTHORIZED = "HTTP/1.1 401 Unauthorized";
 	private static final String HEADER_HTTP_404_NOT_FOUND = "HTTP/1.1 404 Not Found";
 	private static final String HEADER_HTTP_500_INTERNAL_SERVER_ERROR = "HTTP/1.1 500 Internal Server Error"; 
-	private static final String HEADER_SERVER = "Server: Simplatform 0.3.0";
+	private static final String HEADER_SERVER = "Server: Simplatform  " + Simplatform.getVersion();
+	private static final String HEADER_CONNECTION_CLOSE = "Connection: close";
 	private static final String HEADER_CONTENT_LENGTH = "Content-Length: ";
 	private static final String HEADER_CONTENT_TYPE_TEXT = "Content-Type: text/plain; charset=\"utf-8\"" + CR_LF;
 	private static final String HEADER_CONTENT_TYPE_JSON = "Content-Type: application/json; charset=\"utf-8\"" + CR_LF;
@@ -170,6 +172,7 @@ public class ManagementFacilityListener implements IListener {
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_201_CREATED);
 		ps.println(HEADER_SERVER);
+		ps.println(HEADER_CONNECTION_CLOSE);
 		ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
 		ps.println(HEADER_CONTENT_TYPE_JSON);
 		ps.println(batchJob.getOutput());
@@ -191,6 +194,7 @@ public class ManagementFacilityListener implements IListener {
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_200_OK);
 		ps.println(HEADER_SERVER);
+		ps.println(HEADER_CONNECTION_CLOSE);
 		ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
 		ps.println(HEADER_CONTENT_TYPE_JSON);
 		ps.println(batchJob.getOutput());
@@ -205,6 +209,7 @@ public class ManagementFacilityListener implements IListener {
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_200_OK);
 		ps.println(HEADER_SERVER);
+		ps.println(HEADER_CONNECTION_CLOSE);
 		ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
 		ps.println(HEADER_CONTENT_TYPE_JSON);
 		ps.println(batchJob.getOutput());
@@ -220,6 +225,7 @@ public class ManagementFacilityListener implements IListener {
 			PrintStream ps = new PrintStream(output);
 			ps.println(HEADER_HTTP_200_OK);
 			ps.println(HEADER_SERVER);
+			ps.println(HEADER_CONNECTION_CLOSE);
 			ps.println(HEADER_CONTENT_LENGTH + fileContenet.length());
 			ps.println(HEADER_CONTENT_TYPE_TEXT);
 			ps.println(fileContenet);
@@ -238,6 +244,7 @@ public class ManagementFacilityListener implements IListener {
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_200_OK);
 		ps.println(HEADER_SERVER);
+		ps.println(HEADER_CONNECTION_CLOSE);
 		ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
 		ps.println(HEADER_CONTENT_TYPE_JSON);
 		ps.println(batchJob.getOutput());
@@ -264,6 +271,7 @@ public class ManagementFacilityListener implements IListener {
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_401_UNAUTHORIZED);
 		ps.println(HEADER_SERVER);
+		ps.println(HEADER_CONNECTION_CLOSE);
 		ps.println(CR_LF);
 		ps.flush();
 		if (!socket.isClosed()) {
@@ -279,6 +287,7 @@ public class ManagementFacilityListener implements IListener {
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_400_BAD_REQUEST);
 		ps.println(HEADER_SERVER);
+		ps.println(HEADER_CONNECTION_CLOSE);
 		if (content != null) {
 			ps.println(HEADER_CONTENT_LENGTH + content.length());
 			ps.println(HEADER_CONTENT_TYPE_JSON);
@@ -306,6 +315,7 @@ public class ManagementFacilityListener implements IListener {
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_404_NOT_FOUND);
 		ps.println(HEADER_SERVER);
+		ps.println(HEADER_CONNECTION_CLOSE);
 		ps.println(HEADER_CONTENT_LENGTH + jsonObject.toString().length());
 		ps.println(HEADER_CONTENT_TYPE_JSON);
 		ps.println(jsonObject.toString());
@@ -326,6 +336,7 @@ public class ManagementFacilityListener implements IListener {
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_500_INTERNAL_SERVER_ERROR);
 		ps.println(HEADER_SERVER);
+		ps.println(HEADER_CONNECTION_CLOSE);
 		ps.println(HEADER_CONTENT_LENGTH + jsonObject.toString().length());
 		ps.println(HEADER_CONTENT_TYPE_JSON);
 		ps.println(jsonObject.toString());
