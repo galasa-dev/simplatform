@@ -13,7 +13,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -36,9 +35,8 @@ public class ListenerManager implements IListener{
 	private Socket socket;
 	private List<String> headers = new ArrayList<>();
 	
-	/* Contains a list of all the listeners, along with their path names */
-	/* Value is of type ListenerManager as they are children of our manager */
-	private HashMap<String, ListenerManager> listeners = new HashMap<>();
+	/* Contains a list of all the listeners as instances */
+	private ArrayList<ListenerManager> listeners = new ArrayList<>();
 	
 	private String payload = new String();
 	
@@ -50,10 +48,9 @@ public class ListenerManager implements IListener{
 
 	public void run() {
 		
-		/* Register the listeners within Listener Manager */
-		/* Key - Path     Value - Listener Class */
-		listeners.put("/updateAccount", new CreditAccountListener());
-		listeners.put("/processTransfer", new AccountTransferListener());
+		/* Register the listeners within Listener Manager */	
+		listeners.add(new CreditAccountListener());
+		listeners.add(new AccountTransferListener());
 		
 		try {
 			/* Attempt to read the request listened by the server */
@@ -62,14 +59,16 @@ public class ListenerManager implements IListener{
 			/* Interpret which sort of sub-listener we will need to call upon */
             String path = findPath().trim();
             
-            for (String s : listeners.keySet()) {
-            	if (s.equals(path)) {
-            		ListenerManager listener = listeners.get(s);
-            		listener.sendRequest(this, payload);
+            /* Compare our listeners paths to the request to understand which one we need */
+            for (ListenerManager l : listeners) {
+            	if (l.getPath().equals(path)) {
+            		/* Instantiating the requested listener */
+            		l.sendRequest(this, payload);
             	}
             }
             
 		} catch (Exception e) {
+			/* Exception caught whilst either processing the input, or sending the request */
 			log.severe("The request was not readable. Severe Exception caught");
 			this.return500();
 			return;
@@ -100,9 +99,6 @@ public class ListenerManager implements IListener{
 		ps.flush();
 		socket.close();
     }
-    
-    /* Dummy method which allows us to access our sub listeners init method */
-    protected void sendRequest(ListenerManager manager, String payload) throws IOException{}
 	
     /* Reads the key information from the XML Request */
 	private void processInput() {
@@ -150,6 +146,7 @@ public class ListenerManager implements IListener{
 		this.socket = socket;
 	}
 
+	/* Returns a HTTP 500 error and closes the socket */
 	public void return500() {
 		try {
 			OutputStream output = socket.getOutputStream();
@@ -163,6 +160,7 @@ public class ListenerManager implements IListener{
 		}
 	}
 
+	/* Returns a HTTP 400 error and closes the socket */
 	public void return400() {
 		try {
 			OutputStream output = socket.getOutputStream();
@@ -176,5 +174,13 @@ public class ListenerManager implements IListener{
 		}
 
 	}
+    
+    /* Dummy method which allows us to access our sub listeners init method */
+    protected void sendRequest(ListenerManager manager, String payload) throws IOException{}
+    
+    /* Method for children classes to use for the manager to determine the paths */
+    protected String getPath() {
+    	return "/manager";
+    }
 
 }

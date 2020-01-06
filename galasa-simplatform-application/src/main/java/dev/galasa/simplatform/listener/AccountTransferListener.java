@@ -91,7 +91,7 @@ public class AccountTransferListener extends ListenerManager {
         }
     }
     
-    public static String getPath() {
+    public String getPath() {
     	return "/processTransfer";
     }
     

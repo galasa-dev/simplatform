@@ -83,7 +83,7 @@ public class CreditAccountListener extends ListenerManager {
         }
     }
     
-    public static String getPath() {
+    public String getPath() {
     	return "/updateAccount";
     }
     
