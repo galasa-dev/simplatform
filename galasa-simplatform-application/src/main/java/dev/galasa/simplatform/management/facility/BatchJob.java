@@ -492,7 +492,7 @@ public class BatchJob {
 		} else {
 			jobOutputFile.addRecord(" ERROR - Control keyword not recognised: " + control);
 		}
-		setRetcode("0020");
+		setRetcode("CC 0020");
 		
 		return false;
 	}
@@ -626,7 +626,7 @@ public class BatchJob {
 		jobOutputFile.addRecord(String.format("   Records rejected   %6d", invalidRecords.size()));
 		jobOutputFile.addRecord(String.format("   Records processed  %6d", processedAccounts.size()));
 		if (invalidRecords.size() == 0) {
-			setRetcode("0000");
+			setRetcode("CC 0000");
 		} else {
 			jobOutputFile.addRecord(REPORT_HEAD);
 			jobOutputFile.addRecord(REPORT_ASA_0);
@@ -638,9 +638,9 @@ public class BatchJob {
 				jobOutputFile.addRecord(String.format(" %1s %2s", entry.getKey(), entry.getValue()));				
 			}
 			if (processedAccounts.size() == 0) {
-				setRetcode("0020");
+				setRetcode("CC 0020");
 			} else {
-				setRetcode("0004");
+				setRetcode("CC 0004");
 			}
 		}
 	}
