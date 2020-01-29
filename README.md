@@ -1,13 +1,22 @@
 # Galasa SimPlatform and SimBank
-## Project Status
-| Project | Gate | Code Smells | Code Coverage |
-| ------- | ---- | ----------- | ------------- |
-| SimPlatform | [![Quality Gate Status](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Agalasa-simplatform&metric=alert_status)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Agalasa-simplatform) | [![Code Smells](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Agalasa-simplatform&metric=code_smells)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Agalasa-simplatform) | [![Coverage](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Agalasa-simplatform&metric=coverage)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Agalasa-simplatform) |
-| SimBank Eclipse Parent | [![Quality Gate Status](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Agalasa-simbank-eclipse&metric=alert_status)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Agalasa-simbank-eclipse) | [![Code Smells](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Agalasa-simbank-eclipse&metric=code_smells)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Agalasa-simbank-eclipse) |  |
-| SimBank Eclipse UI | [![Quality Gate Status](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.ui&metric=alert_status)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.ui) | [![Code Smells](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.ui&metric=code_smells)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.ui) | [![Coverage](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.ui&metric=coverage)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.ui) |
-| SimBank Eclipse Feature | [![Quality Gate Status](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.feature&metric=alert_status)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.feature) | [![Code Smells](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.feature&metric=code_smells)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.feature) |  |
-| SimBank Tests Parent | [![Quality Gate Status](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Agalasa-simbanktests-parent&metric=alert_status)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Agalasa-simbanktests-parent) | [![Code Smells](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Agalasa-simbanktests-parent&metric=code_smells)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Agalasa-simbanktests-parent) |  |
-| SimBank Manager | [![Quality Gate Status](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.manager&metric=alert_status)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.manager) | [![Code Smells](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.manager&metric=code_smells)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.manager) | [![Coverage](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.manager&metric=coverage)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.manager) |
-| SimBank Tests  | [![Quality Gate Status](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.tests&metric=alert_status)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.tests) | [![Code Smells](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.tests&metric=code_smells)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.tests) |  |
-| SimBank OBR  | [![Quality Gate Status](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.obr&metric=alert_status)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.obr) | [![Code Smells](https://sonarqube.galasa.dev/api/project_badges/measure?project=dev.galasa%3Adev.galasa.simbank.obr&metric=code_smells)](https://sonarqube.galasa.dev/dashboard?id=dev.galasa%3Adev.galasa.simbank.obr) |  |
+This repository contains the Galasa SimBank Eclipse plug-in, SimBank applications and set of sample SimBank tests.
 
+## Documentation
+
+More information can be found on the [Galasa Homepage](https://galasa.dev). Questions related to the usage of Galasa can be posted on [Spectrum](https://spectrum.chat/galasa?tab=posts).
+
+## Where can I get the latest release?
+
+Find out how to install the Galasa Eclipse plug-in from our [Installing the Galasa plug-in](https://galasa.dev/docs/getting-started/installing) documentation.
+
+Other repositories are available via [GitHub](https://github.com/galasa-dev). 
+
+## Contributing
+
+If you are interested in the development of Galasa, take a look at the documentation and feel free to post a question on [Spectrum](https://spectrum.chat/galasa?tab=posts) or raise new ideas / features / bugs etc. as issues on [GitHub](https://github.com/galasa-dev/projectmanagement).
+
+Take a look at the [contribution guidelines](https://github.com/galasa-dev/projectmanagement/blob/master/contributing.md).
+
+## License
+
+This code is under the [Eclipse Public License 2.0](https://github.com/galasa-dev/maven/blob/master/LICENSE).
