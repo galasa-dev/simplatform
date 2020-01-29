@@ -1,5 +1,5 @@
 # Galasa SimPlatform and SimBank
-This repository contains the Galasa Eclipse plug-in, SimBank applications and set of sample SimBank tests.
+This repository contains the Galasa SimBank Eclipse plug-in, SimBank applications and set of sample SimBank tests.
 
 ## Documentation
 
