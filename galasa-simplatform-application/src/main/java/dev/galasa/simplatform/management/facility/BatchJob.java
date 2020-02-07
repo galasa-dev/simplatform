@@ -440,15 +440,15 @@ public class BatchJob {
 		return null;
 	}
 
-	public void purge() {
-		JsonObject statusOutput = new JsonObject();
-		statusOutput.addProperty(PROP_OWNER, getOwner());
-		statusOutput.addProperty(PROP_JOBID, getJobid());
-		statusOutput.addProperty(PROP_MESSAGE, "Request was successful.");
-		statusOutput.addProperty(PROP_JOBNAME, getJobname());
-		statusOutput.addProperty(PROP_STATUS, 0);
-		setOutput(statusOutput.toString());
-	}
+    public void cancel() {
+        JsonObject statusOutput = new JsonObject();
+        statusOutput.addProperty(PROP_OWNER, getOwner());
+        statusOutput.addProperty(PROP_JOBID, getJobid());
+        statusOutput.addProperty(PROP_MESSAGE, "Request was successful.");
+        statusOutput.addProperty(PROP_JOBNAME, getJobname());
+        statusOutput.addProperty(PROP_STATUS, 0);
+        setOutput(statusOutput.toString());
+    }
 
 	public boolean isSubmitted() {
 		return this.submitted;

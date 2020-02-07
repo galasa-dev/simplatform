@@ -39,6 +39,8 @@ public class ManagementFacilityListener implements IListener {
 	private Logger log = Logger.getLogger("Simplatform");
 	private String path;
 	private String authorization;
+	private String method;
+	private String contentType;
 	private String user;
 
 	private static final String CR_LF = "\r\n";
@@ -113,6 +115,7 @@ public class ManagementFacilityListener implements IListener {
 
 	private void processBatchRequest() throws IOException {
 		String[] tokens = this.path.substring(1).split("/");
+		String logNoJobFound = "No job found for reference: '";
 		if (getMethod().equals("PUT") && tokens.length == 3) {
 			// Batch job submit
 			batchJobSubmit();
@@ -120,19 +123,33 @@ public class ManagementFacilityListener implements IListener {
 		} else if (getMethod().equals("GET")) {
 			processBatchGetRequest(tokens);
 			return;
-		} else if (getMethod().equals("DELETE")) {
-			BatchJob batchJob = null;
-			String key = null;
-			if (tokens.length >= 5) {
-				key = tokens[3] + "/" + tokens[4];
-			}
-			batchJob = batchJobs.get(key);
-			if (batchJob == null) {
-				return404("No job found for reference: '" + tokens[3] + "(" + tokens[4] + ")'");
-				return;
-			}
-			batchJobPurge(batchJob);			
-		}
+        } else if (getMethod().equals("PUT")) {
+            BatchJob batchJob = null;
+            String key = null;
+            if (tokens.length >= 5) {
+                key = tokens[3] + "/" + tokens[4];
+            }
+            batchJob = batchJobs.get(key);
+            if (batchJob == null) {
+                return404(logNoJobFound + tokens[3] + "(" + tokens[4] + ")'");
+                return;
+            }
+            batchJobCancel(batchJob);
+            return;
+        } else if (getMethod().equals("DELETE")) {
+            BatchJob batchJob = null;
+            String key = null;
+            if (tokens.length >= 5) {
+                key = tokens[3] + "/" + tokens[4];
+            }
+            batchJob = batchJobs.get(key);
+            if (batchJob == null) {
+                return404(logNoJobFound + tokens[3] + "(" + tokens[4] + ")'");
+                return;
+            }
+            batchJobPurge(batchJob);
+            return;
+        }
 		// Error case
 		return404("Unimplemented or invalid /zosmf/ path " + path);
 	}
@@ -237,21 +254,24 @@ public class ManagementFacilityListener implements IListener {
 		return404("Job '" + batchJob.getJobname() + "(" + batchJob.getJobid() + ")' does not contain spool file id " + token);
 	}
 
-	private void batchJobPurge(BatchJob batchJob) throws IOException {
-		batchJobs.remove(batchJob.getJobname() + "/" + batchJob.getJobid());
-		batchJob.purge();
-		OutputStream output = socket.getOutputStream();
-		PrintStream ps = new PrintStream(output);
-		ps.println(HEADER_HTTP_200_OK);
-		ps.println(HEADER_SERVER);
-		ps.println(HEADER_CONNECTION_CLOSE);
-		ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
-		ps.println(HEADER_CONTENT_TYPE_JSON);
-		ps.println(batchJob.getOutput());
-		ps.println(CR_LF);
-		ps.flush();
-		socket.close();
-	}
+    private void batchJobCancel(BatchJob batchJob) throws IOException {
+        batchJob.cancel();
+        OutputStream output = socket.getOutputStream();
+        PrintStream ps = new PrintStream(output);
+        ps.println(HEADER_HTTP_200_OK);
+        ps.println(HEADER_SERVER);
+        ps.println(HEADER_CONNECTION_CLOSE);
+        ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
+        ps.println(HEADER_CONTENT_TYPE_JSON);
+        ps.println(CR_LF);
+        ps.flush();
+        socket.close();
+    }
+
+    private void batchJobPurge(BatchJob batchJob) throws IOException {
+        batchJobs.remove(batchJob.getJobname() + "/" + batchJob.getJobid());
+        batchJobCancel(batchJob);
+    }
 
 	private void processConsoleRequest() throws IOException {
 		log.log(Level.WARNING, "Console manager feature not implemented returning 404");
@@ -372,6 +392,8 @@ public class ManagementFacilityListener implements IListener {
 	}
 
 	private boolean readInput(BufferedReader br) throws InterruptedException {
+        method = "";
+        contentType = "";
 		boolean alive = false;
 		boolean readAllHeaders = false;
 		try {
@@ -389,14 +411,14 @@ public class ManagementFacilityListener implements IListener {
 				} else {
 					if (data.equals("")) {
 						readAllHeaders = true;
+						if (isPutJson()) {
+						    break;
+						}
 					} else {
 						log.log(Level.INFO, data);
 						headers.add(data);
-						if (data.startsWith("Authorization:")) {
-							authorization = data.substring("Authorization: ".length());
-						}
+						saveHeaderValues(data);
 					}
-
 				}
 			}
 		} catch (IOException e) {
@@ -407,7 +429,21 @@ public class ManagementFacilityListener implements IListener {
 		return alive;
 	}
 
-	public void setSocket(Socket socket) {
+	private boolean isPutJson() {
+        return method.equals("PUT") && contentType.equals("application/json");
+    }
+
+    private void saveHeaderValues(String data) {
+        if (data.startsWith("Authorization:")) {
+            authorization = data.substring("Authorization: ".length());
+        } else if (data.startsWith("X-IBM-Requested-Method:")) {
+            method = data.substring("X-IBM-Requested-Method: ".length());
+        } else if (data.startsWith("Content-Type:")) {
+            contentType = data.substring("Content-Type: ".length());
+        }
+    }
+
+    public void setSocket(Socket socket) {
 		this.socket = socket;
 
 	}
