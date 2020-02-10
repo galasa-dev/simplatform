@@ -263,6 +263,7 @@ public class ManagementFacilityListener implements IListener {
         ps.println(HEADER_CONNECTION_CLOSE);
         ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
         ps.println(HEADER_CONTENT_TYPE_JSON);
+        ps.println(batchJob.getOutput());
         ps.println(CR_LF);
         ps.flush();
         socket.close();
