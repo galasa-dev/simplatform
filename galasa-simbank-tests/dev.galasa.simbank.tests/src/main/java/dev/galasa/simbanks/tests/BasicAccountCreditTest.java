@@ -24,6 +24,8 @@ import dev.galasa.core.manager.ICoreManager;
 import dev.galasa.http.HttpClient;
 import dev.galasa.http.HttpClientException;
 import dev.galasa.http.IHttpClient;
+import dev.galasa.simbank.manager.ISimBank;
+import dev.galasa.simbank.manager.SimBank;
 import dev.galasa.zos.IZosImage;
 import dev.galasa.zos.ZosImage;
 import dev.galasa.zos.ZosManagerException;
@@ -38,6 +40,9 @@ import dev.galasa.zos3270.spi.NetworkException;
 
 @Test
 public class BasicAccountCreditTest {
+    
+    @SimBank
+    public ISimBank        simBank;
 
     @ZosImage(imageTag = "simbank")
     public IZosImage        image;
@@ -101,7 +106,7 @@ public class BasicAccountCreditTest {
         String textContext = resources.streamAsString(is);
 
         // Invoke the web request
-        client.setURI(new URI("http://" + image.getDefaultHostname() + ":2080"));
+        client.setURI(new URI("http://" + this.simBank.getHost() + ":" + this.simBank.getWebnetPort()));
         client.postTextAsXML("updateAccount", textContext, false);
 
         // Obtain the final balance
