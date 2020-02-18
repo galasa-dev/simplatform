@@ -23,4 +23,31 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>dev.galasa</groupId>
+					<artifactId>galasa-simbank-maven</artifactId>
+					<version>0.5.0-SNAPSHOT</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>dev.galasa</groupId>
+				<artifactId>galasa-simbank-maven</artifactId>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>translate-cucumber</id>
+						<goals>
+							<goal>translatecucumber</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
