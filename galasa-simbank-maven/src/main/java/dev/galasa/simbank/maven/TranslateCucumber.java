@@ -46,7 +46,7 @@ public class TranslateCucumber extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("TranslateCucumber: Generating Sources " + project.getName());
 
-        for (Method t : CucumberSimbank.class.getMethods())
+        for (Method t : CucumberSimbank.class.getDeclaredMethods())
             System.out.println(t.toString());
 
 
