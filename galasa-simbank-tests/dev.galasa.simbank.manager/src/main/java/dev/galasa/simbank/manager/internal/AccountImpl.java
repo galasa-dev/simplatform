@@ -44,11 +44,15 @@ public class AccountImpl implements IAccount {
         return accountNumber;
     }
 
-    public static AccountImpl generate(SimBankManagerImpl manager, boolean existing, AccountType accountType)
+    public static AccountImpl generate(SimBankManagerImpl manager, boolean existing, AccountType accountType, String balance)
             throws SimBankManagerException {
 
         if (!manager.getSimBank().isUseJdbc()) {
             throw new SimBankManagerException("Unable to provision account as useJdbc is false");
+        }
+        
+        if(balance != null){
+            return findAccountWithExactBalance(manager.getSimBank(), balance);
         }
 
         if (existing) {
@@ -57,6 +61,133 @@ public class AccountImpl implements IAccount {
             return provisionAccount(manager.getSimBank(), accountType);
         }
     }
+
+    private static AccountImpl findAccountWithExactBalance(SimBankImpl simBank, String balance)
+            throws SimBankManagerException{
+
+        try{        
+
+            Random random = simBank.getManager().getFramework().getRandom();
+
+            String sqlStatement = "SELECT ACCOUNT_NUM FROM ACCOUNTS WHERE BALANCE = " + balance;
+            String accountNumber = "";
+            String runName = simBank.getManager().getFramework().getTestRunName();
+
+            StringBuilder sb = new StringBuilder();
+                sb.append(Integer.toString(random.nextInt(10)));
+                sb.append(Integer.toString(random.nextInt(10)));
+                sb.append("-");
+                sb.append(Integer.toString(random.nextInt(10)));
+                sb.append(Integer.toString(random.nextInt(10)));
+                sb.append("-");
+                sb.append(Integer.toString(random.nextInt(10)));
+                sb.append(Integer.toString(random.nextInt(10)));
+
+            String sortCode = sb.toString();
+
+            BigDecimal balanceBD = new BigDecimal(balance);
+
+            ResultSet res = null;
+            Statement stmt = null;
+
+
+            try{
+                stmt = simBank.getJdbc().createStatement();
+                stmt.execute(sqlStatement);
+                res = stmt.getResultSet();
+
+                while (res.next()) {
+                    accountNumber = res.getString(1);
+                }
+
+                freeAccount(simBank.getManager().getDSS(), simBank.getInstanceId(), accountNumber, runName);
+                }catch(SQLException e){
+                    logger.error("Error finding account with " + balance + " balance, " + e);
+                    res.close();
+                    freeAccount(simBank.getManager().getDSS(), simBank.getInstanceId(), accountNumber, runName);
+                }finally{
+                    if(res!=null){
+                        res.close();
+                    }
+                    if(stmt!=null){
+                        stmt.close();
+                    }
+                }
+
+                if(!accountNumber.isEmpty()){ // *** Test if we have found an account with the exact balance
+                    if (lockAccount(simBank, accountNumber, false)) {
+                    return new AccountImpl(simBank, accountNumber, false);
+                    }
+                }
+
+                for (int retry = 0; retry < 1000; retry++) { // *** try a 1000 times to get an account then fail
+                    // *** Generate an account number
+                    sb = new StringBuilder();
+                    for (int i = 0; i < 9; i++) {
+                        sb.append(Integer.toString(random.nextInt(10)));
+                    }
+
+                    accountNumber = sb.toString();
+
+                    if (!lockAccount(simBank, accountNumber, true)) { // *** Attempt to lock it
+                        continue;
+                    }
+
+                    // *** Attempt to insert into the database (the account may pre-exist in which
+                    // case we need to choose another
+                    stmt = null;
+                    PreparedStatement pstmt = null;
+                    ResultSet rs = null;
+                    try {
+                        stmt = simBank.getJdbc().createStatement();
+                        stmt.execute("SELECT ACCOUNT_NUM FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + accountNumber + "'");
+                        rs = stmt.getResultSet();
+
+                        if (rs.next()) { // the account pre-exists
+                            rs.close();
+                            freeAccount(simBank.getManager().getDSS(), simBank.getInstanceId(), accountNumber, runName); // Release
+                                                                                                                        // the
+                                                                                                                        // lock
+                            continue; // try a new account number
+                        }
+
+                        pstmt = simBank.getJdbc()
+                                .prepareStatement("INSERT INTO ACCOUNTS(ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES(?,?,?)");
+                        pstmt.setString(1, accountNumber);
+                        pstmt.setString(2, sortCode);
+                        pstmt.setBigDecimal(3, balanceBD);
+
+                        pstmt.execute();
+
+                        logger.info("Provisioned new account number=" + accountNumber + ",sortcode=" + sortCode
+                                + ",balance=" + balance);
+
+                        return new AccountImpl(simBank, accountNumber, true);
+                    } catch (SQLException e) {
+                        logger.error("Error creating account " + accountNumber, e);
+                        rs.close();
+                        freeAccount(simBank.getManager().getDSS(), simBank.getInstanceId(), accountNumber, runName); // Release
+                                                                                                                    // the
+                                                                                                                    // lock
+                        continue; // try a new account number
+                    } finally {
+                        if (rs != null) {
+                            rs.close();
+                        }
+                        if (stmt != null) {
+                            stmt.close();
+                        }
+                        if (pstmt != null) {
+                            pstmt.close();
+                        }
+                    }
+            }
+            throw new SimBankManagerException("Unable to create an account after 1000 attempts");
+        }catch (Exception e) {
+          throw new SimBankManagerException("Failed to provision an account", e);
+        }
+    }
+        
 
     private static AccountImpl findExistingAccount(SimBankImpl simBank, AccountType accountType)
             throws SimBankManagerException {
