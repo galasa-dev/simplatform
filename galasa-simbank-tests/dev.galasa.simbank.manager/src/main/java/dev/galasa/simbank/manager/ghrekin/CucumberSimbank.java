@@ -13,13 +13,30 @@ import dev.galasa.simbank.manager.IAccount;
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.SimBankManagerException;
 
+@CucumberTranslator
 public class CucumberSimbank {
 
-    @When(regex = "I have an account with balance of -?([0-9])+")
-    public static Exception theWebApiIsCalledToCreditTheAccountWith(BigDecimal amount, IAccount account, IArtifactManager artifacts, Class testClass, IHttpClient client, ISimBank bank) {
+    @Given(regex = "I have an account with a balance of -?([0-9])+", type = "number", dependencies = "isimbank,iartifactmanager,ihttpclient")
+    public static String iaccount = "@dev.galasa.simbank.manager.Account(amount = value_here)\npublic dev.galasa.simbank.manager.IAccount name_here;";
+
+    @Given(regex = "I have an account that doesn't exist", type = "", dependencies = "isimbank,iartifactmanager,ihttpclient")
+    public static String iaccoun = "@dev.galasa.simbank.manager.Account(existing = false)\npublic dev.galasa.simbank.manager.IAccount name_here;";
+
+    @Given(regex = "", type = "", dependencies = "")
+    public static String isimbank = "@dev.galasa.simbank.manager.SimBank\npublic dev.galasa.simbank.manager.ISimBank name_here;";
+
+    @Given(regex = "", type = "", dependencies = "")
+    public static String iartifactmanager = "@dev.galasa.artifact.ArtifactManager\npublic dev.galasa.artifact.IArtifactManager name_here;";
+
+    @Given(regex = "", type = "", dependencies = "")
+    public static String ihttpclient = "@dev.galasa.http.HttpClient\npublic dev.galasa.http.IHttpClient name_here;";
+
+    @When(regex = "the web API is called to credit the account with -?([0-9])+", type = "number")
+    public static Exception whenTheWebApiIsCalledToCreditTheAccountWith(String amount, IAccount account, @Unique IArtifactManager artifacts, Class<?> testClass, @Unique IHttpClient client, @Unique ISimBank bank) {
+
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("ACCOUNT_NUMBER", account.getAccountNumber());
-        parameters.put("AMOUNT", amount.toString());
+        parameters.put("AMOUNT", amount);
 
         try {
             IBundleResources resources = artifacts.getBundleResources(testClass);
@@ -34,18 +51,18 @@ public class CucumberSimbank {
         return null;
     }
 
-    @Then(regex = "the balance of the account should be -?(0-9)+")
-    public static void theBalaceOfTheAccountShouldBe(BigDecimal amount, IAccount account) {
+    @Then(regex = "the balance of the account should be -?([0-9])+", type = "number")
+    public static void thenTheBalanceOfTheAccountShouldBe(String amount, IAccount account) {
         try {
-            assertThat(account.getBalance()).isEqualTo(amount);
+            assertThat(account.getBalance()).isEqualTo(new BigDecimal(amount));
         } catch (SimBankManagerException e) {
             e.printStackTrace();
         }
     }
 
-    @Then(regex = "an? ([A-z])+ Exception is thrown")
-    public static void aSpecificExceptionIsThrown(Exception thrown, Exception expected) {
-        assertThat(thrown.getClass()).isExactlyInstanceOf(expected.getClass());
+    @Then(regex = "an? ([A-z])+ Exception is thrown", type = "exception")
+    public static void thenASpecificExceptionIsThrown(Class<?> expected, Exception thrown) {
+        assertThat(thrown.getClass()).isExactlyInstanceOf(expected);
     }
 
 }

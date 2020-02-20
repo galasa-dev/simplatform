@@ -1,23 +1,42 @@
+import dev.galasa.simbank.manager.ghrekin.CucumberSimbank;
 import dev.galasa.Test;
+
+
 @Test
 public class test {
+@dev.galasa.simbank.manager.Account(amount = "1000")
+public dev.galasa.simbank.manager.IAccount iaccount1;
+
+@dev.galasa.simbank.manager.Account(amount = "-100")
+public dev.galasa.simbank.manager.IAccount iaccount2;
+
+@dev.galasa.simbank.manager.Account(existing = false)
+public dev.galasa.simbank.manager.IAccount iaccount3;
+
+@dev.galasa.artifact.ArtifactManager
+public dev.galasa.artifact.IArtifactManager iartifactmanager;
+
+@dev.galasa.http.HttpClient
+public dev.galasa.http.IHttpClient ihttpclient;
+
+@dev.galasa.simbank.manager.SimBank
+public dev.galasa.simbank.manager.ISimBank isimbank;
+
+
 //   People like to pay money into their accounts
 @Test
 public void creditAnAccountAlreadyInCredit() {
-//     Given I have an account with a balance of 1000
-//     When the web API is called to credit the account with 500
-//     Then the balance of the account should be 1500
+java.lang.Exception exception1 = CucumberSimbank.whenTheWebApiIsCalledToCreditTheAccountWith("500",iaccount1,iartifactmanager,this.getClass(),ihttpclient,isimbank);
+CucumberSimbank.thenTheBalanceOfTheAccountShouldBe("1500",iaccount1);
 }
 @Test
 public void creditAnAccountInDebt() {
-//     Given I have an account with a balance of -100
-//     When the web API is called to credit the account with 500
-//     Then the balance of the account should be 400
+java.lang.Exception exception2 = CucumberSimbank.whenTheWebApiIsCalledToCreditTheAccountWith("500",iaccount2,iartifactmanager,this.getClass(),ihttpclient,isimbank);
+CucumberSimbank.thenTheBalanceOfTheAccountShouldBe("400",iaccount2);
 }
 @Test
 public void creditAnAccountThatDoesntExist() {
-//     Given I have an account that doesn't exist
-//     When the web API is called to credit the account with 500
-//     Then a accountNotFound Exception is thrown
+java.lang.Exception exception3 = CucumberSimbank.whenTheWebApiIsCalledToCreditTheAccountWith("500",iaccount3,iartifactmanager,this.getClass(),ihttpclient,isimbank);
+CucumberSimbank.thenASpecificExceptionIsThrown(AccountNotFoundException.class,exception3);
 }
 }
