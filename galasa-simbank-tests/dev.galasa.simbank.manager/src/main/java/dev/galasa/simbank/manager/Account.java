@@ -24,4 +24,6 @@ public @interface Account {
 
     AccountType accountType() default AccountType.HighValue;
 
+    String balance() default "";
+
 }
