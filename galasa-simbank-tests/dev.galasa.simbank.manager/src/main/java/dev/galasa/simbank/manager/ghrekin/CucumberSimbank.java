@@ -34,6 +34,8 @@ public class CucumberSimbank {
     @When(regex = "the web API is called to credit the account with -?([0-9])+", type = "number")
     public static Exception whenTheWebApiIsCalledToCreditTheAccountWith(String amount, IAccount account, @Unique IArtifactManager artifacts, Class<?> testClass, @Unique IHttpClient client, @Unique ISimBank bank) {
 
+        client.build();
+
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         if(account == null)
             parameters.put("ACCOUNT_NUMBER", "abcdefgh");
