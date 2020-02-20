@@ -233,7 +233,7 @@
 				<groupId>dev.galasa</groupId>
 				<artifactId>galasa-maven-plugin</artifactId>
 				<extensions>true</extensions>
-                <executions>
+                <!-- <executions>
                     <execution>
                         <id>build-testcatalog</id>
                         <phase>package</phase>
@@ -241,7 +241,7 @@
                             <goal>bundletestcat</goal>
                         </goals>
                     </execution>
-                </executions>
+                </executions> -->
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

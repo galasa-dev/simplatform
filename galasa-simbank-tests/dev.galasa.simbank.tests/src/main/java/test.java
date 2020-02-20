@@ -4,14 +4,14 @@ import dev.galasa.Test;
 
 @Test
 public class test {
-@dev.galasa.simbank.manager.Account(amount = "1000")
+@dev.galasa.simbank.manager.Account(balance = "1000")
 public dev.galasa.simbank.manager.IAccount iaccount1;
 
-@dev.galasa.simbank.manager.Account(amount = "-100")
+@dev.galasa.simbank.manager.Account(balance = "-100")
 public dev.galasa.simbank.manager.IAccount iaccount2;
 
-@dev.galasa.simbank.manager.Account(existing = false)
-public dev.galasa.simbank.manager.IAccount iaccount3;
+@dev.galasa.simbank.manager.Account
+private dev.galasa.simbank.manager.IAccount iaccount3;
 
 @dev.galasa.artifact.ArtifactManager
 public dev.galasa.artifact.IArtifactManager iartifactmanager;
@@ -37,6 +37,6 @@ CucumberSimbank.thenTheBalanceOfTheAccountShouldBe("400",iaccount2);
 @Test
 public void creditAnAccountThatDoesntExist() {
 java.lang.Exception exception3 = CucumberSimbank.whenTheWebApiIsCalledToCreditTheAccountWith("500",iaccount3,iartifactmanager,this.getClass(),ihttpclient,isimbank);
-CucumberSimbank.thenASpecificExceptionIsThrown(AccountNotFoundException.class,exception3);
+CucumberSimbank.thenASpecificExceptionIsThrown(exception3);
 }
 }

@@ -51,7 +51,7 @@ public class AccountImpl implements IAccount {
             throw new SimBankManagerException("Unable to provision account as useJdbc is false");
         }
         
-        if(balance != null){
+        if(!balance.equals("")){
             return findAccountWithExactBalance(manager.getSimBank(), balance);
         }
 

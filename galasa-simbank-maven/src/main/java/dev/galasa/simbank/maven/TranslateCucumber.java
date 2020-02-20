@@ -244,26 +244,33 @@ public class TranslateCucumber extends AbstractMojo {
                 builder.append(parsingMethod.getDeclaringClass().getSimpleName() + "." + parsingMethod.getName() + "(");
                 java.lang.reflect.Parameter[] parsingParams = parsingMethod.getParameters();
                 for(int i = 0; i < parsingParams.length; i++) {
+                    Boolean regexSet = false;
                     if(i == 0) {
-                        builder.append(getVariableFromLine(parsingLine, regex, type));
-                    } else if(parsingParams[i].getType().equals(Class.class)) {
-                        builder.append("this.getClass()");
-                    } else if(parsingParams[i].getAnnotations().length > 0) {
-                        String variableName = parsingParams[i].getType().getSimpleName().toLowerCase();
-                        if(!usedVariables.contains(variableName))
-                            usedVariables.add(variableName);
-                        builder.append(variableName);
-                    } else {
-                        if(lineType == LineType.WHEN) {
-                            String variableName = getVariableName(parsingParams[i].getType().getSimpleName());
+                        if(getVariableFromLine(parsingLine, regex, type) != null) {
+                            builder.append(getVariableFromLine(parsingLine, regex, type));
+                            regexSet = true;
+                        }
+                    }
+                    if(!regexSet) {
+                        if(parsingParams[i].getType().equals(Class.class)) {
+                            builder.append("this.getClass()");
+                        } else if(parsingParams[i].getAnnotations().length > 0) {
+                            String variableName = parsingParams[i].getType().getSimpleName().toLowerCase();
+                            if(!usedVariables.contains(variableName))
+                                usedVariables.add(variableName);
                             builder.append(variableName);
-                        } else if(lineType == LineType.THEN) {
-                            String variableName = null;
-                            for(String usedName : usedVariables) {
-                                if(usedName.matches(parsingParams[i].getType().getSimpleName().toLowerCase() + "([0-9])+"))
-                                    variableName = usedName;
+                        } else {
+                            if(lineType == LineType.WHEN) {
+                                String variableName = getVariableName(parsingParams[i].getType().getSimpleName());
+                                builder.append(variableName);
+                            } else if(lineType == LineType.THEN) {
+                                String variableName = null;
+                                for(String usedName : usedVariables) {
+                                    if(usedName.matches(parsingParams[i].getType().getSimpleName().toLowerCase() + "([0-9])+"))
+                                        variableName = usedName;
+                                }
+                                builder.append(variableName);
                             }
-                            builder.append(variableName);
                         }
                     }
 
@@ -288,10 +295,6 @@ public class TranslateCucumber extends AbstractMojo {
         String variableWord = lineWords[i];
         if(type.equals("number")) {
             return "\"" + variableWord + "\"";
-        } else if(type.equals("exception")) {
-            if(!variableWord.endsWith("Exception"))
-                variableWord = variableWord + "Exception";
-            return variableWord.substring(0, 1).toUpperCase() + variableWord.substring(1) + ".class";
         }
         return null;
     }
