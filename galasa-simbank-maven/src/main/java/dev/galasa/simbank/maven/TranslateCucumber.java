@@ -49,6 +49,9 @@ public class TranslateCucumber extends AbstractMojo {
     @Parameter(defaultValue = "${project.compileClasspathElements}", readonly = true, required = true)
     private List<String> classpathElements;
 
+    @Parameter(defaultValue = "galasa.gherkin.translated", name = "packageName")
+    private String packageName;
+
     private List<File> sourceFiles = new ArrayList<File>();
     private File javaCode;
 
@@ -65,14 +68,14 @@ public class TranslateCucumber extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("TranslateCucumber: Generating Sources " + project.getName());
 
-        javaCode = new File(project.getBasedir() + "/src/main/java/dev/galasa/translatedghrekin");
+        javaCode = new File(project.getBasedir() + "/src/main/java/" + packageName.replace(".", "/"));
         if(!javaCode.exists())
             javaCode.mkdirs();
 
         getTranslatorClass();
 
         File testResources = new File(project.getBasedir() + "/src/test/resources");
-        checkForSource(testResources, sourceFiles, new FeatureFilter(".feature"));
+        checkForSource(testResources, sourceFiles, new ExtensionFilter(".feature"));
 
         for (File cucumberSource : sourceFiles) {
             try {
@@ -116,80 +119,102 @@ public class TranslateCucumber extends AbstractMojo {
 
         FileWriter writer = new FileWriter(generated);
         StringBuilder builder = new StringBuilder();
-        Boolean method = false;
-        String parsingLine;
+        Boolean methodStarted = false;
         ArrayList<String> givenLines = new ArrayList<String>();
         for(String line : sourceLines) {
             if(line.trim().indexOf(" ") >= 0) {
                 switch (line.trim().substring(0, line.trim().indexOf(" "))) {
                     case "Feature:":
-                        builder.append("package dev.galasa.translatedghrekin;\n\n");
-                        builder.append("@ImportsHere@\n");
+                        builder.append("package " + packageName + ";\n\n@ImportsHere@\n@Test\npublic class " + className + " {\n@AnnotationsHere@");
                         imports.add("dev.galasa.Test");
-                        builder.append("@Test\n");
-                        builder.append("public class " + className + " {");
-                        builder.append("\n");
-                        builder.append("@AnnotationsHere@");
                         break;
                     case "Scenario:":
-                        if(method)
-                            builder.append("}\n");
-                        method = true;
-                        builder.append("@Test\n");
+                        if(methodStarted)
+                            builder.append("\t}\n\n");
+                        methodStarted = true;
+                        builder.append("\t@Test\n");
                         
-                        builder.append("public void " + camelCase(line.substring(line.indexOf(":") + 2, line.length())) + "() {\n");
+                        builder.append("\tpublic void " + camelCase(line.trim().substring(line.trim().indexOf(" ") + 1)) + "() {\n");
                         break;
                     case "When":
-                        parsingLine = line.trim().substring(line.trim().indexOf(" ") + 1, line.trim().length());
+                        String whenParsingLine = line.trim().substring(line.trim().indexOf(" ") + 1);
                         for(Method parsingMethod : whenMethods) {
-                            writeMethod(parsingMethod, parsingLine, builder, LineType.WHEN);
+                            writeMethod(parsingMethod, whenParsingLine, builder, LineType.WHEN);
                         }
                         break;
                     case "Then":
-                        parsingLine = line.trim().substring(line.trim().indexOf(" ") + 1, line.trim().length());
+                        String thenParsingLine = line.trim().substring(line.trim().indexOf(" ") + 1);
                         for(Method parsingMethod : thenMethods) {
-                            writeMethod(parsingMethod, parsingLine, builder, LineType.THEN);
+                            writeMethod(parsingMethod, thenParsingLine, builder, LineType.THEN);
                         }
                         break;
                     case "Given":
-                        givenLines.add(line.trim().substring(line.trim().indexOf(" ") + 1, line.trim().length()));
+                        givenLines.add(line.trim().substring(line.trim().indexOf(" ") + 1));
                         break;
                     default:
+                        builder.append("\t//" + line.trim() + "\n\n");
                         break;
                 }
             }
         }
+
+        processGivenLines(givenLines, builder);
+
+        builder.append("\t}\n}");
+        
+        StringBuilder importBuilder = new StringBuilder();
+        for(String imp : imports) {
+            importBuilder.append("import " + imp + ";\n");
+        }
+        stringBuilderReplace(builder, "@ImportsHere@", importBuilder.toString());
+        writer.write(builder.toString());
+        writer.close();
+    }
+
+    private String getAnnotationValue(Annotation annotation, String field) {
+        String parsedField = annotation.toString().substring(annotation.toString().indexOf(field) + field.length() + 1);
+        if(parsedField.indexOf(",") == -1)
+            return parsedField.substring(0, parsedField.indexOf(")"));
+        else
+            return parsedField.substring(0, parsedField.indexOf(","));
+    }
+
+    private void stringBuilderReplace(StringBuilder builder, String replacePattern, String replaceWith) {
+        int indexReplacement = builder.indexOf(replacePattern, 0);
+        if(indexReplacement >= 0)
+            builder.replace(indexReplacement, indexReplacement + replacePattern.length(), replaceWith);
+    }
+
+    private void processGivenLines(ArrayList<String> givenLines, StringBuilder builder)
+            throws IllegalArgumentException, IllegalAccessException {
         StringBuilder givenBuilder = new StringBuilder();
         for(String givenLine: givenLines) {
             for(Field parsingField : givenFields) {
                 for(Annotation parsingAnnotation : parsingField.getAnnotations()) {
-                    String regex = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("regex=") + 6, parsingAnnotation.toString().indexOf("type") - 2);
-                    String type = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("type=") + 5, parsingAnnotation.toString().indexOf("dependencies") - 2);
-                    String dependencies = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("dependencies=") + 13, parsingAnnotation.toString().indexOf("codeImports") - 2);
-                    String[] codeImports = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("codeImports=") + 12, parsingAnnotation.toString().length() - 1).split(",");
+                    String regex = getAnnotationValue(parsingAnnotation, "regex");
+                    String type = getAnnotationValue(parsingAnnotation, "type");
+                    String[] dependencies = getAnnotationValue(parsingAnnotation, "dependencies").split(";");
+                    String[] codeImports = getAnnotationValue(parsingAnnotation, "codeImports").split(";");
                     if(regex != "" && givenLine.matches(regex)) {
                         StringBuilder fieldBuilder = new StringBuilder();
                         fieldBuilder.append((String)parsingField.get(parsingField));
                         String subVariable = null;
                         for(String usedVariable : usedVariables) {
-                            if(usedVariable.matches(parsingField.getName() + "(([A-z])+)?([0-9])+")){
+                            if(usedVariable.matches(parsingField.getName().replaceAll("[0-9]", "") + "([0-9])+")){
                                 subVariable = usedVariable;
                                 break;
                             }
                         }
-                        int indexFieldValue = fieldBuilder.indexOf("@value_here@", 0);
-                        if(indexFieldValue >= 0)
-                            fieldBuilder.replace(indexFieldValue, indexFieldValue + "@value_here@".length(), getVariableFromLine(givenLine, regex, type));
-                        indexFieldValue = fieldBuilder.indexOf("@name_here@", 0);
-                        if(indexFieldValue >= 0)
-                            fieldBuilder.replace(indexFieldValue, indexFieldValue + "@name_here@".length(), subVariable);
+                        stringBuilderReplace(fieldBuilder, "@value_here@", getVariableFromLine(givenLine, regex, type));
+                        stringBuilderReplace(fieldBuilder, "@name_here@", subVariable);
                         usedVariables.remove(subVariable);
-                        for(String dependency : dependencies.split(","))
+                        for(String dependency : dependencies)
                             uniqueDependencies.add(dependency);
                         for(String codeImport : codeImports)
                             imports.add(codeImport);
                             
-                        givenBuilder.append(fieldBuilder.toString() + "\n\n");
+                        givenBuilder.append("\t//" + givenLine + "\n");
+                        givenBuilder.append("\t" + fieldBuilder.toString().replace("\n", "\n\t") + "\n\n");
                     }
                 }
             }
@@ -202,47 +227,34 @@ public class TranslateCucumber extends AbstractMojo {
                     fieldBuilder.append((String)parsingField.get(parsingField));
                     String subVariable = null;
                     for(String usedVariable : usedVariables) {
-                        
-                        if(usedVariable.matches(parsingField.getName() + "(([A-z])+)?")){
+                        if(usedVariable.matches(parsingField.getName())) {
                             subVariable = usedVariable;
                             break;
                         }
                     }
-                    int indexFieldValue = fieldBuilder.indexOf("@name_here@", 0);
-                    if(indexFieldValue >= 0)
-                        fieldBuilder.replace(indexFieldValue, indexFieldValue + "@name_here@".length(), subVariable);
+                    stringBuilderReplace(fieldBuilder, "@name_here@", subVariable);
                     usedVariables.remove(subVariable);
                     for(Annotation parsingAnnotation : parsingField.getAnnotations()) {
-                        String[] codeImports = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("codeImports=") + 12, parsingAnnotation.toString().length() - 1).split(",");
+                        String[] codeImports = getAnnotationValue(parsingAnnotation, "codeImports").split(";");
                         for(String codeImport : codeImports)
                             imports.add(codeImport);
                     }
-                    givenBuilder.append(fieldBuilder.toString() + "\n\n");
+                    givenBuilder.append("\t" + fieldBuilder.toString().replace("\n", "\n\t") + "\n\n");
                 }
             }
         }
-        builder.append("}\n}");
-        int indexAnnotations = builder.indexOf("@AnnotationsHere@", 0);
-        builder.replace(indexAnnotations, indexAnnotations + "@AnnotationsHere@".length(), givenBuilder.toString());
-        StringBuilder importBuilder = new StringBuilder();
-        for(String imp : imports) {
-            importBuilder.append("import " + imp + ";\n");
-        }
-        int indexImports = builder.indexOf("@ImportsHere@", 0);
-        builder.replace(indexImports, indexImports + "@ImportsHere@".length(), importBuilder.toString());
-        writer.write(builder.toString());
-        writer.close();
+        stringBuilderReplace(builder, "@AnnotationsHere@", givenBuilder.toString());
     }
 
     private void writeMethod(Method parsingMethod, String parsingLine, StringBuilder builder, LineType lineType) throws IOException {
         for(Annotation parsingAnnotation : parsingMethod.getAnnotations()) {
-            String regex = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("regex=") + 6, parsingAnnotation.toString().indexOf("type") - 2);
-            String type = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("type=") + 5, parsingAnnotation.toString().length() - 1);
+            String regex = getAnnotationValue(parsingAnnotation, "regex");
+            String type = getAnnotationValue(parsingAnnotation, "type");
             if(parsingLine.matches(regex)) {
+                builder.append("\t\t" + "//" + parsingLine + "\n\t\t");
                 if(!parsingMethod.getReturnType().getSimpleName().contains("void")) {
-                    String returnName = getVariableName(parsingMethod.getReturnType().getSimpleName());
                     imports.add(parsingMethod.getReturnType().getName());
-                    builder.append(parsingMethod.getReturnType().getSimpleName() + " " + returnName + " = ");
+                    builder.append(parsingMethod.getReturnType().getSimpleName() + " " + getVariableName(parsingMethod.getReturnType().getSimpleName()) + " = ");
                 }
                 builder.append(parsingMethod.getDeclaringClass().getSimpleName() + "." + parsingMethod.getName() + "(");
                 java.lang.reflect.Parameter[] parsingParams = parsingMethod.getParameters();
@@ -263,17 +275,16 @@ public class TranslateCucumber extends AbstractMojo {
                                 usedVariables.add(variableName);
                             builder.append(variableName);
                         } else {
+                            String variableName = null;
                             if(lineType == LineType.WHEN) {
-                                String variableName = getVariableName(parsingParams[i].getType().getSimpleName());
-                                builder.append(variableName);
+                                variableName = getVariableName(parsingParams[i].getType().getSimpleName());
                             } else if(lineType == LineType.THEN) {
-                                String variableName = null;
                                 for(String usedName : usedVariables) {
                                     if(usedName.matches(parsingParams[i].getType().getSimpleName().toLowerCase() + "([0-9])+"))
                                         variableName = usedName;
                                 }
-                                builder.append(variableName);
                             }
+                            builder.append(variableName);
                         }
                     }
 
@@ -364,40 +375,4 @@ public class TranslateCucumber extends AbstractMojo {
         }
         return methodName.replaceAll("[^a-zA-Z0-9_-]", "");
     }
-
-	private static class FeatureFilter implements FilenameFilter {
-
-		private String extension;
-
-		public FeatureFilter(String extension) {
-			this.extension = extension.toLowerCase();
-		}
-
-		@Override
-		public boolean accept(File dir, String name) {
-			return name.toLowerCase().endsWith(extension);
-		}
-
-    }
-    
-    private static class JavaFilter implements FilenameFilter {
-
-		private String senarioName;
-
-		public JavaFilter(String senarioName) {
-			this.senarioName = senarioName.toLowerCase();
-		}
-
-		@Override
-		public boolean accept(File dir, String name) {
-			return name.toLowerCase().equals(this.senarioName + ".java");
-		}
-
-    }
-    
-    private enum LineType {
-        WHEN,
-        THEN
-    }
-    
 }
