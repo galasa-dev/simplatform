@@ -7,6 +7,7 @@ package dev.galasa.simbank.maven;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -38,8 +39,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
-@Mojo(name = "translatecucumber", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
-                                 requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(name = "translatecucumber", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 @SuppressWarnings("unchecked")
 public class TranslateCucumber extends AbstractMojo {
 
@@ -69,7 +69,7 @@ public class TranslateCucumber extends AbstractMojo {
         getLog().info("TranslateCucumber: Generating Sources " + project.getName());
 
         javaCode = new File(project.getBasedir() + "/src/main/java/" + packageName.replace(".", "/"));
-        if(!javaCode.exists())
+        if (!javaCode.exists())
             javaCode.mkdirs();
 
         getTranslatorClass();
@@ -81,30 +81,36 @@ public class TranslateCucumber extends AbstractMojo {
             try {
                 generateGalasaTest(cucumberSource);
             } catch (Exception e) {
-                throw new MojoExecutionException(
-                        "Error processing feature file " + cucumberSource.getName(), e);
+                throw new MojoExecutionException("Error processing feature file " + cucumberSource.getName(), e);
             }
         }
     }
 
-    private void generateGalasaTest(File source) throws IOException, IllegalArgumentException, IllegalAccessException {
+    private void generateGalasaTest(File source) throws MojoExecutionException {
         getLog().info("TranslateCucumber: Generating Test Class " + source.getName());
 
         usedVariables = new ArrayList<String>();
         uniqueDependencies = new HashSet<String>();
         imports = new HashSet<String>();
-        
-        for(Class<?> translator : translatorClasses) {
+
+        for (Class<?> translator : translatorClasses) {
             imports.add(translator.getName());
         }
 
         List<String> sourceLines = new ArrayList<String>();
-        BufferedReader br = new BufferedReader(new FileReader(source));
-        String st;
-        while((st = br.readLine()) != null) {
-            sourceLines.add(st);
+        BufferedReader br;
+        try {
+            br = new BufferedReader(new FileReader(source));
+            String st;
+            while((st = br.readLine()) != null) {
+                sourceLines.add(st);
+            }
+            br.close();
+        } catch (FileNotFoundException e) {
+            throw new MojoExecutionException("Feature file - " + source + " not found", e);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error reading file - " + source, e);
         }
-        br.close();
 
         File[] oldVersions = javaCode.listFiles(new JavaFilter(source.getName().substring(0, source.getName().lastIndexOf('.'))));
         if(oldVersions != null) {
@@ -115,9 +121,18 @@ public class TranslateCucumber extends AbstractMojo {
 
         String className = source.getName().substring(0, source.getName().indexOf('.'));
         File generated = new File(javaCode.getPath() + "/" + className + ".java");
-        generated.createNewFile();
+        try {
+            generated.createNewFile();
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error generating file at path " + javaCode.getPath() + "/" + className + ".java", e);
+        }
 
-        FileWriter writer = new FileWriter(generated);
+        FileWriter writer;
+        try {
+            writer = new FileWriter(generated);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error generating file writer for - " + javaCode.getPath() + "/" + className + ".java", e);
+        }
         StringBuilder builder = new StringBuilder();
         Boolean methodStarted = false;
         ArrayList<String> givenLines = new ArrayList<String>();
@@ -167,8 +182,17 @@ public class TranslateCucumber extends AbstractMojo {
             importBuilder.append("import " + imp + ";\n");
         }
         stringBuilderReplace(builder, "@ImportsHere@", importBuilder.toString());
-        writer.write(builder.toString());
-        writer.close();
+        try {
+            writer.write(builder.toString());
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error writing String Builder to file", e);
+        } finally {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                throw new MojoExecutionException("Error closing File Writer", e);
+            }
+        }
     }
 
     private String getAnnotationValue(Annotation annotation, String field) {
@@ -185,8 +209,7 @@ public class TranslateCucumber extends AbstractMojo {
             builder.replace(indexReplacement, indexReplacement + replacePattern.length(), replaceWith);
     }
 
-    private void processGivenLines(ArrayList<String> givenLines, StringBuilder builder)
-            throws IllegalArgumentException, IllegalAccessException {
+    private void processGivenLines(ArrayList<String> givenLines, StringBuilder builder) throws MojoExecutionException {
         StringBuilder givenBuilder = new StringBuilder();
         for(String givenLine: givenLines) {
             for(Field parsingField : givenFields) {
@@ -197,7 +220,11 @@ public class TranslateCucumber extends AbstractMojo {
                     String[] codeImports = getAnnotationValue(parsingAnnotation, "codeImports").split(";");
                     if(regex != "" && givenLine.matches(regex)) {
                         StringBuilder fieldBuilder = new StringBuilder();
-                        fieldBuilder.append((String)parsingField.get(parsingField));
+                        try {
+                            fieldBuilder.append((String)parsingField.get(parsingField));
+                        } catch(IllegalAccessException e) {
+                            throw new MojoExecutionException("Error getting access to field - " + parsingField.toString(), e);
+                        }
                         String subVariable = null;
                         for(String usedVariable : usedVariables) {
                             if(usedVariable.matches(parsingField.getName().replaceAll("[0-9]", "") + "([0-9])+")){
@@ -224,7 +251,11 @@ public class TranslateCucumber extends AbstractMojo {
             for(Field parsingField : givenFields) {
                 if(dependency.equals(parsingField.getName())) {
                     StringBuilder fieldBuilder = new StringBuilder();
-                    fieldBuilder.append((String)parsingField.get(parsingField));
+                    try {
+                        fieldBuilder.append((String)parsingField.get(parsingField));
+                    } catch(IllegalAccessException e) {
+                        throw new MojoExecutionException("Error getting access to field - " + parsingField.toString(), e);
+                    }
                     String subVariable = null;
                     for(String usedVariable : usedVariables) {
                         if(usedVariable.matches(parsingField.getName())) {
@@ -246,7 +277,7 @@ public class TranslateCucumber extends AbstractMojo {
         stringBuilderReplace(builder, "@AnnotationsHere@", givenBuilder.toString());
     }
 
-    private void writeMethod(Method parsingMethod, String parsingLine, StringBuilder builder, LineType lineType) throws IOException {
+    private void writeMethod(Method parsingMethod, String parsingLine, StringBuilder builder, LineType lineType) {
         for(Annotation parsingAnnotation : parsingMethod.getAnnotations()) {
             String regex = getAnnotationValue(parsingAnnotation, "regex");
             String type = getAnnotationValue(parsingAnnotation, "type");
@@ -322,7 +353,7 @@ public class TranslateCucumber extends AbstractMojo {
         return variableType.toLowerCase() + i;
     }
 
-    private void getTranslatorClass() {
+    private void getTranslatorClass() throws MojoExecutionException {
         ArrayList<URL> classpathURLs = new ArrayList<URL>();
         try {
             for(String dependency : classpathElements) {
@@ -330,7 +361,7 @@ public class TranslateCucumber extends AbstractMojo {
                 classpathURLs.add(file.toURI().toURL());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new MojoExecutionException("Error in parsing dependency class URLs during getTranslatorClass", e);
         }
         
         ClassLoader thisLoad = getClass().getClassLoader();
