@@ -150,7 +150,6 @@ public class AccountImpl implements IAccount {
                     accountNumber = res.getString(1);
                 }
 
-                freeAccount(simBank.getManager().getDSS(), simBank.getInstanceId(), accountNumber, runName);
                 }catch(SQLException e){
                     logger.error("Error finding account with " + balance + " balance, " + e);
                     res.close();
@@ -166,7 +165,7 @@ public class AccountImpl implements IAccount {
 
                 if(!accountNumber.isEmpty()){ // *** Test if we have found an account with the exact balance
                     if (lockAccount(simBank, accountNumber, false)) {
-                    return new AccountImpl(simBank, accountNumber, false);
+                        return new AccountImpl(simBank, accountNumber, false);
                     }
                 }
 
