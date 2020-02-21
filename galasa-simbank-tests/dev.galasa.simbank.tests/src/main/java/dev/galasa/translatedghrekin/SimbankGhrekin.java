@@ -1,4 +1,4 @@
-package dev.galasa.ghrekin;
+package dev.galasa.translatedghrekin;
 
 import dev.galasa.simbank.manager.SimBank;
 import dev.galasa.simbank.manager.ghrekin.CucumberSimbank;
@@ -14,7 +14,7 @@ import dev.galasa.simbank.manager.Account;
 import dev.galasa.http.HttpClient;
 
 @Test
-public class test {
+public class SimbankGhrekin {
 @Account(balance = "1000")
 public IAccount iaccount1;
 

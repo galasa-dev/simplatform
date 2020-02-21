@@ -65,7 +65,7 @@ public class TranslateCucumber extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("TranslateCucumber: Generating Sources " + project.getName());
 
-        javaCode = new File(project.getBasedir() + "/src/main/java/dev/galasa/ghrekin");
+        javaCode = new File(project.getBasedir() + "/src/main/java/dev/galasa/translatedghrekin");
         if(!javaCode.exists())
             javaCode.mkdirs();
 
@@ -123,7 +123,7 @@ public class TranslateCucumber extends AbstractMojo {
             if(line.trim().indexOf(" ") >= 0) {
                 switch (line.trim().substring(0, line.trim().indexOf(" "))) {
                     case "Feature:":
-                        builder.append("package dev.galasa.ghrekin;\n\n");
+                        builder.append("package dev.galasa.translatedghrekin;\n\n");
                         builder.append("@ImportsHere@\n");
                         imports.add("dev.galasa.Test");
                         builder.append("@Test\n");
