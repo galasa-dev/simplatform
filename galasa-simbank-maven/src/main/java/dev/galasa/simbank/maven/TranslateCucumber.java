@@ -46,30 +46,26 @@ public class TranslateCucumber extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
-    @Parameter(defaultValue = "${project.compileSourceRoots}")
-    private List<String> projectSources;
-
     @Parameter(defaultValue = "${project.compileClasspathElements}", readonly = true, required = true)
     private List<String> classpathElements;
 
     private List<File> sourceFiles = new ArrayList<File>();
-
     private File javaCode;
 
-    private Set<Class<?>> translatorClasses = new HashSet<Class<?>>();
-    private Set<Method> whenMethods = new HashSet<Method>();
-    private Set<Method> thenMethods = new HashSet<Method>();
-    private Set<Field> givenFields = new HashSet<Field>();
+    private Set<Class<?>> translatorClasses;
+    private Set<Method> whenMethods;
+    private Set<Method> thenMethods;
+    private Set<Field> givenFields;
 
-    private ArrayList<String> usedVariables = new ArrayList<String>();
-    private HashSet<String> uniqueDependencies = new HashSet<String>();
-    private HashSet<String> imports = new HashSet<String>();
+    private ArrayList<String> usedVariables;
+    private HashSet<String> uniqueDependencies;
+    private HashSet<String> imports;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("TranslateCucumber: Generating Sources " + project.getName());
 
-        javaCode = new File(projectSources.get(0));
+        javaCode = new File(project.getBasedir() + "/src/main/java/dev/galasa/ghrekin");
         if(!javaCode.exists())
             javaCode.mkdirs();
 
@@ -96,8 +92,6 @@ public class TranslateCucumber extends AbstractMojo {
         imports = new HashSet<String>();
         
         for(Class<?> translator : translatorClasses) {
-            System.out.println(translator);
-            System.out.println(translator.getName());
             imports.add(translator.getName());
         }
 
@@ -109,7 +103,7 @@ public class TranslateCucumber extends AbstractMojo {
         }
         br.close();
 
-        File[] oldVersions = javaCode.listFiles(new JavaFilter(source.getName().substring(0, source.getName().indexOf('.'))));
+        File[] oldVersions = javaCode.listFiles(new JavaFilter(source.getName().substring(0, source.getName().lastIndexOf('.'))));
         if(oldVersions != null) {
             for(File old : oldVersions) {
                 old.delete();
@@ -129,12 +123,13 @@ public class TranslateCucumber extends AbstractMojo {
             if(line.trim().indexOf(" ") >= 0) {
                 switch (line.trim().substring(0, line.trim().indexOf(" "))) {
                     case "Feature:":
-                        builder.append("@ImportsHere@\n\n");
+                        builder.append("package dev.galasa.ghrekin;\n\n");
+                        builder.append("@ImportsHere@\n");
                         imports.add("dev.galasa.Test");
                         builder.append("@Test\n");
                         builder.append("public class " + className + " {");
                         builder.append("\n");
-                        builder.append("@AnnotationsHere@\n");
+                        builder.append("@AnnotationsHere@");
                         break;
                     case "Scenario:":
                         if(method)
@@ -160,8 +155,6 @@ public class TranslateCucumber extends AbstractMojo {
                         givenLines.add(line.trim().substring(line.trim().indexOf(" ") + 1, line.trim().length()));
                         break;
                     default:
-                        if(!line.trim().equals(""))
-                            builder.append("// " + line + "\n");
                         break;
                 }
             }
@@ -172,7 +165,8 @@ public class TranslateCucumber extends AbstractMojo {
                 for(Annotation parsingAnnotation : parsingField.getAnnotations()) {
                     String regex = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("regex=") + 6, parsingAnnotation.toString().indexOf("type") - 2);
                     String type = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("type=") + 5, parsingAnnotation.toString().indexOf("dependencies") - 2);
-                    String dependencies = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("dependencies=") + 13, parsingAnnotation.toString().length() - 1);
+                    String dependencies = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("dependencies=") + 13, parsingAnnotation.toString().indexOf("codeImports") - 2);
+                    String[] codeImports = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("codeImports=") + 12, parsingAnnotation.toString().length() - 1).split(",");
                     if(regex != "" && givenLine.matches(regex)) {
                         StringBuilder fieldBuilder = new StringBuilder();
                         fieldBuilder.append((String)parsingField.get(parsingField));
@@ -183,15 +177,18 @@ public class TranslateCucumber extends AbstractMojo {
                                 break;
                             }
                         }
-                        int indexFieldValue = fieldBuilder.indexOf("value_here", 0);
+                        int indexFieldValue = fieldBuilder.indexOf("@value_here@", 0);
                         if(indexFieldValue >= 0)
-                            fieldBuilder.replace(indexFieldValue, indexFieldValue + "value_here".length(), getVariableFromLine(givenLine, regex, type));
-                        indexFieldValue = fieldBuilder.indexOf("name_here", 0);
+                            fieldBuilder.replace(indexFieldValue, indexFieldValue + "@value_here@".length(), getVariableFromLine(givenLine, regex, type));
+                        indexFieldValue = fieldBuilder.indexOf("@name_here@", 0);
                         if(indexFieldValue >= 0)
-                            fieldBuilder.replace(indexFieldValue, indexFieldValue + "name_here".length(), subVariable);
+                            fieldBuilder.replace(indexFieldValue, indexFieldValue + "@name_here@".length(), subVariable);
                         usedVariables.remove(subVariable);
                         for(String dependency : dependencies.split(","))
                             uniqueDependencies.add(dependency);
+                        for(String codeImport : codeImports)
+                            imports.add(codeImport);
+                            
                         givenBuilder.append(fieldBuilder.toString() + "\n\n");
                     }
                 }
@@ -211,10 +208,15 @@ public class TranslateCucumber extends AbstractMojo {
                             break;
                         }
                     }
-                    int indexFieldValue = fieldBuilder.indexOf("name_here", 0);
+                    int indexFieldValue = fieldBuilder.indexOf("@name_here@", 0);
                     if(indexFieldValue >= 0)
-                        fieldBuilder.replace(indexFieldValue, indexFieldValue + "name_here".length(), subVariable);
+                        fieldBuilder.replace(indexFieldValue, indexFieldValue + "@name_here@".length(), subVariable);
                     usedVariables.remove(subVariable);
+                    for(Annotation parsingAnnotation : parsingField.getAnnotations()) {
+                        String[] codeImports = parsingAnnotation.toString().substring(parsingAnnotation.toString().indexOf("codeImports=") + 12, parsingAnnotation.toString().length() - 1).split(",");
+                        for(String codeImport : codeImports)
+                            imports.add(codeImport);
+                    }
                     givenBuilder.append(fieldBuilder.toString() + "\n\n");
                 }
             }
@@ -239,7 +241,8 @@ public class TranslateCucumber extends AbstractMojo {
             if(parsingLine.matches(regex)) {
                 if(!parsingMethod.getReturnType().getSimpleName().contains("void")) {
                     String returnName = getVariableName(parsingMethod.getReturnType().getSimpleName());
-                    builder.append(parsingMethod.getReturnType().getName() + " " + returnName + " = ");
+                    imports.add(parsingMethod.getReturnType().getName());
+                    builder.append(parsingMethod.getReturnType().getSimpleName() + " " + returnName + " = ");
                 }
                 builder.append(parsingMethod.getDeclaringClass().getSimpleName() + "." + parsingMethod.getName() + "(");
                 java.lang.reflect.Parameter[] parsingParams = parsingMethod.getParameters();

@@ -6,11 +6,18 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch) - Docker Manager Integration Tests",
+            "name": "Debug (Launch) - Simbank Cucumber Test",
             "request": "launch",
             "classPaths": ["/Users/richard.somers@ibm.com/Documents/github/Galasa/framework/galasa-parent/galasa-boot/target/galasa-boot-0.5.0-SNAPSHOT.jar"],
             "mainClass": "dev.galasa.boot.Launcher",
             "args": "--localmaven file:/Users/richard.somers@ibm.com/.m2/repository --obr mvn:dev.galasa/dev.galasa.uber.obr/0.5.0-SNAPSHOT/obr --obr mvn:dev.galasa/dev.galasa.simbank.obr/0.5.0-SNAPSHOT/obr --test dev.galasa.simbank.tests/test"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch) - SimPlatform Application",
+            "request": "launch",
+            "classPaths": ["/Users/richard.somers@ibm.com/Documents/github/Galasa/simplatform/galasa-simplatform-application/target/galasa-simplatform-0.5.0-SNAPSHOT.jar"],
+            "mainClass": "dev.galasa.simplatform.main.Simplatform",
         }
     ]
 }

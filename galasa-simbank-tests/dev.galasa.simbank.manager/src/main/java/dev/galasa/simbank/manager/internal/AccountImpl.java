@@ -55,11 +55,61 @@ public class AccountImpl implements IAccount {
             return findAccountWithExactBalance(manager.getSimBank(), balance);
         }
 
+        if(accountType == AccountType.UnOpened){
+            return findAccountWhichIsNotOpen(manager.getSimBank());
+        }
+
         if (existing) {
             return findExistingAccount(manager.getSimBank(), accountType);
         } else {
             return provisionAccount(manager.getSimBank(), accountType);
         }
+    }
+
+    private static AccountImpl findAccountWhichIsNotOpen(SimBankImpl simBank) throws SimBankManagerException {
+        Random random = simBank.getManager().getFramework().getRandom();
+
+        String sqlStatement = "SELECT ACCOUNT_NUM FROM ACCOUNTS";
+        ArrayList<String> accountNumbers = new ArrayList<String>();
+
+        ResultSet res = null;
+        Statement stmt = null;
+        try {
+            stmt = simBank.getJdbc().createStatement();
+            stmt.execute(sqlStatement);
+            res = stmt.getResultSet();
+
+            while (res.next()) {
+                accountNumbers.add(res.getString(1));
+            }
+        } catch (SQLException e) {
+            throw new SimBankManagerException(e);
+        } finally {
+            try {
+                stmt.close();
+                res.close();
+            } catch (SQLException e) {
+                throw new SimBankManagerException(e);
+            }
+        }
+
+        for (int retry = 0; retry < 1000; retry++) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 9; i++) {
+                sb.append(Integer.toString(random.nextInt(10)));
+            }
+            String accountNumber = sb.toString();
+
+            if(!accountNumbers.contains(accountNumber)) {
+                try {
+                    if (lockAccount(simBank, accountNumber, true))
+                    return new AccountImpl(simBank, accountNumber, false);
+                } catch (DynamicStatusStoreException e) {
+                    logger.info("Error locking Account - Retrying");
+                }
+            }
+        }
+        throw new SimBankManagerException("Unable to create an account after 1000 attempts");
     }
 
     private static AccountImpl findAccountWithExactBalance(SimBankImpl simBank, String balance)

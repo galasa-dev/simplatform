@@ -16,20 +16,20 @@ import dev.galasa.simbank.manager.SimBankManagerException;
 @CucumberTranslator
 public class CucumberSimbank {
 
-    @Given(regex = "I have an account with a balance of -?([0-9])+", type = "number", dependencies = "isimbank,iartifactmanager,ihttpclient")
-    public static String iaccount = "@dev.galasa.simbank.manager.Account(balance = value_here)\npublic dev.galasa.simbank.manager.IAccount name_here;";
+    @Given(regex = "I have an account with a balance of -?([0-9])+", type = "number", dependencies = "isimbank,iartifactmanager,ihttpclient", codeImports = "dev.galasa.simbank.manager.Account,dev.galasa.simbank.manager.IAccount")
+    public static String iaccount = "@Account(balance = @value_here@)\npublic IAccount @name_here@;";
 
-    @Given(regex = "I have an account that doesn't exist", type = "", dependencies = "isimbank,iartifactmanager,ihttpclient")
-    public static String iaccoun = "@dev.galasa.simbank.manager.Account\nprivate dev.galasa.simbank.manager.IAccount name_here;";
+    @Given(regex = "I have an account that doesn't exist", type = "", dependencies = "isimbank,iartifactmanager,ihttpclient", codeImports = "dev.galasa.simbank.manager.Account,dev.galasa.simbank.manager.IAccount,dev.galasa.simbank.manager.AccountType")
+    public static String iaccoun = "@Account(accountType = AccountType.UnOpened)\npublic IAccount @name_here@;";
 
-    @Given(regex = "", type = "", dependencies = "")
-    public static String isimbank = "@dev.galasa.simbank.manager.SimBank\npublic dev.galasa.simbank.manager.ISimBank name_here;";
+    @Given(regex = "", type = "", dependencies = "", codeImports = "dev.galasa.simbank.manager.SimBank,dev.galasa.simbank.manager.ISimBank")
+    public static String isimbank = "@SimBank\npublic ISimBank @name_here@;";
 
-    @Given(regex = "", type = "", dependencies = "")
-    public static String iartifactmanager = "@dev.galasa.artifact.ArtifactManager\npublic dev.galasa.artifact.IArtifactManager name_here;";
+    @Given(regex = "", type = "", dependencies = "", codeImports = "dev.galasa.artifact.ArtifactManager,dev.galasa.artifact.IArtifactManager")
+    public static String iartifactmanager = "@ArtifactManager\npublic IArtifactManager @name_here@;";
 
-    @Given(regex = "", type = "", dependencies = "")
-    public static String ihttpclient = "@dev.galasa.http.HttpClient\npublic dev.galasa.http.IHttpClient name_here;";
+    @Given(regex = "", type = "", dependencies = "", codeImports = "dev.galasa.http.HttpClient,dev.galasa.http.IHttpClient")
+    public static String ihttpclient = "@HttpClient\npublic IHttpClient @name_here@;";
 
     @When(regex = "the web API is called to credit the account with -?([0-9])+", type = "number")
     public static Exception whenTheWebApiIsCalledToCreditTheAccountWith(String amount, IAccount account, @Unique IArtifactManager artifacts, Class<?> testClass, @Unique IHttpClient client, @Unique ISimBank bank) {
@@ -37,10 +37,7 @@ public class CucumberSimbank {
         client.build();
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        if(account == null)
-            parameters.put("ACCOUNT_NUMBER", "abcdefgh");
-        else
-            parameters.put("ACCOUNT_NUMBER", account.getAccountNumber());
+        parameters.put("ACCOUNT_NUMBER", account.getAccountNumber());
         parameters.put("AMOUNT", amount);
 
         try {

@@ -11,5 +11,7 @@ public @interface Given {
     String type();
 
     String dependencies();
+
+    String codeImports();
     
 }
