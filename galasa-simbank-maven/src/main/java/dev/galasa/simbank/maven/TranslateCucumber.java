@@ -63,6 +63,7 @@ public class TranslateCucumber extends AbstractMojo {
     private ArrayList<String> usedVariables;
     private HashSet<String> uniqueDependencies;
     private HashSet<String> imports;
+    private HashSet<String> generatedReturns;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -92,6 +93,7 @@ public class TranslateCucumber extends AbstractMojo {
         usedVariables = new ArrayList<String>();
         uniqueDependencies = new HashSet<String>();
         imports = new HashSet<String>();
+        generatedReturns = new HashSet<String>();
 
         for (Class<?> translator : translatorClasses) {
             imports.add(translator.getName());
@@ -176,12 +178,16 @@ public class TranslateCucumber extends AbstractMojo {
         processGivenLines(givenLines, builder);
 
         builder.append("\t}\n}");
+
+        for(String gen : generatedReturns)
+            stringBuilderReplace(builder, gen, "");
         
         StringBuilder importBuilder = new StringBuilder();
         for(String imp : imports) {
             importBuilder.append("import " + imp + ";\n");
         }
         stringBuilderReplace(builder, "@ImportsHere@", importBuilder.toString());
+
         try {
             writer.write(builder.toString());
         } catch (IOException e) {
@@ -285,7 +291,9 @@ public class TranslateCucumber extends AbstractMojo {
                 builder.append("\t\t" + "//" + parsingLine + "\n\t\t");
                 if(!parsingMethod.getReturnType().getSimpleName().contains("void")) {
                     imports.add(parsingMethod.getReturnType().getName());
-                    builder.append(parsingMethod.getReturnType().getSimpleName() + " " + getVariableName(parsingMethod.getReturnType().getSimpleName()) + " = ");
+                    String returnLine = parsingMethod.getReturnType().getSimpleName() + " " + getVariableName(parsingMethod.getReturnType().getSimpleName()) + " = ";
+                    builder.append(returnLine);
+                    generatedReturns.add(returnLine);
                 }
                 builder.append(parsingMethod.getDeclaringClass().getSimpleName() + "." + parsingMethod.getName() + "(");
                 java.lang.reflect.Parameter[] parsingParams = parsingMethod.getParameters();
@@ -314,6 +322,12 @@ public class TranslateCucumber extends AbstractMojo {
                                     if(usedName.matches(parsingParams[i].getType().getSimpleName().toLowerCase() + "([0-9])+"))
                                         variableName = usedName;
                                 }
+                                String foundGen = null;
+                                for(String gen : generatedReturns) {
+                                    if(gen.contains(variableName))
+                                        foundGen = gen;
+                                }
+                                generatedReturns.remove(foundGen);
                             }
                             builder.append(variableName);
                         }

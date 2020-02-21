@@ -43,7 +43,7 @@ public class SimbankGhrekin {
 		//the web API is called to credit the account with 500
 		Exception exception1 = CucumberSimbank.whenTheWebApiIsCalledToCreditTheAccountWith("500",iaccount1,iartifactmanager,this.getClass(),ihttpclient,isimbank);
 		//the balance of the account should be 1500
-		CucumberSimbank.thenTheBalanceOfTheAccountShouldBe("1500",iaccount1);
+		CucumberSimbank.thenTheBalanceOfTheAccountShouldBe("1500",exception1,iaccount1);
 	}
 
 	@Test
@@ -51,7 +51,7 @@ public class SimbankGhrekin {
 		//the web API is called to credit the account with 500
 		Exception exception2 = CucumberSimbank.whenTheWebApiIsCalledToCreditTheAccountWith("500",iaccount2,iartifactmanager,this.getClass(),ihttpclient,isimbank);
 		//the balance of the account should be 400
-		CucumberSimbank.thenTheBalanceOfTheAccountShouldBe("400",iaccount2);
+		CucumberSimbank.thenTheBalanceOfTheAccountShouldBe("400",exception2,iaccount2);
 	}
 
 	@Test

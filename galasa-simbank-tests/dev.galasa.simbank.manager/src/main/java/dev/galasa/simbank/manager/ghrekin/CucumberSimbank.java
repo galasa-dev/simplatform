@@ -54,7 +54,8 @@ public class CucumberSimbank {
     }
 
     @Then(regex = "the balance of the account should be -?([0-9])+", type = "number")
-    public static void thenTheBalanceOfTheAccountShouldBe(String amount, IAccount account) {
+    public static void thenTheBalanceOfTheAccountShouldBe(String amount, Exception exception, IAccount account) {
+        assertThat(exception).isNull();
         try {
             assertThat(account.getBalance()).isEqualByComparingTo(new BigDecimal(amount));
         } catch (SimBankManagerException e) {
