@@ -64,6 +64,8 @@ public class TranslateCucumber extends AbstractMojo {
     private HashSet<String> uniqueDependencies;
     private HashSet<String> imports;
     private HashSet<String> generatedReturns;
+    private HashSet<String> thrownMethodExceptions;
+    private HashSet<String> processableVariables;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -94,6 +96,7 @@ public class TranslateCucumber extends AbstractMojo {
         uniqueDependencies = new HashSet<String>();
         imports = new HashSet<String>();
         generatedReturns = new HashSet<String>();
+        thrownMethodExceptions = new HashSet<String>();
 
         for (Class<?> translator : translatorClasses) {
             imports.add(translator.getName());
@@ -146,12 +149,16 @@ public class TranslateCucumber extends AbstractMojo {
                         imports.add("dev.galasa.Test");
                         break;
                     case "Scenario:":
-                        if(methodStarted)
+                        if(methodStarted) {
                             builder.append("\t}\n\n");
+                            processExceptions(builder, thrownMethodExceptions);
+                        }
+                        processableVariables = new HashSet<String>();
+                        thrownMethodExceptions = new HashSet<String>();
                         methodStarted = true;
                         builder.append("\t@Test\n");
                         
-                        builder.append("\tpublic void " + camelCase(line.trim().substring(line.trim().indexOf(" ") + 1)) + "() {\n");
+                        builder.append("\tpublic void " + camelCase(line.trim().substring(line.trim().indexOf(" ") + 1)) + "() @ExceptionsHere@{\n");
                         break;
                     case "When":
                         String whenParsingLine = line.trim().substring(line.trim().indexOf(" ") + 1);
@@ -174,7 +181,7 @@ public class TranslateCucumber extends AbstractMojo {
                 }
             }
         }
-
+        processExceptions(builder, thrownMethodExceptions);
         processGivenLines(givenLines, builder);
 
         builder.append("\t}\n}");
@@ -199,6 +206,19 @@ public class TranslateCucumber extends AbstractMojo {
                 throw new MojoExecutionException("Error closing File Writer", e);
             }
         }
+    }
+
+    private void processExceptions(StringBuilder builder, HashSet<String> exceptions) {
+        StringBuilder exceptionString = new StringBuilder();
+        for(int i = 0; i < exceptions.size(); i++) {
+            if(exceptionString.length() == 0)
+                exceptionString.append("throws ");
+            exceptionString.append(exceptions.toArray()[i]);
+            if(i != exceptions.size() - 1)
+                exceptionString.append(",");
+            exceptionString.append(" ");
+        }
+        stringBuilderReplace(builder, "@ExceptionsHere@", exceptionString.toString());
     }
 
     private String getAnnotationValue(Annotation annotation, String field) {
@@ -316,7 +336,15 @@ public class TranslateCucumber extends AbstractMojo {
                         } else {
                             String variableName = null;
                             if(lineType == LineType.WHEN) {
-                                variableName = getVariableName(parsingParams[i].getType().getSimpleName());
+                                for(String processableVariable : processableVariables) {
+                                    System.out.println(processableVariable + " : " + parsingParams[i].getType().getSimpleName());
+                                    if(processableVariable.matches(parsingParams[i].getType().getSimpleName().toLowerCase() + "([0-9])+"))
+                                        variableName = processableVariable;
+                                }
+                                if(variableName == null) {
+                                    variableName = getVariableName(parsingParams[i].getType().getSimpleName());
+                                    processableVariables.add(variableName);
+                                }
                             } else if(lineType == LineType.THEN) {
                                 for(String usedName : usedVariables) {
                                     if(usedName.matches(parsingParams[i].getType().getSimpleName().toLowerCase() + "([0-9])+"))
@@ -334,9 +362,13 @@ public class TranslateCucumber extends AbstractMojo {
                     }
 
                     if(i != parsingParams.length - 1)
-                        builder.append(",");
+                        builder.append(", ");
                 }
                 builder.append(");\n");
+                for(Class<?> exceptionClass : parsingMethod.getExceptionTypes()) {
+                    imports.add(exceptionClass.getName());
+                    thrownMethodExceptions.add(exceptionClass.getSimpleName());
+                }
                 break;
             }
         }

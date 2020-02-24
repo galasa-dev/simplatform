@@ -1,6 +1,8 @@
 package dev.galasa.simbank.manager.ghrekin;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
