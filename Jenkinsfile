@@ -28,19 +28,19 @@ pipeline {
       
       stage('SimPlatform Application') {
          steps {
-            withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
-               withSonarQubeEnv('GalasaSonarQube') {
+             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
+               withFolderProperties { withSonarQubeEnv('GalasaSonarQube') {
                   dir('galasa-simplatform-application') {
                      sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                   }
-               }
+               } }
             }
          }
       }
       stage('SimBank-Tests') {
          steps {
             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
-               withSonarQubeEnv('GalasaSonarQube') {
+               withFolderProperties { withSonarQubeEnv('GalasaSonarQube') {
                   dir('galasa-simbank-tests') {
                      sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
 
@@ -56,14 +56,14 @@ pipeline {
                         sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                      }
                   }
-               }
+               } }
             }
          }
       }
       stage('SimBank Eclipse Comms Maven') {
          steps {
             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
-               withSonarQubeEnv('GalasaSonarQube') {
+               withFolderProperties { withSonarQubeEnv('GalasaSonarQube') {
                   dir('galasa-simbank-eclipse') {
                      sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
 
@@ -75,7 +75,7 @@ pipeline {
                         sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Djarsigner.skip=${env.SIGN_SKIP} -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                      }
                   }
-               }
+               } }
             }
          }
       }
