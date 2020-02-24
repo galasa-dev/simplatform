@@ -107,7 +107,7 @@ public class SimBankImpl implements ISimBank {
                         "Missing credentials for id " + credentialsId + " for SimBank instance " + dseInstanceName);
             }
             if (!(credentials instanceof ICredentialsUsernamePassword)) {
-                throw new SimBankManagerException("Invalidcredentials for id " + credentialsId
+                throw new SimBankManagerException("Invalid credentials for id " + credentialsId
                         + " for SimBank instance " + dseInstanceName + ", needs to Username and Password");
             }
 
