@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -375,17 +377,13 @@ public class TranslateCucumber extends AbstractMojo {
     }
 
     private String getVariableFromLine(String line, String regex, String type) {
-        String[] lineWords = line.split(" ");
-        String[] regexWords = regex.split(" ");
-        int i = 0;
-        while(!regexWords[i].contains("(") || !regexWords[i].contains(")") || !regexWords[i].contains("+") || !regexWords[i].contains("[") || !regexWords[i].contains("]")) {
-            i++;
-            if(i == regexWords.length)
-                return "";
-        }
-        String variableWord = lineWords[i];
-        if(type.equals("number")) {
-            return "\"" + variableWord + "\"";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(line);
+        if(matcher.groupCount() > 0) {
+            String variableWord = matcher.group(1);
+            if(type.equals("number")) {
+                return "\"" + variableWord + "\"";
+            }
         }
         return null;
     }

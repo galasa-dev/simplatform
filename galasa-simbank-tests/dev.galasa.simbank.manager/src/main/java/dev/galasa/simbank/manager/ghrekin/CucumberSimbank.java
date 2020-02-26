@@ -18,7 +18,7 @@ import dev.galasa.simbank.manager.SimBankManagerException;
 @CucumberTranslator
 public class CucumberSimbank {
 
-    @Given(regex = "I have an account with a balance of -?([0-9])+", type = "number", dependencies = "isimbank;iartifactmanager;ihttpclient", codeImports = "dev.galasa.simbank.manager.Account;dev.galasa.simbank.manager.IAccount")
+    @Given(regex = "I have an account with a balance of (-?[0-9]+)", type = "number", dependencies = "isimbank;iartifactmanager;ihttpclient", codeImports = "dev.galasa.simbank.manager.Account;dev.galasa.simbank.manager.IAccount")
     public static String iaccount = "@Account(balance = @value_here@)\npublic IAccount @name_here@;";
 
     @Given(regex = "I have an account that doesn't exist", type = "", dependencies = "isimbank;iartifactmanager;ihttpclient", codeImports = "dev.galasa.simbank.manager.Account;dev.galasa.simbank.manager.IAccount;dev.galasa.simbank.manager.AccountType")
@@ -33,7 +33,7 @@ public class CucumberSimbank {
     @Given(regex = "", type = "", dependencies = "", codeImports = "dev.galasa.http.HttpClient;dev.galasa.http.IHttpClient")
     public static String ihttpclient = "@HttpClient\npublic IHttpClient @name_here@;";
 
-    @When(regex = "the web API is called to credit the account with -?([0-9])+", type = "number")
+    @When(regex = "the web API is called to credit the account with (-?[0-9]+)", type = "number")
     public static Exception whenTheWebApiIsCalledToCreditTheAccountWith(String amount, IAccount account, @Unique IArtifactManager artifacts, Class<?> testClass, @Unique IHttpClient client, @Unique ISimBank bank) {
 
         client.build();
@@ -55,7 +55,7 @@ public class CucumberSimbank {
         return null;
     }
 
-    @Then(regex = "the balance of the account should be -?([0-9])+", type = "number")
+    @Then(regex = "the balance of the account should be (-?[0-9]+)", type = "number")
     public static void thenTheBalanceOfTheAccountShouldBe(String amount, Exception exception, IAccount account) {
         assertThat(exception).isNull();
         try {
@@ -65,7 +65,7 @@ public class CucumberSimbank {
         }
     }
 
-    @Then(regex = "an? ([A-z])+ Exception is thrown", type = "exception")
+    @Then(regex = "an? ([A-z]+) Exception is thrown", type = "exception")
     public static void thenASpecificExceptionIsThrown(Exception thrown) {
         assertThat(thrown.getMessage()).contains("400: 'Method Not Allowed'");
     }
