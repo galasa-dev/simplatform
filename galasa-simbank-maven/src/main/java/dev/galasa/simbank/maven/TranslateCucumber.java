@@ -379,7 +379,7 @@ public class TranslateCucumber extends AbstractMojo {
     private String getVariableFromLine(String line, String regex, String type) {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(line);
-        if(matcher.groupCount() > 0) {
+        if(matcher.matches() && matcher.groupCount() > 0) {
             String variableWord = matcher.group(1);
             if(type.equals("number")) {
                 return "\"" + variableWord + "\"";
