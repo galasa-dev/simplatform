@@ -291,6 +291,10 @@ public class TranslateCucumber extends AbstractMojo {
                             break;
                         }
                     }
+                    if(subVariable == null){
+                        subVariable = parsingField.getName();
+                        usedVariables.add(subVariable);
+                    }
                     stringBuilderReplace(fieldBuilder, "@name_here@", subVariable);
                     usedVariables.remove(subVariable);
                     for(Annotation parsingAnnotation : parsingField.getAnnotations()) {
@@ -339,7 +343,6 @@ public class TranslateCucumber extends AbstractMojo {
                             String variableName = null;
                             if(lineType == LineType.WHEN) {
                                 for(String processableVariable : processableVariables) {
-                                    System.out.println(processableVariable + " : " + parsingParams[i].getType().getSimpleName());
                                     if(processableVariable.matches(parsingParams[i].getType().getSimpleName().toLowerCase() + "([0-9])+"))
                                         variableName = processableVariable;
                                 }

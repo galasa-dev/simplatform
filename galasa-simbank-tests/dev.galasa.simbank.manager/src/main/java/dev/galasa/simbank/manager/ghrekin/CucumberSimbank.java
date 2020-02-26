@@ -10,10 +10,13 @@ import java.util.HashMap;
 
 import dev.galasa.artifact.IArtifactManager;
 import dev.galasa.artifact.IBundleResources;
+import dev.galasa.core.manager.ICoreManager;
 import dev.galasa.http.IHttpClient;
 import dev.galasa.simbank.manager.IAccount;
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.SimBankManagerException;
+import dev.galasa.zos.IZosImage;
+import dev.galasa.zos3270.ITerminal;
 
 @CucumberTranslator
 public class CucumberSimbank {
@@ -23,6 +26,15 @@ public class CucumberSimbank {
 
     @Given(regex = "I have an account that doesn't exist", type = "", dependencies = "isimbank;iartifactmanager;ihttpclient", codeImports = "dev.galasa.simbank.manager.Account;dev.galasa.simbank.manager.IAccount;dev.galasa.simbank.manager.AccountType")
     public static String iaccount1 = "@Account(accountType = AccountType.UnOpened)\npublic IAccount @name_here@;";
+
+    @Given(regex = "", type = "", dependencies = "", codeImports =  "dev.galasa.zos.ZosImage;dev.galasa.zos.IZosImage")
+    public static String iimage = "@ZosImage(imageTag = \"simbank\")\npublic IZosImage @name_here@;";
+
+    @Given(regex = "The Simbank is available", type = "", dependencies = "iimage;icoremanager", codeImports =  "dev.galasa.zos3270.Zos3270Terminal;dev.galasa.zos3270.ITerminal")
+    public static String iterminal = "@Zos3270Terminal(imageTag = \"simbank\")\npublic ITerminal @name_here@;";
+
+    @Given(regex = "", type = "", dependencies = "", codeImports =  "dev.galasa.core.manager.CoreManager;dev.galasa.core.manager.ICoreManager")
+    public static String icoremanager = "@CoreManager\npublic ICoreManager @name_here@;";
 
     @Given(regex = "", type = "", dependencies = "", codeImports = "dev.galasa.simbank.manager.SimBank;dev.galasa.simbank.manager.ISimBank")
     public static String isimbank = "@SimBank\npublic ISimBank @name_here@;";
@@ -55,6 +67,23 @@ public class CucumberSimbank {
         return null;
     }
 
+    @When(regex = "I navigate to SimBank", type = "")
+    public static String whenYouNavigateToBank(@Unique ICoreManager manager, ITerminal terminal ) {
+        
+        try{
+
+            manager.registerConfidentialText("SYS1", "IBMUSER password");
+
+            terminal.waitForKeyboard().positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
+            .positionCursorToFieldContaining("Password").tab().type("SYS1").enter().waitForKeyboard();
+
+            return terminal.retrieveScreen();
+        }catch(Exception e){
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     @Then(regex = "the balance of the account should be (-?[0-9]+)", type = "number")
     public static void thenTheBalanceOfTheAccountShouldBe(String amount, Exception exception, IAccount account) {
         assertThat(exception).isNull();
@@ -68,6 +97,12 @@ public class CucumberSimbank {
     @Then(regex = "an? ([A-z]+) Exception is thrown", type = "exception")
     public static void thenASpecificExceptionIsThrown(Exception thrown) {
         assertThat(thrown.getMessage()).contains("400: 'Method Not Allowed'");
+    }
+
+    @Then(regex = "I should see the main screen", type = "")
+    public static void thenTheMainScreenShouldBeVisible(String screen){
+        assertThat(screen).containsOnlyOnce("SIMPLATFORM MAIN MENU");
+        assertThat(screen).containsOnlyOnce("BANKTEST");
     }
 
 }

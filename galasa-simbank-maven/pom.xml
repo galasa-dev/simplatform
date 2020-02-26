@@ -106,8 +106,6 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.6</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.bundlerepository</artifactId>
@@ -128,6 +126,22 @@
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.simbank.manager</artifactId>
+			<version>0.5.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>dev.galasa</groupId>
+			<artifactId>dev.galasa.zos.manager</artifactId>
+			<version>0.5.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>dev.galasa</groupId>
+			<artifactId>dev.galasa.zos3270.manager</artifactId>
+			<version>0.5.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dev.galasa</groupId>
+			<artifactId>dev.galasa.core.manager</artifactId>
 			<version>0.5.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
