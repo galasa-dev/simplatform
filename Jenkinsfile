@@ -1,6 +1,3 @@
-def mvnProfile        = 'dev'
-def galasaSignJarSkip = 'true'
-
 pipeline {
 // Initially run on any agent
    agent {
@@ -13,46 +10,8 @@ pipeline {
       
 //Set some defaults
       def workspace  = pwd()
-      def mvnGoal    = 'install'
    }
    stages {
-// If it is the master branch, version 0.3.0 and master on all the other branches
-      stage('set-dev') {
-         when {
-           environment name: 'GIT_BRANCH', value: 'origin/master'
-         }
-         steps {
-            script {
-//               mvnGoal           = 'deploy sonar:sonar'
-               mvnGoal           = 'deploy'
-            }
-         }
-      }
-// If it is the master branch, version 0.3.0 and master on all the other branches
-      stage('set-staging') {
-         when {
-           environment name: 'GIT_BRANCH', value: 'origin/staging'
-         }
-         steps {
-            script {
-               mvnGoal           = 'deploy'
-               mvnProfile        = 'staging'
-               galasaSignJarSkip = 'false'
-            }
-         }
-      }
-
-// for debugging purposes
-      stage('report') {
-         steps {
-            echo "Branch/Tag         : ${env.GIT_BRANCH}"
-            echo "Workspace directory: ${workspace}"
-            echo "Maven Goal         : ${mvnGoal}"
-            echo "Maven profile      : ${mvnProfile}"
-            echo "Skip Signing JARs  : ${galasaSignJarSkip}"
-         }
-      }
-   
 // Set up the workspace, clear the git directories and setup the manve settings.xml files
       stage('prep-workspace') { 
          steps {
@@ -69,54 +28,54 @@ pipeline {
       
       stage('SimPlatform Application') {
          steps {
-            withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
-               withSonarQubeEnv('GalasaSonarQube') {
+             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
+               withFolderProperties { withSonarQubeEnv('GalasaSonarQube') {
                   dir('galasa-simplatform-application') {
-                     sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=false -Dgpg.passphrase=$GPG  -P ${mvnProfile} -B -e -fae --non-recursive ${mvnGoal}"
+                     sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                   }
-               }
+               } }
             }
          }
       }
       stage('SimBank-Tests') {
          steps {
             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
-               withSonarQubeEnv('GalasaSonarQube') {
+               withFolderProperties { withSonarQubeEnv('GalasaSonarQube') {
                   dir('galasa-simbank-tests') {
-                     sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=false -Dgpg.passphrase=$GPG  -P ${mvnProfile} -B -e -fae --non-recursive ${mvnGoal}"
+                     sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
 
                      dir('dev.galasa.simbank.manager') {
-                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=false -Dgpg.passphrase=$GPG  -P ${mvnProfile} -B -e -fae --non-recursive ${mvnGoal}"
+                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                      }
 
                      dir('dev.galasa.simbank.tests') {
-                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=false -Dgpg.passphrase=$GPG  -P ${mvnProfile} -B -e -fae --non-recursive ${mvnGoal}"
+                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                      }
 
                      dir('dev.galasa.simbank.obr') {
-                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=false -Dgpg.passphrase=$GPG  -P ${mvnProfile} -B -e -fae --non-recursive ${mvnGoal}"
+                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                      }
                   }
-               }
+               } }
             }
          }
       }
       stage('SimBank Eclipse Comms Maven') {
          steps {
             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
-               withSonarQubeEnv('GalasaSonarQube') {
+               withFolderProperties { withSonarQubeEnv('GalasaSonarQube') {
                   dir('galasa-simbank-eclipse') {
-                     sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=false -Dgpg.passphrase=$GPG  -P ${mvnProfile} -B -e -fae --non-recursive ${mvnGoal}"
+                     sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
 
                      dir('dev.galasa.simbank.ui') {
-                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Djarsigner.skip=${galasaSignJarSkip} -Dgpg.skip=false -Dgpg.passphrase=$GPG  -P ${mvnProfile} -B -e -fae --non-recursive ${mvnGoal}"
+                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Djarsigner.skip=${env.SIGN_SKIP} -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                      }
 
                      dir('dev.galasa.simbank.feature') {
-                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Djarsigner.skip=${galasaSignJarSkip} -Dgpg.skip=false -Dgpg.passphrase=$GPG  -P ${mvnProfile} -B -e -fae --non-recursive ${mvnGoal}"
+                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Djarsigner.skip=${env.SIGN_SKIP} -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                      }
                   }
-               }
+               } }
             }
          }
       }
