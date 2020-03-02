@@ -1,0 +1,49 @@
+[
+    {
+        "id": "efd0d126.ba5a6",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "2b66319f.35f186",
+        "type": "provision_account",
+        "z": "efd0d126.ba5a6",
+        "name": "Obtain account with 500",
+        "topic": "GIVEN",
+        "x": 140,
+        "y": 600,
+        "wires": [
+            [
+                "729b89b8.d36318"
+            ]
+        ]
+    },
+    {
+        "id": "729b89b8.d36318",
+        "type": "add_credit",
+        "z": "efd0d126.ba5a6",
+        "name": "Credit with 500",
+        "topic": "WHEN",
+        "x": 440,
+        "y": 600,
+        "wires": [
+            [
+                "98545780.5815f"
+            ]
+        ]
+    },
+    {
+        "id": "98545780.5815f",
+        "type": "assert_value",
+        "z": "efd0d126.ba5a6",
+        "name": "Check account is 1000",
+        "topic": "THEN",
+        "x": 690,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    }
+]

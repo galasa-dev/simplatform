@@ -48,6 +48,12 @@
 							<goal>translatecucumber</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>translate-nodered</id>
+						<goals>
+							<goal>translatenodered</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>

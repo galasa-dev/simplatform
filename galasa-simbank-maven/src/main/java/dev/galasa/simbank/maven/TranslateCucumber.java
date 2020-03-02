@@ -255,7 +255,7 @@ public class TranslateCucumber extends AbstractMojo {
                         }
                         String subVariable = null;
                         for(String usedVariable : usedVariables) {
-                            if(usedVariable.matches(parsingField.getName().replaceAll("[0-9]", "") + "([0-9])+")){
+                            if(usedVariable.matches(parsingField.getName().replaceAll("[0-9]", "") + "([0-9])+")) {
                                 subVariable = usedVariable;
                                 break;
                             }
@@ -284,19 +284,8 @@ public class TranslateCucumber extends AbstractMojo {
                     } catch(IllegalAccessException e) {
                         throw new MojoExecutionException("Error getting access to field - " + parsingField.toString(), e);
                     }
-                    String subVariable = null;
-                    for(String usedVariable : usedVariables) {
-                        if(usedVariable.matches(parsingField.getName())) {
-                            subVariable = usedVariable;
-                            break;
-                        }
-                    }
-                    if(subVariable == null){
-                        subVariable = parsingField.getName();
-                        usedVariables.add(subVariable);
-                    }
+                    String subVariable = parsingField.getName();
                     stringBuilderReplace(fieldBuilder, "@name_here@", subVariable);
-                    usedVariables.remove(subVariable);
                     for(Annotation parsingAnnotation : parsingField.getAnnotations()) {
                         String[] codeImports = getAnnotationValue(parsingAnnotation, "codeImports").split(";");
                         for(String codeImport : codeImports)
