@@ -186,9 +186,11 @@ public class TranslateNodeRed extends AbstractMojo {
     }
 
     private void processLine(String line, StringBuilder patternBuilder, ArrayList<String> exceptionsList) {
+
         Pattern pattern = Pattern.compile("Obtain account with (-?[0-9]+)");
         Matcher matcher = pattern.matcher(line);
         if(matcher.matches() && matcher.groupCount() > 0) {
+            patternBuilder.append("\t//" + line + "\n");
             String variableWord = "\"" + matcher.group(1) + "\"";
             StringBuilder fieldBuilder = new StringBuilder();
             fieldBuilder.append("\t@Account(balance = @value_here@)\n\tpublic IAccount @name_here@;");
@@ -208,6 +210,7 @@ public class TranslateNodeRed extends AbstractMojo {
         pattern = Pattern.compile("Credit with (-?[0-9]+)");
         matcher = pattern.matcher(line);
         if(matcher.matches() && matcher.groupCount() > 0) {
+            patternBuilder.append("\t\t//" + line + "\n");
             String variableWord = "\"" + matcher.group(1) + "\"";
             StringBuilder fieldBuilder = new StringBuilder();
             String methodCode = "\t\tclient.build();\n" +
@@ -273,6 +276,7 @@ public class TranslateNodeRed extends AbstractMojo {
         pattern = Pattern.compile("Check account is (-?[0-9]+)");
         matcher = pattern.matcher(line);
         if(matcher.matches() && matcher.groupCount() > 0) {
+            patternBuilder.append("\t\t//" + line + "\n");
             String variableWord = "\"" + matcher.group(1) + "\"";
             StringBuilder fieldBuilder = new StringBuilder();
             fieldBuilder.append("\t\tassertThat(@account_name@.getBalance()).isEqualByComparingTo(new BigDecimal(@value_here@));");
