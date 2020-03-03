@@ -113,7 +113,18 @@ public class TranslateNodeRed extends AbstractMojo {
             jsonArray.remove(flowElement);
             JsonArray flowObjects = new JsonArray();
             for(JsonElement arrayElement : jsonArray) {
-                if(arrayElement.getAsJsonObject().get("z") != null && arrayElement.getAsJsonObject().get("z").getAsString().equals(flowElement.getAsJsonObject().get("id").getAsString()))
+                if(arrayElement.getAsJsonObject().get("z") != null && arrayElement.getAsJsonObject().get("topic").getAsString().equals("GIVEN")
+                        && arrayElement.getAsJsonObject().get("z").getAsString().equals(flowElement.getAsJsonObject().get("id").getAsString()))
+                    flowObjects.add(arrayElement);
+            }
+            for(JsonElement arrayElement : jsonArray) {
+                if(arrayElement.getAsJsonObject().get("z") != null && arrayElement.getAsJsonObject().get("topic").getAsString().equals("WHEN")
+                        && arrayElement.getAsJsonObject().get("z").getAsString().equals(flowElement.getAsJsonObject().get("id").getAsString()))
+                    flowObjects.add(arrayElement);
+            }
+            for(JsonElement arrayElement : jsonArray) {
+                if(arrayElement.getAsJsonObject().get("z") != null && arrayElement.getAsJsonObject().get("topic").getAsString().equals("THEN")
+                        && arrayElement.getAsJsonObject().get("z").getAsString().equals(flowElement.getAsJsonObject().get("id").getAsString()))
                     flowObjects.add(arrayElement);
             }
             organisedFlows.add(flowElement.getAsJsonObject().get("id").getAsString(), flowObjects);
