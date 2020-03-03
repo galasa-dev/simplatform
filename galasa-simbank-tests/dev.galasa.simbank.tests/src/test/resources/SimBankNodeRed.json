@@ -1,47 +1,137 @@
 [
     {
-        "id": "efd0d126.ba5a6",
+        "id": "45ce20bd.e4f2e8",
         "type": "tab",
         "label": "Flow 1",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "2b66319f.35f186",
+        "id": "6feadfbb.635a9",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "41e8b16a.715ac8",
+        "type": "tab",
+        "label": "Flow 3",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "e83463a8.ca7c58",
         "type": "provision_account",
-        "z": "efd0d126.ba5a6",
+        "z": "45ce20bd.e4f2e8",
+        "name": "Obtain account with 500",
+        "topic": "GIVEN",
+        "x": 220,
+        "y": 600,
+        "wires": [
+            [
+                "60edae98.610fa"
+            ]
+        ]
+    },
+    {
+        "id": "60edae98.610fa",
+        "type": "add_credit",
+        "z": "45ce20bd.e4f2e8",
+        "name": "Credit with 500",
+        "topic": "WHEN",
+        "x": 500,
+        "y": 600,
+        "wires": [
+            [
+                "655432de.c82bbc"
+            ]
+        ]
+    },
+    {
+        "id": "655432de.c82bbc",
+        "type": "assert_value",
+        "z": "45ce20bd.e4f2e8",
+        "name": "Check account is 1000",
+        "topic": "THEN",
+        "x": 880,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7cf70c33.89a824",
+        "type": "provision_account",
+        "z": "6feadfbb.635a9",
         "name": "Obtain account with 500",
         "topic": "GIVEN",
         "x": 140,
-        "y": 600,
+        "y": 580,
         "wires": [
             [
-                "729b89b8.d36318"
+                "3b0f88df.f5b438"
             ]
         ]
     },
     {
-        "id": "729b89b8.d36318",
+        "id": "3b0f88df.f5b438",
         "type": "add_credit",
-        "z": "efd0d126.ba5a6",
+        "z": "6feadfbb.635a9",
         "name": "Credit with 500",
         "topic": "WHEN",
-        "x": 440,
-        "y": 600,
+        "x": 420,
+        "y": 580,
         "wires": [
             [
-                "98545780.5815f"
+                "35f8a54d.d9b6ba"
             ]
         ]
     },
     {
-        "id": "98545780.5815f",
+        "id": "35f8a54d.d9b6ba",
         "type": "assert_value",
-        "z": "efd0d126.ba5a6",
+        "z": "6feadfbb.635a9",
         "name": "Check account is 1000",
         "topic": "THEN",
-        "x": 690,
-        "y": 600,
+        "x": 780,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d95c8cce.4776f8",
+        "type": "provision_account",
+        "z": "41e8b16a.715ac8",
+        "name": "Obtain account with 2000",
+        "topic": "GIVEN",
+        "x": 140,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5c47330a.60a734",
+        "type": "add_credit",
+        "z": "41e8b16a.715ac8",
+        "name": "Credit with 200",
+        "topic": "WHEN",
+        "x": 480,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d3cf319c.99dcc",
+        "type": "assert_value",
+        "z": "41e8b16a.715ac8",
+        "name": "Check account is 2200",
+        "topic": "THEN",
+        "x": 760,
+        "y": 540,
         "wires": [
             []
         ]
