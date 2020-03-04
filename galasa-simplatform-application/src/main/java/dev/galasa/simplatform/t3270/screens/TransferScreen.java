@@ -92,7 +92,7 @@ public class TransferScreen extends AbstractScreen {
 
         screen.setBuffer(72, 0, time.format(dtf));
 
-        screen.setBuffer(3, 8, "                 ");
+        screen.setBuffer(3, 8, "                                   ");
         screen.setBuffer(3, 8, errorMessage);
 
         if (validFields) {
