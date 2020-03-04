@@ -6,12 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Given {
 
-    String regex();
+    String regex() default "";
 
-    String type();
+    String type() default "";
 
-    String dependencies();
+    String dependencies() default "";
 
-    String codeImports();
+    String codeImports() default "";
     
 }
