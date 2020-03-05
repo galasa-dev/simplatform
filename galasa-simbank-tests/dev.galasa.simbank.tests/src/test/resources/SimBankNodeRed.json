@@ -109,19 +109,9 @@
         "x": 140,
         "y": 540,
         "wires": [
-            []
-        ]
-    },
-    {
-        "id": "5c47330a.60a734",
-        "type": "add_credit",
-        "z": "41e8b16a.715ac8",
-        "name": "Credit with 200",
-        "topic": "WHEN",
-        "x": 480,
-        "y": 540,
-        "wires": [
-            []
+            [
+                "599fbe8b.ca03f"
+            ]
         ]
     },
     {
@@ -130,10 +120,24 @@
         "z": "41e8b16a.715ac8",
         "name": "Check account is 2200",
         "topic": "THEN",
-        "x": 760,
+        "x": 770,
         "y": 540,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "599fbe8b.ca03f",
+        "type": "add_credit",
+        "z": "41e8b16a.715ac8",
+        "name": "Credit with 200",
+        "topic": "WHEN",
+        "x": 420,
+        "y": 540,
+        "wires": [
+            [
+                "d3cf319c.99dcc"
+            ]
         ]
     }
 ]

@@ -8,6 +8,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -91,98 +93,113 @@ public class TranslateNodeRed extends AbstractMojo {
             throw new MojoExecutionException("Error generating file at path " + javaCode.getPath() + "/" + className + ".java", e);
         }
 
-        FileWriter writer;
+        FileWriter writer = null;
         try {
             writer = new FileWriter(generated);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error generating file writer for - " + javaCode.getPath() + "/" + className + ".java", e);
-        }
-
-        ArrayList<JsonElement> flowElements = new ArrayList<JsonElement>();
-        ArrayList<String> flowIds = new ArrayList<String>();
-
-        for(JsonElement jsonElement : jsonArray) {
-            if(jsonElement.getAsJsonObject().get("label") != null && jsonElement.getAsJsonObject().get("label").getAsString().contains("Flow")) {
-                flowElements.add(jsonElement);
-                flowIds.add(jsonElement.getAsJsonObject().get("id").getAsString());
-            }
-        }
         
-        JsonObject organisedFlows = new JsonObject();
-        for(JsonElement flowElement : flowElements) {
-            jsonArray.remove(flowElement);
-            JsonArray flowObjects = new JsonArray();
-            for(JsonElement arrayElement : jsonArray) {
-                if(arrayElement.getAsJsonObject().get("z") != null && arrayElement.getAsJsonObject().get("topic").getAsString().equals("GIVEN")
-                        && arrayElement.getAsJsonObject().get("z").getAsString().equals(flowElement.getAsJsonObject().get("id").getAsString()))
-                    flowObjects.add(arrayElement);
-            }
-            for(JsonElement arrayElement : jsonArray) {
-                if(arrayElement.getAsJsonObject().get("z") != null && arrayElement.getAsJsonObject().get("topic").getAsString().equals("WHEN")
-                        && arrayElement.getAsJsonObject().get("z").getAsString().equals(flowElement.getAsJsonObject().get("id").getAsString()))
-                    flowObjects.add(arrayElement);
-            }
-            for(JsonElement arrayElement : jsonArray) {
-                if(arrayElement.getAsJsonObject().get("z") != null && arrayElement.getAsJsonObject().get("topic").getAsString().equals("THEN")
-                        && arrayElement.getAsJsonObject().get("z").getAsString().equals(flowElement.getAsJsonObject().get("id").getAsString()))
-                    flowObjects.add(arrayElement);
-            }
-            organisedFlows.add(flowElement.getAsJsonObject().get("id").getAsString(), flowObjects);
-        }
+            ArrayList<JsonElement> flowElements = new ArrayList<JsonElement>();
+            ArrayList<String> flowIds = new ArrayList<String>();
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("package " + packageName + ";\n\n@ImportsHere@\n@Test\npublic class " + className + " {\n@AnnotationsHere@");
-        imports.add("dev.galasa.Test");
-
-        int methodCount = 0;
-
-        StringBuilder givenBuilder = new StringBuilder();
-
-        for(String flowId : flowIds) {
-            builder.append("\t@Test\n\tpublic void method" + methodCount + "()@ExceptionsHere@ {\n");
-            JsonArray jArray = organisedFlows.get(flowId).getAsJsonArray();
-            ArrayList<String> methodExceptions = new ArrayList<String>();
-            for(JsonElement arrayObject : jArray) {
-                String value = arrayObject.getAsJsonObject().get("topic").getAsString();
-                String line = arrayObject.getAsJsonObject().get("name").getAsString();
-                switch(value) {
-                    case "GIVEN":
-                        processLine(line, givenBuilder, methodExceptions); break;
-                    case "WHEN":
-                    case "THEN":
-                        processLine(line, builder, methodExceptions); break;
-                    default:
-                        builder.append("//" + line + "\n");
+            for(JsonElement jsonElement : jsonArray) {
+                if(jsonElement.getAsJsonObject().get("label") != null && jsonElement.getAsJsonObject().get("label").getAsString().contains("Flow")) {
+                    flowElements.add(jsonElement);
+                    flowIds.add(jsonElement.getAsJsonObject().get("id").getAsString());
                 }
             }
-            methodCount++;
+            
+            JsonObject organisedFlows = new JsonObject();
 
-            if(methodExceptions.size() > 0) {
-                StringBuilder exceptionBuilder = new StringBuilder();
-                exceptionBuilder.append(" throws ");
-                for(int i = 0; i < methodExceptions.size(); i++) {
-                    exceptionBuilder.append(methodExceptions.get(i));
-                    if(i != methodExceptions.size() -1)
-                        exceptionBuilder.append(", ");
-                }
-                stringBuilderReplace(builder, "@ExceptionsHere@", exceptionBuilder.toString());
-            } else {
-                stringBuilderReplace(builder, "@ExceptionsHere@", "");
+            for(JsonElement flowElement : flowElements) {
+                jsonArray.remove(flowElement);
             }
 
-            builder.append("\t}\n\n");
-        }
+            for(JsonElement flowElement : flowElements) {
+                int attempts = 0;
+                HashMap<String, JsonElement> extractedObjects = new HashMap<String, JsonElement>();
+                for(JsonElement parsedElement : jsonArray) {
+                    if(parsedElement.getAsJsonObject().get("z").getAsString().equals(flowElement.getAsJsonObject().get("id").getAsString())) {
+                        if(parsedElement.getAsJsonObject().get("wires").getAsJsonArray().get(0).getAsJsonArray().size() == 0)
+                            extractedObjects.put("start", parsedElement);
+                        else
+                            extractedObjects.put(parsedElement.getAsJsonObject().get("wires").getAsJsonArray().get(0).getAsJsonArray().get(0).getAsString(), parsedElement);
+                    }
+                }
 
-        builder.append("}");
+                JsonElement leadingElement = extractedObjects.get("start");
+                if(leadingElement == null)
+                    throw new MojoExecutionException("Unable to find leading element for flow " + flowElement.getAsJsonObject().get("id").getAsString());
 
-        StringBuilder importBuilder = new StringBuilder();
-        for(String imp : imports) {
-            importBuilder.append("import " + imp + ";\n");
-        }
-        stringBuilderReplace(builder, "@ImportsHere@", importBuilder.toString());
-        stringBuilderReplace(builder, "@AnnotationsHere@", givenBuilder.toString());
+                ArrayList<JsonElement> reversedElements = new ArrayList<JsonElement>();
+                reversedElements.add(leadingElement);
+                while(attempts <= extractedObjects.size()) {
+                    leadingElement = extractedObjects.get(leadingElement.getAsJsonObject().get("id").getAsString());
+                    reversedElements.add(leadingElement);
+                    if(reversedElements.size() == extractedObjects.size())
+                        break;
+                    attempts ++;
+                    if(attempts > extractedObjects.size())
+                        throw new MojoExecutionException("Unable to interpret JSON");
+                }
+                Collections.reverse(reversedElements);
 
-        try {
+                JsonArray flowObjects = new JsonArray();
+                for(JsonElement j : reversedElements)
+                    flowObjects.add(j);
+                organisedFlows.add(flowElement.getAsJsonObject().get("id").getAsString(), flowObjects);
+            }
+
+            StringBuilder builder = new StringBuilder();
+            builder.append("package " + packageName + ";\n\n@ImportsHere@\n@Test\npublic class " + className + " {\n@AnnotationsHere@");
+            imports.add("dev.galasa.Test");
+
+            int methodCount = 0;
+
+            StringBuilder givenBuilder = new StringBuilder();
+
+            for(String flowId : flowIds) {
+                builder.append("\t@Test\n\tpublic void method" + methodCount + "()@ExceptionsHere@ {\n");
+                JsonArray jArray = organisedFlows.get(flowId).getAsJsonArray();
+                ArrayList<String> methodExceptions = new ArrayList<String>();
+                for(JsonElement arrayObject : jArray) {
+                    String value = arrayObject.getAsJsonObject().get("topic").getAsString();
+                    String line = arrayObject.getAsJsonObject().get("name").getAsString();
+                    switch(value) {
+                        case "GIVEN":
+                            processLine(line, givenBuilder, methodExceptions); break;
+                        case "WHEN":
+                        case "THEN":
+                            processLine(line, builder, methodExceptions); break;
+                        default:
+                            builder.append("//" + line + "\n");
+                    }
+                }
+                methodCount++;
+
+                if(methodExceptions.size() > 0) {
+                    StringBuilder exceptionBuilder = new StringBuilder();
+                    exceptionBuilder.append(" throws ");
+                    for(int i = 0; i < methodExceptions.size(); i++) {
+                        exceptionBuilder.append(methodExceptions.get(i));
+                        if(i != methodExceptions.size() -1)
+                            exceptionBuilder.append(", ");
+                    }
+                    stringBuilderReplace(builder, "@ExceptionsHere@", exceptionBuilder.toString());
+                } else {
+                    stringBuilderReplace(builder, "@ExceptionsHere@", "");
+                }
+
+                builder.append("\t}\n\n");
+            }
+
+            builder.append("}");
+
+            StringBuilder importBuilder = new StringBuilder();
+            for(String imp : imports) {
+                importBuilder.append("import " + imp + ";\n");
+            }
+            stringBuilderReplace(builder, "@ImportsHere@", importBuilder.toString());
+            stringBuilderReplace(builder, "@AnnotationsHere@", givenBuilder.toString());
+
             writer.write(builder.toString());
         } catch (IOException e) {
             throw new MojoExecutionException("Error writing String Builder to file", e);
