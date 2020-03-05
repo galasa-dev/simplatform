@@ -89,7 +89,7 @@ public class BasicAccountCreditTest {
                 .positionCursorToFieldContaining("Password").tab().type("SYS1").enter().waitForKeyboard()
 
                 // Open banking application
-                .pf1().waitForKeyboard().clear().waitForKeyboard().tab().type("bank").enter().waitForKeyboard();
+                .pf1().waitForKeyboard().clear().waitForKeyboard().type("bank").enter().waitForKeyboard();
 
         // Obtain the initial balance
         BigDecimal userBalance = getBalance("123456789");

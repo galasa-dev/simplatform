@@ -84,7 +84,7 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
 
     private void enterCICSTransaction() throws TimeoutException, KeyboardLockedException, NetworkException,
             TextNotFoundException, FieldNotFoundException, InterruptedException {
-        verifyTextInField("DFHZC2312").clear().waitForKeyboard().tab().type("bank").enter().waitForKeyboard();
+        verifyTextInField("DFHZC2312").clear().waitForKeyboard().type("bank").enter().waitForKeyboard();
     }
 
 }

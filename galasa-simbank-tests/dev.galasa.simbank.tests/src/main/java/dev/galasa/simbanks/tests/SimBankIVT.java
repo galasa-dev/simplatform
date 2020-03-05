@@ -34,10 +34,10 @@ import dev.galasa.zos3270.spi.NetworkException;
 @Test
 public class SimBankIVT {
 
-    @ZosImage(imageTag = "simbank")
+    @ZosImage(imageTag = "SIMBANK")
     public IZosImage        image;
 
-    @Zos3270Terminal(imageTag = "simbank")
+    @Zos3270Terminal(imageTag = "SIMBANK")
     public ITerminal        terminal;
 
     @ArtifactManager
@@ -91,7 +91,9 @@ public class SimBankIVT {
         assertThat(terminal.retrieveScreen()).containsOnlyOnce("BANKTEST");
 
         // Open banking application
-        terminal.pf1().waitForKeyboard().clear().waitForKeyboard().tab().type("bank").enter().waitForKeyboard();
+        terminal.pf1().waitForKeyboard().clear().waitForKeyboard();
+           
+        terminal.type("bank").enter().waitForKeyboard();
 
         // Assert that the bank menu is showing
         assertThat(terminal.retrieveScreen()).containsOnlyOnce("Options     Description        PFKey ");
