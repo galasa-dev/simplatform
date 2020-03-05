@@ -16,16 +16,17 @@ import dev.galasa.zos3270.AttentionIdentification;
 import dev.galasa.zos3270.internal.comms.Network;
 import dev.galasa.zos3270.internal.comms.NetworkServer;
 import dev.galasa.zos3270.internal.comms.NetworkThread;
+import dev.galasa.zos3270.internal.datastream.AbstractOrder;
 import dev.galasa.zos3270.internal.datastream.BufferAddress;
 import dev.galasa.zos3270.internal.datastream.CommandEraseWrite;
-import dev.galasa.zos3270.internal.datastream.AbstractOrder;
+import dev.galasa.zos3270.internal.datastream.OrderInsertCursor;
 import dev.galasa.zos3270.internal.datastream.OrderSetBufferAddress;
 import dev.galasa.zos3270.internal.datastream.OrderStartField;
 import dev.galasa.zos3270.internal.datastream.WriteControlCharacter;
 import dev.galasa.zos3270.spi.BufferChar;
-import dev.galasa.zos3270.spi.IBufferHolder;
 import dev.galasa.zos3270.spi.BufferStartOfField;
 import dev.galasa.zos3270.spi.Field;
+import dev.galasa.zos3270.spi.IBufferHolder;
 import dev.galasa.zos3270.spi.Screen;
 
 public abstract class AbstractScreen implements IScreen {
@@ -44,7 +45,7 @@ public abstract class AbstractScreen implements IScreen {
             ByteArrayOutputStream outboundBuffer = new ByteArrayOutputStream();
             outboundBuffer.write(commandEraseWrite.getBytes());
             outboundBuffer.write(writeControlCharacter.getBytes());
-
+            
             for (Field field : screen.calculateFields()) {
                 OrderSetBufferAddress sba = new OrderSetBufferAddress(new BufferAddress(field.getStart()));
                 outboundBuffer.write(sba.getCharRepresentation());
@@ -57,6 +58,9 @@ public abstract class AbstractScreen implements IScreen {
                 outboundBuffer.write(field.getFieldWithNulls());
             }
 
+            outboundBuffer.write(new OrderSetBufferAddress(new BufferAddress(screen.getCursor())).getCharRepresentation());
+            outboundBuffer.write(new OrderInsertCursor().getBytes());
+            
             network.sendDatastream(outboundBuffer.toByteArray());
         } catch (Exception e) {
             throw new ScreenException("Problem writing screen", e);
@@ -65,13 +69,26 @@ public abstract class AbstractScreen implements IScreen {
 
     protected Screen buildScreen(String screenName) throws ScreenException {
         log.info("Building Screen: " + screenName);
+        int newCursorPosition = 0;
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(getClass().getResourceAsStream("/screens/" + screenName)))) {
             IBufferHolder[] buffer = new IBufferHolder[1920];
             String line = null;
             int cursorPosition = 0;
+            int setCursorLineOffset = -1;
             while ((line = br.readLine()) != null) {
                 String controlChar = line.substring(0, 1);
+
+                if ("C".equals(controlChar)) {
+                    for(int i = 1; i < line.length(); i++) {
+                        if ('*' == line.charAt(i)) {
+                            setCursorLineOffset = i - 1;
+                            break;
+                        }
+                    }
+                }
+
+
                 if (!"S".equals(controlChar)) {
                     continue;
                 }
@@ -86,6 +103,11 @@ public abstract class AbstractScreen implements IScreen {
 
                 for (int i = 0; i < 80; i++) {
                     char c = line.charAt(i);
+
+                    if (setCursorLineOffset >= 0) {
+                        newCursorPosition = cursorPosition;
+                        setCursorLineOffset--;
+                    } 
 
                     if (c == ']') {
                         buffer[cursorPosition] = new BufferStartOfField(cursorPosition, true, false, true, false, false,
@@ -109,6 +131,9 @@ public abstract class AbstractScreen implements IScreen {
 
             Screen screen = new Screen(80, 24, null);
             screen.setBuffer(buffer);
+            if (newCursorPosition >= 0) {
+                screen.setCursorPosition(newCursorPosition);
+            }
 
             return screen;
         } catch (Exception e) {

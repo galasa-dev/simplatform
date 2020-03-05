@@ -5,6 +5,8 @@
  */
 package dev.galasa.simplatform.t3270.screens;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +21,9 @@ public class CICSClearScreen extends AbstractScreen {
 
     private static final Logger logger = Logger.getLogger("Simplatform");
 
-    private final Screen        screen;
+    public Screen        screen;
+    
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
 
     public CICSClearScreen(NetworkServer network) throws ScreenException {
         super(network);
@@ -33,20 +37,37 @@ public class CICSClearScreen extends AbstractScreen {
 
     @Override
     public IScreen run() {
+        
+        String message = "";
 
         try {
             while (true) {
-                writeScreen();
+                writeScreen(message);
 
                 AttentionIdentification aid = receiveScreen(screen);
+                
+                Field transactionField = screen.getFieldAt(0, 0);
+                String text = transactionField.getFieldWithoutNulls().trim().toUpperCase();
+                
+                int length = text.length();
+                if (length > 4) {
+                    length = 4;
+                }
+                String transaction = text.substring(0, length).trim();
 
                 if (aid == AttentionIdentification.ENTER) {
-                    Field transactionField = screen.getFieldAt(0, 0);
-                    String application = transactionField.getFieldWithoutNulls().trim().toUpperCase();
-
-                    if ("BANK".equals(application)) {
+                    if ("BANK".equals(transaction)) {
                         return new BankMainMenu(network);
+                    } else {
+                        message = "DFHAC2001 " + getDate() + " SIMBANK Transaction '" + transaction + "' is not recognized. Check  that the transaction name is correct.";
                     }
+                } else if (aid == AttentionIdentification.CLEAR) {
+                    this.screen = buildScreen(getClass().getSimpleName());
+                    message = "";
+                } else if (aid == AttentionIdentification.PF3) {
+                    return new SessionManagerMenu(network);
+                } else {
+                    message = "DFHAC2001 " + getDate() + " SIMBANK Transaction '" + aid.toString() + "' is not recognized. Check  that the transaction name is correct.";
                 }
             }
         } catch (Exception e) {
@@ -55,9 +76,22 @@ public class CICSClearScreen extends AbstractScreen {
         }
     }
 
-    private void writeScreen() throws ScreenException {
+    private void writeScreen(String errorMessage) throws ScreenException {
+        
+        while(errorMessage.length() < 158) {
+            errorMessage += " ";
+        }
+        
+        screen.setBuffer(1, 22, errorMessage);
+         
         writeScreen(new CommandEraseWrite(),
                 new WriteControlCharacter(false, false, false, false, false, false, true, true), screen);
+    }
+    
+    private String getDate() {
+        LocalDateTime time = LocalDateTime.now();
+        
+        return dtf.format(time);
     }
 
 }
