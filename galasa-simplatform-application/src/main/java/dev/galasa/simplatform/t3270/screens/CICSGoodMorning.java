@@ -41,6 +41,8 @@ public class CICSGoodMorning extends AbstractScreen {
 
                 if (aid == AttentionIdentification.CLEAR) {
                     return new CICSClearScreen(network);
+                } else if (aid == AttentionIdentification.PF3) {
+                    return new SessionManagerMenu(network);
                 }
 
             }
