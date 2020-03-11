@@ -79,7 +79,7 @@ public class TranslateCucumber extends AbstractMojo {
 
         getTranslatorClass();
 
-        File testResources = new File(project.getBasedir() + "/src/test/resources");
+        File testResources = new File(project.getBasedir() + "/src/main/test/resources");
         checkForSource(testResources, sourceFiles, new ExtensionFilter(".feature"));
 
         for (File cucumberSource : sourceFiles) {
