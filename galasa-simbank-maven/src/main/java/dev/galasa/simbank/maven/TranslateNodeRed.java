@@ -52,7 +52,7 @@ public class TranslateNodeRed extends AbstractMojo {
         if (!javaCode.exists())
             javaCode.mkdirs();
 
-        File testResources = new File(project.getBasedir() + "/src/test/resources");
+        File testResources = new File(project.getBasedir() + "/src/main/test/resources");
         checkForSource(testResources, sourceFiles, new ExtensionFilter(".json"));
 
         for (File nodeRedSource : sourceFiles) {
