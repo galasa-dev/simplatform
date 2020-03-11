@@ -32,18 +32,44 @@ import org.apache.maven.project.MavenProject;
 @Mojo(name = "translatenodered", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class TranslateNodeRed extends AbstractMojo {
 
+    /**
+     * An attribute that allows referencing to the Maven build itself that allows us to search for the necessary resources
+     * Usage: Retrieving the projectname, the project's working directory
+     */
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
+    /**
+     * An attribute to specify where the translated Java files need to go
+     */
     @Parameter(defaultValue = "galasa.gherkin.translated", name = "packageName")
     private String packageName;
 
+    /**
+     * A list containing all JSON source files that are found within the maven build process
+     */
     private List<File> sourceFiles = new ArrayList<File>();
+
+    /**
+     * An attribute for the creation of the directory where the translated JSON -> Java will be found
+     */
     private File javaCode;
 
+    /**
+     * Arraylist for all the used variables for the Galasa-test
+     * Here it is used to add the Account the variable in, this can be scalable
+     */
     private ArrayList<String> usedVariables;
+
+    /**
+     * All the needed imports for the Galasa-test are stored in here
+     */
     private HashSet<String> imports;
     
+    /**
+     * The initiator method to kick off the whole process of
+     * finding resources -> regex'ing the JSON -> Translating to Galasa -> Galasa-test
+     */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("TranslateNodeRed: Generating Sources " + project.getName());
@@ -64,6 +90,11 @@ public class TranslateNodeRed extends AbstractMojo {
         }
     }
 
+    /**
+     * The full execution of the translation of a NodeRed Json file to a galasa test
+     * @param source The source of a single NodeRed JSON file
+     * @throws MojoExecutionException
+     */
     private void generateGalasaTest(File source) throws MojoExecutionException {
         getLog().info("TranslateNodeRed: Generating Test Class " + source.getName());
         
@@ -72,12 +103,14 @@ public class TranslateNodeRed extends AbstractMojo {
 
         Gson gson = new Gson();
         JsonArray jsonArray;
+        // Extracting an actual JSON Java object from the given source file
         try {
             jsonArray = gson.fromJson(new FileReader(source), JsonArray.class);
         } catch (FileNotFoundException e) {
             throw new MojoExecutionException("Feature file - " + source + " not found", e);
         }
 
+        // Deletion of the previously translated .java files from other runs with the same JSON source name
         File[] oldVersions = javaCode.listFiles(new JavaFilter(source.getName().substring(0, source.getName().lastIndexOf('.'))));
         if(oldVersions != null) {
             for(File old : oldVersions) {
@@ -85,6 +118,7 @@ public class TranslateNodeRed extends AbstractMojo {
             }
         }
 
+        // Provision the new .java file where the translation will be put for this specific JSON source name
         String className = source.getName().substring(0, source.getName().indexOf('.'));
         File generated = new File(javaCode.getPath() + "/" + className + ".java");
         try {
@@ -97,6 +131,8 @@ public class TranslateNodeRed extends AbstractMojo {
         try {
             writer = new FileWriter(generated);
         
+            // A flow element refers to a single custom node, while a flowID refers to a complete flow page 
+            // NodeRed can extract multiple flows at once
             ArrayList<JsonElement> flowElements = new ArrayList<JsonElement>();
             ArrayList<String> flowIds = new ArrayList<String>();
 
@@ -109,10 +145,12 @@ public class TranslateNodeRed extends AbstractMojo {
             
             JsonObject organisedFlows = new JsonObject();
 
+            // From the full JSON source remove all the available flow elements
             for(JsonElement flowElement : flowElements) {
                 jsonArray.remove(flowElement);
             }
 
+            // Extract the necessary flow object that need to be processed later on
             for(JsonElement flowElement : flowElements) {
                 int attempts = 0;
                 HashMap<String, JsonElement> extractedObjects = new HashMap<String, JsonElement>();
@@ -125,10 +163,12 @@ public class TranslateNodeRed extends AbstractMojo {
                     }
                 }
 
+                // Find the lead of every flow, so that the right order applies
                 JsonElement leadingElement = extractedObjects.get("start");
                 if(leadingElement == null)
                     throw new MojoExecutionException("Unable to find leading element for flow " + flowElement.getAsJsonObject().get("id").getAsString());
 
+                // Reversal is needed for the way the JSON is structured and the way NodeRed encoded the wiring system between the nodes
                 ArrayList<JsonElement> reversedElements = new ArrayList<JsonElement>();
                 reversedElements.add(leadingElement);
                 while(attempts <= extractedObjects.size()) {
@@ -148,6 +188,7 @@ public class TranslateNodeRed extends AbstractMojo {
                 organisedFlows.add(flowElement.getAsJsonObject().get("id").getAsString(), flowObjects);
             }
 
+            // Start of the builder for the eventual Galasa-test
             StringBuilder builder = new StringBuilder();
             builder.append("package " + packageName + ";\n\n@ImportsHere@\n@Test\npublic class " + className + " {\n@AnnotationsHere@");
             imports.add("dev.galasa.Test");
@@ -160,6 +201,7 @@ public class TranslateNodeRed extends AbstractMojo {
                 builder.append("\t@Test\n\tpublic void method" + methodCount + "()@ExceptionsHere@ {\n");
                 JsonArray jArray = organisedFlows.get(flowId).getAsJsonArray();
                 ArrayList<String> methodExceptions = new ArrayList<String>();
+                // Loop over the Custom nodes that have been found within the flow and process these
                 for(JsonElement arrayObject : jArray) {
                     String value = arrayObject.getAsJsonObject().get("topic").getAsString();
                     String line = arrayObject.getAsJsonObject().get("name").getAsString();
@@ -174,7 +216,7 @@ public class TranslateNodeRed extends AbstractMojo {
                     }
                 }
                 methodCount++;
-
+                // Appending of the thrown exceptions that are used in the Galasa-test
                 if(methodExceptions.size() > 0) {
                     StringBuilder exceptionBuilder = new StringBuilder();
                     exceptionBuilder.append(" throws ");
@@ -193,6 +235,7 @@ public class TranslateNodeRed extends AbstractMojo {
 
             builder.append("}");
 
+            // Input of the necessary imports to the Galasa-test
             StringBuilder importBuilder = new StringBuilder();
             for(String imp : imports) {
                 importBuilder.append("import " + imp + ";\n");
@@ -213,6 +256,12 @@ public class TranslateNodeRed extends AbstractMojo {
 
     }
 
+    /**
+     * Regex'ing of a specific CustomNode (line here) against the actual Java necessary translation for this Node
+     * @param line
+     * @param patternBuilder
+     * @param exceptionsList
+     */
     private void processLine(String line, StringBuilder patternBuilder, ArrayList<String> exceptionsList) {
 
         Pattern pattern = Pattern.compile("Obtain account with (-?[0-9]+)");
@@ -324,6 +373,12 @@ public class TranslateNodeRed extends AbstractMojo {
         }
     }
 
+    /**
+     * Extracting a specific prefix of a variable and finding out if it is needed 
+     * Also adding a suffix number to be able to provide multiple instances of an object
+     * @param prefix
+     * @return
+     */
     private String getVariableName(String prefix) {
         int i = 1;
         while(usedVariables.contains(prefix.toLowerCase() + i)) {
@@ -333,12 +388,25 @@ public class TranslateNodeRed extends AbstractMojo {
         return prefix.toLowerCase() + i;
     }
 
+    /**
+     * Generalisation of a stringbuilder.replace() function
+     * @param builder
+     * @param replacePattern
+     * @param replaceWith
+     */
     private void stringBuilderReplace(StringBuilder builder, String replacePattern, String replaceWith) {
         int indexReplacement = builder.indexOf(replacePattern, 0);
         if(indexReplacement >= 0)
             builder.replace(indexReplacement, indexReplacement + replacePattern.length(), replaceWith);
     }
 
+    /**
+     * A method that goes through the working directory in a recursive fashion to be able 
+     * to extract all the applicable source files ( NodeRed JSON files)
+     * @param directory
+     * @param outputFiles
+     * @param filter
+     */
     private void checkForSource(File directory, List<File> outputFiles, FilenameFilter filter) {
         File[] features = directory.listFiles(filter);
         if(features != null)
