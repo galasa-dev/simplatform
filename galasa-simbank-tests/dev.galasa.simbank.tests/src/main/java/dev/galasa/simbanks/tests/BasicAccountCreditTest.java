@@ -44,10 +44,10 @@ public class BasicAccountCreditTest {
     @SimBank
     public ISimBank        simBank;
 
-    @ZosImage(imageTag = "simbank")
+    @ZosImage(imageTag = "SIMBANK")
     public IZosImage        image;
 
-    @Zos3270Terminal(imageTag = "simbank")
+    @Zos3270Terminal(imageTag = "SIMBANK")
     public ITerminal        terminal;
 
     @ArtifactManager
