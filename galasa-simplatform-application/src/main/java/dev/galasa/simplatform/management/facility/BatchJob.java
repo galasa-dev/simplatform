@@ -51,6 +51,7 @@ public class BatchJob {
 	
 	private String owner;
 	private String jobid;
+    private String type;
 	private String jobname;
 	private String stepname;
 	private String status;
@@ -66,6 +67,7 @@ public class BatchJob {
 	
 	private static final String PROP_OWNER = "owner";
 	private static final String PROP_JOBID = "jobid";
+    private static final String PROP_TYPE = "type";
 	private static final String PROP_JOBNAME = "jobname";
 	private static final String PROP_STATUS = "status";
 	private static final String PROP_RETCODE = "retcode";
@@ -91,6 +93,7 @@ public class BatchJob {
 	public BatchJob(String jcl, String user, String jobid) {
 		setOwner(user.toUpperCase());
 		setJobid(jobid);
+        setType("JOB");
 		
 		// Check if the JCL will run
 		parseJclPhase0(jcl);
@@ -190,6 +193,10 @@ public class BatchJob {
 	public String getJobid() {
 		return this.jobid;
 	}
+
+    public String getType() {
+        return this.type;
+    }
 	
 	public String getJobname() {
 		return this.jobname;
@@ -215,6 +222,7 @@ public class BatchJob {
 		JsonObject statusOutput = new JsonObject();
 		statusOutput.addProperty(PROP_OWNER, getOwner());
 		statusOutput.addProperty(PROP_JOBID, getJobid());
+        statusOutput.addProperty(PROP_TYPE, getType());
 		statusOutput.addProperty(PROP_JOBNAME, getJobname());
 		statusOutput.addProperty(PROP_STATUS, getStatus());
 		statusOutput.addProperty(PROP_RETCODE, getRetcode());
@@ -240,6 +248,10 @@ public class BatchJob {
 	private void setJobid(String jobid) {
 		this.jobid = jobid;
 	}
+
+    private void setType(String type) {
+        this.type = type;
+    }
 
 	private void setJobname(String jobname) {
 		this.jobname = jobname;
