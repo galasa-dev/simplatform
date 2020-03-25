@@ -57,6 +57,7 @@
 	</issueManagement>
 
 	<modules>
+		<module>dev.galasa.simbank.translation</module>
 		<module>dev.galasa.simbank.tests</module>
 		<module>dev.galasa.simbank.manager</module>
 		<module>dev.galasa.simbank.obr</module>
