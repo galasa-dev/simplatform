@@ -119,7 +119,7 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
     @GenerateAnnotatedField(annotation = Account.class)
     public IAccount generateSimBankAccount(Field field, List<Annotation> annotations) throws SimBankManagerException {
         Account accountAnnotation = field.getAnnotation(Account.class);
-        AccountImpl account = AccountImpl.generate(this, accountAnnotation.existing(), accountAnnotation.accountType());
+        AccountImpl account = AccountImpl.generate(this, accountAnnotation.existing(), accountAnnotation.accountType(), accountAnnotation.balance());
 
         if (simBankSingleInstance == null) {
             throw new SimBankManagerException("An instance of the SimBank has not been requested");

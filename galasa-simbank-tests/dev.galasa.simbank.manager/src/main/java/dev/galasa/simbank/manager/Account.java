@@ -7,6 +7,7 @@ package dev.galasa.simbank.manager;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.math.BigDecimal;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.RetentionPolicy;
 
@@ -23,5 +24,7 @@ public @interface Account {
     boolean existing() default true;
 
     AccountType accountType() default AccountType.HighValue;
+
+    String balance() default "";
 
 }

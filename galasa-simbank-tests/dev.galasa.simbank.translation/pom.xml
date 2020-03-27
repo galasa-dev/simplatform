@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>dev.galasa</groupId>
+		<artifactId>galasa-simbanktests-parent</artifactId>
+		<version>0.6.0-SNAPSHOT</version>
+	</parent>
+	
+	<name>Galasa SimBank Example Tests</name>
+
+	<artifactId>dev.galasa.simbank.translation</artifactId>
+	<!-- If updating version, reflect in dev.galasa.simbank.feature and dev.galasa.simbank.obr -->
+	<version>0.6.0-SNAPSHOT</version>
+	<packaging>bundle</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>dev.galasa</groupId>
+			<artifactId>dev.galasa.simbank.manager</artifactId>
+			<version>0.6.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>dev.galasa</groupId>
+					<artifactId>galasa-simbank-maven</artifactId>
+					<version>0.6.0-SNAPSHOT</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>dev.galasa</groupId>
+				<artifactId>galasa-simbank-maven</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<packageName>dev.galasa.ghrekin.translated</packageName>
+				</configuration>
+				<executions>
+					<execution>
+						<id>translate-cucumber</id>
+						<goals>
+							<goal>translatecucumber</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>translate-nodered</id>
+						<goals>
+							<goal>translatenodered</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
