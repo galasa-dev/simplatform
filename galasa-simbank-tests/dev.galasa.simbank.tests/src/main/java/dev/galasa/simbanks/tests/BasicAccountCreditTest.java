@@ -16,6 +16,7 @@ import java.util.HashMap;
 
 import dev.galasa.Test;
 import dev.galasa.artifact.ArtifactManager;
+import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IArtifactManager;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.artifact.TestBundleResourceException;
@@ -50,8 +51,8 @@ public class BasicAccountCreditTest {
     @Zos3270Terminal(imageTag = "SIMBANK")
     public ITerminal        terminal;
 
-    @ArtifactManager
-    public IArtifactManager artifacts;
+    @BundleResources
+    public IBundleResources resources;
 
     @CoreManager
     public ICoreManager     coreManager;
@@ -101,7 +102,6 @@ public class BasicAccountCreditTest {
         parameters.put("AMOUNT", amount.toString());
 
         // Load sample request with the given parameters
-        IBundleResources resources = artifacts.getBundleResources(this.getClass());
         InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
         String textContext = resources.streamAsString(is);
 

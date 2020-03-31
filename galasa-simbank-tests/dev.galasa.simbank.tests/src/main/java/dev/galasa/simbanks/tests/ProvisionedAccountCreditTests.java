@@ -22,6 +22,7 @@ import dev.galasa.ResultArchiveStoreContentType;
 import dev.galasa.SetContentType;
 import dev.galasa.Test;
 import dev.galasa.artifact.ArtifactManager;
+import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IArtifactManager;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.core.manager.Logger;
@@ -43,8 +44,8 @@ public class ProvisionedAccountCreditTests {
     @Account(existing = false, accountType = AccountType.HighValue)
     public IAccount         account;
 
-    @ArtifactManager
-    public IArtifactManager artifacts;
+    @BundleResources
+    public IBundleResources resources;
 
     @HttpClient
     public IHttpClient      client;
@@ -77,7 +78,6 @@ public class ProvisionedAccountCreditTests {
         parameters.put("AMOUNT", amount.toString());
 
         // Load sample request with the given parameters
-        IBundleResources resources = artifacts.getBundleResources(this.getClass());
         InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
         String textContent = resources.streamAsString(is);
 
