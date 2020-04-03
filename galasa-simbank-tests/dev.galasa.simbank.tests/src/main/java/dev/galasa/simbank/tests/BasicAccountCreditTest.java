@@ -3,7 +3,7 @@
  * 
  * (c) Copyright IBM Corp. 2019.
  */
-package dev.galasa.simbanks.tests;
+package dev.galasa.simbank.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
