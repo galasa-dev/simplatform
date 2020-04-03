@@ -12,8 +12,6 @@ import java.net.URISyntaxException;
 
 import dev.galasa.Test;
 import dev.galasa.artifact.ArtifactManager;
-import dev.galasa.artifact.BundleResources;
-import dev.galasa.artifact.IArtifactManager;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.artifact.TestBundleResourceException;
 import dev.galasa.core.manager.CoreManager;
@@ -43,9 +41,6 @@ public class SimBankIVT {
     public ITerminal        terminal;
 
     @ArtifactManager
-    public IArtifactManager artifacts;
-
-    @BundleResources
     public IBundleResources resources;
 
     @HttpClient
@@ -58,7 +53,6 @@ public class SimBankIVT {
     public void testNotNull() {
         // Check all objects loaded
         assertThat(terminal).isNotNull();
-        assertThat(artifacts).isNotNull();
         assertThat(resources).isNotNull();
         assertThat(client).isNotNull();
     }
