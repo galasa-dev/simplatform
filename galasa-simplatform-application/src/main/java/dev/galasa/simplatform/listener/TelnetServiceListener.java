@@ -6,6 +6,7 @@
 package dev.galasa.simplatform.listener;
 
 import java.net.Socket;
+import java.util.logging.Logger;
 
 import dev.galasa.simplatform.t3270.screens.IScreen;
 import dev.galasa.simplatform.t3270.screens.SessionManagerLogon;
@@ -13,8 +14,10 @@ import dev.galasa.zos3270.internal.comms.NetworkServer;
 
 public class TelnetServiceListener implements IListener {
     private Socket socket;
+    private Logger log;
 
     public void run() {
+        this.log = Logger.getLogger("Simplatform");
         try {
             NetworkServer network = new NetworkServer(socket);
 
@@ -29,8 +32,8 @@ public class TelnetServiceListener implements IListener {
             socket.close();
 
         } catch (Exception e) {
-            System.err.println("Stuff went really wrong");
-            e.printStackTrace();
+            log.warning("Major error when creating session manager screen");
+            log.warning("Exception: " + e.getMessage());
         }
 
     }
