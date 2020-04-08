@@ -3,17 +3,14 @@
  * 
  * (c) Copyright IBM Corp. 2019.
  */
-package dev.galasa.simbanks.tests;
+package dev.galasa.simbank.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-
 import dev.galasa.Test;
-import dev.galasa.artifact.ArtifactManager;
 import dev.galasa.artifact.BundleResources;
-import dev.galasa.artifact.IArtifactManager;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.artifact.TestBundleResourceException;
 import dev.galasa.core.manager.CoreManager;
@@ -42,9 +39,6 @@ public class SimBankIVT {
     @Zos3270Terminal(imageTag = "SIMBANK")
     public ITerminal        terminal;
 
-    @ArtifactManager
-    public IArtifactManager artifacts;
-
     @BundleResources
     public IBundleResources resources;
 
@@ -58,7 +52,6 @@ public class SimBankIVT {
     public void testNotNull() {
         // Check all objects loaded
         assertThat(terminal).isNotNull();
-        assertThat(artifacts).isNotNull();
         assertThat(resources).isNotNull();
         assertThat(client).isNotNull();
     }

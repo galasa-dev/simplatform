@@ -3,7 +3,7 @@
  * 
  * (c) Copyright IBM Corp. 2019.
  */
-package dev.galasa.simbanks.tests;
+package dev.galasa.simbank.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,11 +13,8 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-
 import dev.galasa.Test;
-import dev.galasa.artifact.ArtifactManager;
 import dev.galasa.artifact.BundleResources;
-import dev.galasa.artifact.IArtifactManager;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.artifact.TestBundleResourceException;
 import dev.galasa.core.manager.CoreManager;

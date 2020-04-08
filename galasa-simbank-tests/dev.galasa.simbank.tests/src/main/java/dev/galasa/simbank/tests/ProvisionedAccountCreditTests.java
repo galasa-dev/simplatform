@@ -3,7 +3,7 @@
  * 
  * (c) Copyright IBM Corp. 2019.
  */
-package dev.galasa.simbanks.tests;
+package dev.galasa.simbank.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,9 +21,7 @@ import org.apache.commons.logging.Log;
 import dev.galasa.ResultArchiveStoreContentType;
 import dev.galasa.SetContentType;
 import dev.galasa.Test;
-import dev.galasa.artifact.ArtifactManager;
 import dev.galasa.artifact.BundleResources;
-import dev.galasa.artifact.IArtifactManager;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.core.manager.Logger;
 import dev.galasa.core.manager.StoredArtifactRoot;
