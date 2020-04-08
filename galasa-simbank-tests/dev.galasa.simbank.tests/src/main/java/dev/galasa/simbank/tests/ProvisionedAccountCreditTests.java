@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import dev.galasa.ResultArchiveStoreContentType;
 import dev.galasa.SetContentType;
 import dev.galasa.Test;
-import dev.galasa.artifact.ArtifactManager;
+import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.core.manager.Logger;
 import dev.galasa.core.manager.StoredArtifactRoot;
@@ -42,7 +42,7 @@ public class ProvisionedAccountCreditTests {
     @Account(existing = false, accountType = AccountType.HighValue)
     public IAccount         account;
 
-    @ArtifactManager
+    @BundleResources
     public IBundleResources resources;
 
     @HttpClient

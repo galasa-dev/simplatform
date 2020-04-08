@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import dev.galasa.Test;
-import dev.galasa.artifact.ArtifactManager;
+import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.artifact.TestBundleResourceException;
 import dev.galasa.core.manager.CoreManager;
@@ -49,7 +49,7 @@ public class BasicAccountCreditTest {
     @Zos3270Terminal(imageTag = "SIMBANK")
     public ITerminal        terminal;
 
-    @ArtifactManager
+    @BundleResources
     public IBundleResources resources;
 
     @CoreManager
