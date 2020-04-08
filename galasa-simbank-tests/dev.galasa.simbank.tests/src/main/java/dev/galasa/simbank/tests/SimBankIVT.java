@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import dev.galasa.Test;
+import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.artifact.TestBundleResourceException;
 import dev.galasa.core.manager.CoreManager;
@@ -38,7 +39,7 @@ public class SimBankIVT {
     @Zos3270Terminal(imageTag = "SIMBANK")
     public ITerminal        terminal;
 
-    @IBundleResources
+    @BundleResources
     public IBundleResources resources;
 
     @HttpClient
