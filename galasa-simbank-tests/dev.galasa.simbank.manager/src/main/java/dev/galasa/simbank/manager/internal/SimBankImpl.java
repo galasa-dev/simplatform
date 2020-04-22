@@ -41,6 +41,7 @@ public class SimBankImpl implements ISimBank {
     private final ICredentialsUsernamePassword credentials;
     private final boolean                      useTerminal;
     private final boolean                      useJdbc;
+    private final boolean                      autoConnect;
     private URI                                jdbcUri;
 
     private SimBankTerminalImpl                controlTerminal;
@@ -48,7 +49,7 @@ public class SimBankImpl implements ISimBank {
 
     private SimBankImpl(SimBankManagerImpl manager, String instanceId, String hostname, int telnetPort,
             boolean telnetSecure, int databasePort, int webnetPort, String applicationName,
-            ICredentialsUsernamePassword credentials, boolean useTerminal, boolean useJdbc) {
+            ICredentialsUsernamePassword credentials, boolean useTerminal, boolean useJdbc, boolean autoConnect) {
         this.instanceId = instanceId;
         this.manager = manager;
         this.host = hostname;
@@ -59,6 +60,7 @@ public class SimBankImpl implements ISimBank {
         this.credentials = credentials;
         this.useTerminal = useTerminal;
         this.useJdbc = useJdbc;
+        this.autoConnect = autoConnect;
 
         this.manager.getFramework().getConfidentialTextService().registerText(credentials.getPassword(),
                 credentials.getUsername() + " password");
@@ -113,7 +115,7 @@ public class SimBankImpl implements ISimBank {
 
             SimBankImpl simBank = new SimBankImpl(manager, dseInstanceName, hostname, telnetPort, telnetSecure,
                     databasePort, webnetPort, applicationName, (ICredentialsUsernamePassword) credentials, useTerminal,
-                    useJdbc);
+                    useJdbc, true);
 
             if (useJdbc) {
                 simBank.connectJdbc();
@@ -170,7 +172,7 @@ public class SimBankImpl implements ISimBank {
     private SimBankTerminalImpl connectTerminal(String id) throws SimBankManagerException {
         try {
             SimBankTerminalImpl terminal = new SimBankTerminalImpl(id, host, instanceId, credentials, telnetPort,
-                    telnetSecure, manager.getFramework());
+                    telnetSecure, manager.getFramework(), autoConnect);
             manager.registerTerminal(terminal);
             terminal.connect();
 
@@ -217,7 +219,7 @@ public class SimBankImpl implements ISimBank {
             String id = "simbank-" + terminalNumber;
 
             SimBankTerminalImpl terminal = new SimBankTerminalImpl(id, host, instanceId, credentials, telnetPort,
-                    telnetSecure, manager.getFramework());
+                    telnetSecure, manager.getFramework(), true);
             manager.registerTerminal(terminal);
             terminal.connect();
 

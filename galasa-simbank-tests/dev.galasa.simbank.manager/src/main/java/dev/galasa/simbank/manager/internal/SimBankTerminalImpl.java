@@ -31,8 +31,8 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
     private final String                       application;
 
     public SimBankTerminalImpl(String id, String host, String application, ICredentialsUsernamePassword credentials,
-            int port, boolean tls, IFramework framework) throws Zos3270ManagerException, InterruptedException {
-        super(id, host, port, tls, framework);
+            int port, boolean tls, IFramework framework, boolean autoConnect) throws Zos3270ManagerException, InterruptedException {
+        super(id, host, port, tls, framework, autoConnect);
         this.credentials = credentials;
         this.application = application;
     }
