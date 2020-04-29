@@ -68,7 +68,7 @@ pipeline {
                      }
 
                      dir('dev.galasa.simbank.obr') {
-                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgalasa.bootstrap=${GALASA_BOOTSTRAP}-Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
+                        sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgalasa.bootstrap=${GALASA_BOOTSTRAP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
                      }
                   }
                } }
