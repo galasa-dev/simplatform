@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simbank-eclipse</artifactId>
-		<version>0.7.0</version>
+		<version>0.8.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>dev.galasa.simbank.ui</artifactId>
 	<!-- If updating, reflect in dev.galasa.simbank.feature pom.xml and feature.xml -->
-	<version>0.7.0</version>
+	<version>0.8.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	<name>Galasa SimBank UI</name>
 
@@ -32,12 +32,12 @@
 								<item>
 									<groupId>dev.galasa</groupId>
 									<artifactId>galasa-simplatform</artifactId>
-									<version>0.7.0</version>
+									<version>0.8.0-SNAPSHOT</version>
 								</item>
 								<item>
 									<groupId>dev.galasa</groupId>
 									<artifactId>galasa-simbanktests-parent</artifactId>
-									<version>0.7.0</version>
+									<version>0.8.0-SNAPSHOT</version>
 									<classifier>examples</classifier>
 									<type>zip</type>
 								</item>
