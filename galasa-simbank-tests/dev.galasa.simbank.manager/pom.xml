@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simbanktests-parent</artifactId>
-		<version>0.7.0</version>
+		<version>0.8.0-SNAPSHOT</version>
 	</parent>
 	
 	<name>Galasa SimBank Manager</name>
 
 	<artifactId>dev.galasa.simbank.manager</artifactId>
 	<!-- If updating version, reflect in dev.galasa.simbank.feature, dev.galasa.simbank.tests and dev.galasa.simbank.obr -->
-	<version>0.7.0</version>
+	<version>0.8.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<dependencies>
