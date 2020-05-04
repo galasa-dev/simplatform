@@ -17,6 +17,7 @@ import dev.galasa.simbank.manager.SimBankManagerException;
 import dev.galasa.zos3270.FieldNotFoundException;
 import dev.galasa.zos3270.ITerminal;
 import dev.galasa.zos3270.KeyboardLockedException;
+import dev.galasa.zos3270.TerminalInterruptedException;
 import dev.galasa.zos3270.TextNotFoundException;
 import dev.galasa.zos3270.TimeoutException;
 import dev.galasa.zos3270.spi.NetworkException;
@@ -74,7 +75,7 @@ public class CucumberSimbank {
     @When(regex = "I navigate to SimBank", type = "")
     public static String whenYouNavigateToBank(@Unique ICoreManager manager, ITerminal terminal)
             throws TimeoutException, KeyboardLockedException, NetworkException, FieldNotFoundException,
-            TextNotFoundException, InterruptedException {
+            TextNotFoundException, TerminalInterruptedException {
 
         manager.registerConfidentialText("SYS1", "IBMUSER password");
 

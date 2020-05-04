@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+
 import dev.galasa.Test;
 import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IBundleResources;
@@ -30,6 +31,7 @@ import dev.galasa.zos.ZosManagerException;
 import dev.galasa.zos3270.FieldNotFoundException;
 import dev.galasa.zos3270.ITerminal;
 import dev.galasa.zos3270.KeyboardLockedException;
+import dev.galasa.zos3270.TerminalInterruptedException;
 import dev.galasa.zos3270.TextNotFoundException;
 import dev.galasa.zos3270.TimeoutException;
 import dev.galasa.zos3270.Zos3270Terminal;
@@ -78,7 +80,7 @@ public class BasicAccountCreditTest {
     @Test
     public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException,
             HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException,
-            NetworkException, FieldNotFoundException, TextNotFoundException, InterruptedException {
+            NetworkException, FieldNotFoundException, TextNotFoundException, TerminalInterruptedException {
         // Register the password to the confidential text filtering service
         coreManager.registerConfidentialText("SYS1", "IBMUSER password");
 
@@ -129,7 +131,7 @@ public class BasicAccountCreditTest {
      */
     private BigDecimal getBalance(String accountNum)
             throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException,
-            FieldNotFoundException, TextNotFoundException, InterruptedException {
+            FieldNotFoundException, TextNotFoundException, TerminalInterruptedException {
         BigDecimal amount = BigDecimal.ZERO;
         // Open account menu and enter account number
         terminal.pf1().waitForKeyboard().positionCursorToFieldContaining("Account Number").tab().type(accountNum)

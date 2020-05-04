@@ -8,8 +8,8 @@ import dev.galasa.zos3270.ITerminal;
 import dev.galasa.zos.ZosImage;
 import dev.galasa.core.manager.CoreManager;
 import dev.galasa.zos3270.TimeoutException;
+import dev.galasa.zos3270.TerminalInterruptedException;
 import dev.galasa.simbank.manager.ghrekin.CucumberSimbank;
-import java.lang.InterruptedException;
 import dev.galasa.Test;
 import java.lang.String;
 import dev.galasa.zos3270.Zos3270Terminal;
@@ -31,7 +31,7 @@ public class SimbankStartGhrekin {
 	//Check if the SimBnk application is installed
 
 	@Test
-	public void simbankIsInstalled() throws FieldNotFoundException, TextNotFoundException, KeyboardLockedException, NetworkException, InterruptedException, TimeoutException {
+	public void simbankIsInstalled() throws FieldNotFoundException, TextNotFoundException, TerminalInterruptedException, KeyboardLockedException, NetworkException, TimeoutException {
 		//I navigate to SimBank
 		String string1 = CucumberSimbank.whenYouNavigateToBank(icoremanager, iterminal1);
 		//I should see the main screen
