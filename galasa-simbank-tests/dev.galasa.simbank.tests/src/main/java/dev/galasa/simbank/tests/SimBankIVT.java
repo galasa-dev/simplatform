@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+
 import dev.galasa.Test;
 import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IBundleResources;
@@ -24,6 +25,7 @@ import dev.galasa.zos.ZosManagerException;
 import dev.galasa.zos3270.FieldNotFoundException;
 import dev.galasa.zos3270.ITerminal;
 import dev.galasa.zos3270.KeyboardLockedException;
+import dev.galasa.zos3270.TerminalInterruptedException;
 import dev.galasa.zos3270.TextNotFoundException;
 import dev.galasa.zos3270.TimeoutException;
 import dev.galasa.zos3270.Zos3270Terminal;
@@ -77,7 +79,7 @@ public class SimBankIVT {
     @Test
     public void checkBankIsAvailable() throws TestBundleResourceException, URISyntaxException, IOException,
             HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException,
-            NetworkException, FieldNotFoundException, TextNotFoundException, InterruptedException {
+            NetworkException, FieldNotFoundException, TextNotFoundException, TerminalInterruptedException {
         // Register the password to the confidential text filtering service
         coreManager.registerConfidentialText("SYS1", "IBMUSER password");
 

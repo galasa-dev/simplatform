@@ -16,6 +16,7 @@ import dev.galasa.simbank.manager.SimBankManagerException;
 import dev.galasa.simbank.manager.internal.properties.SimBankApplicationName;
 import dev.galasa.zos3270.FieldNotFoundException;
 import dev.galasa.zos3270.KeyboardLockedException;
+import dev.galasa.zos3270.TerminalInterruptedException;
 import dev.galasa.zos3270.TextNotFoundException;
 import dev.galasa.zos3270.TimeoutException;
 import dev.galasa.zos3270.Zos3270ManagerException;
@@ -31,7 +32,7 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
     private final String                       application;
 
     public SimBankTerminalImpl(String id, String host, String application, ICredentialsUsernamePassword credentials,
-            int port, boolean tls, IFramework framework, boolean autoConnect) throws Zos3270ManagerException, InterruptedException {
+            int port, boolean tls, IFramework framework, boolean autoConnect) throws Zos3270ManagerException, TerminalInterruptedException {
         super(id, host, port, tls, framework, autoConnect);
         this.credentials = credentials;
         this.application = application;
@@ -40,7 +41,7 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
     @Override
     public void gotoMainMenu() throws TimeoutException, KeyboardLockedException, DatastreamException, NetworkException,
             FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException,
-            InterruptedException {
+            TerminalInterruptedException {
 
         waitForKeyboard();
 
@@ -65,7 +66,7 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
 
     private void logonSessionManager() throws DatastreamException, TimeoutException, KeyboardLockedException,
             NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException,
-            SimBankManagerException, InterruptedException {
+            SimBankManagerException, TerminalInterruptedException {
         verifyTextInField(("SIMPLATFORM LOGON SCREEN")).positionCursorToFieldContaining("Userid").tab()
                 .type(credentials.getUsername()).positionCursorToFieldContaining("Password").tab()
                 .type(credentials.getPassword()).enter().waitForKeyboard();
@@ -75,7 +76,7 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
 
     private void selectionApplication() throws DatastreamException, TimeoutException, KeyboardLockedException,
             NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException,
-            SimBankManagerException, InterruptedException {
+            SimBankManagerException, TerminalInterruptedException {
         verifyTextInField("SIMPLATFORM MAIN MENU").positionCursorToFieldContaining("===>").tab()
                 .type(SimBankApplicationName.get(this.application)).enter().waitForKeyboard();
 
@@ -83,7 +84,7 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
     }
 
     private void enterCICSTransaction() throws TimeoutException, KeyboardLockedException, NetworkException,
-            TextNotFoundException, FieldNotFoundException, InterruptedException {
+            TextNotFoundException, FieldNotFoundException, TerminalInterruptedException {
         verifyTextInField("DFHZC2312").clear().waitForKeyboard().type("bank").enter().waitForKeyboard();
     }
 

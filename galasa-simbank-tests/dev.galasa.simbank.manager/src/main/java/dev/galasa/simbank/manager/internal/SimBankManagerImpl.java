@@ -40,6 +40,7 @@ import dev.galasa.zos.IZosImage;
 import dev.galasa.zos.IZosManager;
 import dev.galasa.zos.spi.IZosManagerSpi;
 import dev.galasa.zos3270.IZos3270Manager;
+import dev.galasa.zos3270.TerminalInterruptedException;
 import dev.galasa.zos3270.Zos3270ManagerException;
 import dev.galasa.zos3270.spi.IZos3270ManagerSpi;
 
@@ -168,7 +169,7 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
             if (this.simBankSingleInstance != null) {
                 this.simBankSingleInstance.discard();
             }
-        } catch (InterruptedException e) {
+        } catch (TerminalInterruptedException e) {
             logger.error("Discard interrupted", e);
             Thread.currentThread().interrupt();
         }

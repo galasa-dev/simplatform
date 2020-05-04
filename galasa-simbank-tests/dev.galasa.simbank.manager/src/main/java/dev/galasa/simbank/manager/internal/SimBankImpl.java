@@ -9,7 +9,6 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -25,6 +24,7 @@ import dev.galasa.simbank.manager.internal.properties.SimBankDatabasePort;
 import dev.galasa.simbank.manager.internal.properties.SimBankWebNetPort;
 import dev.galasa.simbank.manager.internal.properties.SimBankZosImage;
 import dev.galasa.zos.IZosImage;
+import dev.galasa.zos3270.TerminalInterruptedException;
 
 public class SimBankImpl implements ISimBank {
 
@@ -154,7 +154,7 @@ public class SimBankImpl implements ISimBank {
 
     }
 
-    public void discard() throws InterruptedException {
+    public void discard() throws TerminalInterruptedException {
         if (this.controlTerminal != null) {
             this.controlTerminal.disconnect();
             this.controlTerminal = null;
