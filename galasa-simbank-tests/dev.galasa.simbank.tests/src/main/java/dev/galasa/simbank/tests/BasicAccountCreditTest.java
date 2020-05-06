@@ -8,7 +8,6 @@ package dev.galasa.simbank.tests;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -101,8 +100,7 @@ public class BasicAccountCreditTest {
         parameters.put("AMOUNT", amount.toString());
 
         // Load sample request with the given parameters
-        InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
-        String textContext = resources.streamAsString(is);
+        String textContext = resources.retrieveSkeletonFileAsString("/resources/skeletons/testSkel.skel", parameters);
 
         // Invoke the web request
         client.setURI(new URI("http://" + this.simBank.getHost() + ":" + this.simBank.getWebnetPort()));
