@@ -8,7 +8,6 @@ package dev.galasa.simbank.tests;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
@@ -76,8 +75,7 @@ public class ProvisionedAccountCreditTests {
         parameters.put("AMOUNT", amount.toString());
 
         // Load sample request with the given parameters
-        InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
-        String textContent = resources.streamAsString(is);
+        String textContent = resources.retrieveSkeletonFileAsString("/resources/skeletons/testSkel.skel", parameters);
 
         logger.info("Credit actioned");
 
