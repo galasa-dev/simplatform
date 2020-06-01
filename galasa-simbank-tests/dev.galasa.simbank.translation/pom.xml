@@ -4,21 +4,21 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simbanktests-parent</artifactId>
-		<version>0.8.0</version>
+		<version>0.9.0-SNAPSHOT</version>
 	</parent>
 	
 	<name>Galasa SimBank Example Tests</name>
 
 	<artifactId>dev.galasa.simbank.translation</artifactId>
 	<!-- If updating version, reflect in dev.galasa.simbank.feature and dev.galasa.simbank.obr -->
-	<version>0.8.0</version>
+	<version>0.9.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<dependencies>
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.simbank.manager</artifactId>
-			<version>0.8.0</version>
+			<version>0.9.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -29,7 +29,7 @@
 				<plugin>
 					<groupId>dev.galasa</groupId>
 					<artifactId>galasa-simbank-maven</artifactId>
-					<version>0.8.0</version>
+					<version>0.9.0-SNAPSHOT</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
