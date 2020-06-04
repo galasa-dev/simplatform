@@ -1,4 +1,4 @@
-package dev.galasa.ghrekin.translated;
+package dev.galasa.gherkin.translated;
 
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.http.IHttpClient;

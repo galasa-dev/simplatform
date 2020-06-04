@@ -463,11 +463,11 @@ public class TranslateCucumber extends AbstractMojo {
         ClassLoader thisLoad = getClass().getClassLoader();
         ClassLoader load = new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]), thisLoad);
 
-        Class<?> classAnnotation = ReflectionUtils.forName("dev.galasa.simbank.manager.ghrekin.CucumberTranslator", load);
-        Class<?> whenAnnotation = ReflectionUtils.forName("dev.galasa.simbank.manager.ghrekin.When", load);
-        Class<?> thenAnnotation = ReflectionUtils.forName("dev.galasa.simbank.manager.ghrekin.Then", load);
-        Class<?> givenAnnotation = ReflectionUtils.forName("dev.galasa.simbank.manager.ghrekin.Given", load);
-
+        Class<?> classAnnotation = ReflectionUtils.forName("dev.galasa.simbank.manager.gherkin.CucumberTranslator", load);
+        Class<?> whenAnnotation = ReflectionUtils.forName("dev.galasa.simbank.manager.gherkin.When", load);
+        Class<?> thenAnnotation = ReflectionUtils.forName("dev.galasa.simbank.manager.gherkin.Then", load);
+        Class<?> givenAnnotation = ReflectionUtils.forName("dev.galasa.simbank.manager.gherkin.Given", load);
+        
         ConfigurationBuilder configuration = new ConfigurationBuilder();
         configuration.addClassLoaders(load);
         configuration.addUrls(classpathURLs);

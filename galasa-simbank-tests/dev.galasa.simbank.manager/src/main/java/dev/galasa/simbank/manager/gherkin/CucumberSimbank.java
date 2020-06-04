@@ -1,4 +1,4 @@
-package dev.galasa.simbank.manager.ghrekin;
+package dev.galasa.simbank.manager.gherkin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
