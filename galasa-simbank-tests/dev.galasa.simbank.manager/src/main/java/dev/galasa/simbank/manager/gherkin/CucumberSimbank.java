@@ -1,4 +1,4 @@
-package dev.galasa.simbank.manager.ghrekin;
+package dev.galasa.simbank.manager.gherkin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,7 +65,7 @@ public class CucumberSimbank {
             String textContent = resources.streamAsString(is);
 
             client.setURI(new URI(bank.getFullAddress()));
-            client.postTextAsXML(bank.getUpdateAddress(), textContent, false);
+            client.postText(bank.getUpdateAddress(), textContent);
         } catch (Exception e) {
             return e;
         }

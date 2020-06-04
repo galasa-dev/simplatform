@@ -7,7 +7,7 @@
 		<version>0.9.0-SNAPSHOT</version>
 	</parent>
 	
-	<name>Galasa SimBank Example Tests</name>
+	<name>Galasa SimBank Example Translations</name>
 
 	<artifactId>dev.galasa.simbank.translation</artifactId>
 	<!-- If updating version, reflect in dev.galasa.simbank.feature and dev.galasa.simbank.obr -->
@@ -39,7 +39,7 @@
 				<artifactId>galasa-simbank-maven</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<packageName>dev.galasa.ghrekin.translated</packageName>
+					<packageName>dev.galasa.gherkin.translated</packageName>
 				</configuration>
 				<executions>
 					<execution>

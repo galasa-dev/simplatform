@@ -1,12 +1,12 @@
-package dev.galasa.ghrekin.translated;
+package dev.galasa.gherkin.translated;
 
 import dev.galasa.simbank.manager.SimBank;
-import dev.galasa.simbank.manager.ghrekin.CucumberSimbank;
 import dev.galasa.http.IHttpClient;
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.AccountType;
 import dev.galasa.Test;
 import dev.galasa.artifact.IArtifactManager;
+import dev.galasa.simbank.manager.gherkin.CucumberSimbank;
 import dev.galasa.artifact.ArtifactManager;
 import java.lang.Exception;
 import dev.galasa.simbank.manager.IAccount;

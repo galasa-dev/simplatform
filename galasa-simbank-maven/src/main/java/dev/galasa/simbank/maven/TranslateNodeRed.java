@@ -298,7 +298,7 @@ public class TranslateNodeRed extends AbstractMojo {
             "InputStream is = resources.retrieveSkeletonFile(\"/resources/skeletons/testSkel.skel\", parameters);\n" +
             "String textContent = resources.streamAsString(is);\n" +
             "client.setURI(new URI(bank.getFullAddress()));\n" +
-            "client.postTextAsXML(bank.getUpdateAddress(), textContent, false);";
+            "client.postText(bank.getUpdateAddress(), textContent);";
             fieldBuilder.append(methodCode.replaceAll("\n", "\n\t\t"));
             stringBuilderReplace(fieldBuilder, "@value_here@", variableWord);
             String accName = null;

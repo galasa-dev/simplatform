@@ -100,11 +100,11 @@ public class BasicAccountCreditTest {
         parameters.put("AMOUNT", amount.toString());
 
         // Load sample request with the given parameters
-        String textContext = resources.retrieveSkeletonFileAsString("/resources/skeletons/testSkel.skel", parameters);
+        String textContent = resources.retrieveSkeletonFileAsString("/resources/skeletons/testSkel.skel", parameters);
 
         // Invoke the web request
         client.setURI(new URI("http://" + this.simBank.getHost() + ":" + this.simBank.getWebnetPort()));
-        client.postTextAsXML("updateAccount", textContext, false);
+        client.postText("updateAccount", textContent);
 
         // Obtain the final balance
         BigDecimal newUserBalance = getBalance("123456789");

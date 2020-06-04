@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import dev.galasa.framework.spi.ValidAnnotatedFields;
 import dev.galasa.simbank.manager.ISimBank;
-import dev.galasa.simbank.manager.ghrekin.Unique;
+import dev.galasa.simbank.manager.gherkin.Unique;
 import dev.galasa.simbank.manager.internal.SimBankManagerField;
 
 @Unique

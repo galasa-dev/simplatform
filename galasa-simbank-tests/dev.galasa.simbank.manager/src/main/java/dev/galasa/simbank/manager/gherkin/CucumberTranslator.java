@@ -1,4 +1,4 @@
-package dev.galasa.simbank.manager.ghrekin;
+package dev.galasa.simbank.manager.gherkin;
 
 public @interface CucumberTranslator {
     
