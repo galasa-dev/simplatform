@@ -84,7 +84,7 @@ public class ProvisionedAccountCreditTests {
 
         // Invoke the web request
         client.setURI(new URI(bank.getFullAddress()));
-        String response = (String) client.postTextAsXML(bank.getUpdateAddress(), textContent, false);
+        String response = client.postText(bank.getUpdateAddress(), textContent).getContent();
 
         // Store the response in the test results archive
         storeOutput("webservice", "response.txt", response);

@@ -55,7 +55,7 @@ public class SimBankNodeRed {
 		InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
 		String textContent = resources.streamAsString(is);
 		client.setURI(new URI(bank.getFullAddress()));
-		client.postTextAsXML(bank.getUpdateAddress(), textContent, false);
+		client.postText(bank.getUpdateAddress(), textContent);
 
 		//Check account is 1000
 		assertThat(account1.getBalance()).isEqualByComparingTo(new BigDecimal("1000"));
@@ -72,7 +72,7 @@ public class SimBankNodeRed {
 		InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
 		String textContent = resources.streamAsString(is);
 		client.setURI(new URI(bank.getFullAddress()));
-		client.postTextAsXML(bank.getUpdateAddress(), textContent, false);
+		client.postText(bank.getUpdateAddress(), textContent);
 
 		//Check account is 1000
 		assertThat(account2.getBalance()).isEqualByComparingTo(new BigDecimal("1000"));
@@ -89,7 +89,7 @@ public class SimBankNodeRed {
 		InputStream is = resources.retrieveSkeletonFile("/resources/skeletons/testSkel.skel", parameters);
 		String textContent = resources.streamAsString(is);
 		client.setURI(new URI(bank.getFullAddress()));
-		client.postTextAsXML(bank.getUpdateAddress(), textContent, false);
+		client.postText(bank.getUpdateAddress(), textContent);
 
 		//Check account is 2200
 		assertThat(account3.getBalance()).isEqualByComparingTo(new BigDecimal("2200"));
