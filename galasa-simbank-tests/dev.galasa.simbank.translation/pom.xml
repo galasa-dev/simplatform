@@ -10,8 +10,8 @@
 	<name>Galasa SimBank Example Translations</name>
 
 	<artifactId>dev.galasa.simbank.translation</artifactId>
-	<!-- If updating version, reflect in dev.galasa.simbank.feature and dev.galasa.simbank.obr -->
 	<version>0.9.0-SNAPSHOT</version>
+	<!-- If updating version, reflect in dev.galasa.simbank.feature and dev.galasa.simbank.obr -->
 	<packaging>bundle</packaging>
 
 	<dependencies>
