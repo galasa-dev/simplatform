@@ -10,8 +10,8 @@
 	<name>Galasa SimBank Manager</name>
 
 	<artifactId>dev.galasa.simbank.manager</artifactId>
-	<!-- If updating version, reflect in dev.galasa.simbank.feature, dev.galasa.simbank.tests and dev.galasa.simbank.obr -->
 	<version>0.9.0-SNAPSHOT</version>
+	<!-- If updating version, reflect in dev.galasa.simbank.feature, dev.galasa.simbank.tests and dev.galasa.simbank.obr -->
 	<packaging>bundle</packaging>
 
 	<dependencies>

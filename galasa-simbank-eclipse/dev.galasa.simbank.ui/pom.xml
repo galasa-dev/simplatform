@@ -10,8 +10,8 @@
 	</parent>
 
 	<artifactId>dev.galasa.simbank.ui</artifactId>
-	<!-- If updating, reflect in dev.galasa.simbank.feature pom.xml and feature.xml -->
 	<version>0.9.0-SNAPSHOT</version>
+	<!-- If updating, reflect in dev.galasa.simbank.feature pom.xml and feature.xml -->
 	<packaging>eclipse-plugin</packaging>
 	<name>Galasa SimBank UI</name>
 
