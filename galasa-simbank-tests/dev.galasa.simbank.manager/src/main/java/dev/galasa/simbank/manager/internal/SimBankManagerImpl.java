@@ -26,6 +26,7 @@ import dev.galasa.framework.spi.IDynamicStatusStoreService;
 import dev.galasa.framework.spi.IFramework;
 import dev.galasa.framework.spi.IManager;
 import dev.galasa.framework.spi.ResourceUnavailableException;
+import dev.galasa.framework.spi.language.GalasaTest;
 import dev.galasa.simbank.manager.Account;
 import dev.galasa.simbank.manager.IAccount;
 import dev.galasa.simbank.manager.ISimBank;
@@ -177,11 +178,14 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 
     @Override
     public void initialise(@NotNull IFramework framework, @NotNull List<IManager> allManagers,
-            @NotNull List<IManager> activeManagers, @NotNull Class<?> testClass) throws ManagerException {
-        super.initialise(framework, allManagers, activeManagers, testClass);
-        List<AnnotatedField> ourFields = findAnnotatedFields(SimBankManagerField.class);
-        if (!ourFields.isEmpty()) {
-            youAreRequired(allManagers, activeManagers);
+            @NotNull List<IManager> activeManagers, @NotNull GalasaTest galasaTest) throws ManagerException {
+        super.initialise(framework, allManagers, activeManagers, galasaTest);
+
+        if(galasaTest.isJava()) {
+            List<AnnotatedField> ourFields = findAnnotatedFields(SimBankManagerField.class);
+            if (!ourFields.isEmpty()) {
+                youAreRequired(allManagers, activeManagers);
+            }
         }
 
         try {
