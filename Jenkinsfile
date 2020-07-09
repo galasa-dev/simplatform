@@ -75,7 +75,7 @@ pipeline {
             }
          }
       }
-      stage('SimBank Eclipse Comms Maven') {
+      stage('SimBank Eclipse Maven') {
          steps {
             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
                withFolderProperties { withSonarQubeEnv('GalasaSonarQube') {
