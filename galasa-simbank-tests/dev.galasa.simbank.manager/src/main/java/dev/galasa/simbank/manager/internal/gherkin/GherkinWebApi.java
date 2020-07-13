@@ -19,7 +19,7 @@ public class GherkinWebApi {
 
     public final static GherkinKeyword keyword = GherkinKeyword.GIVEN;
 
-    public final static Pattern pattern = Pattern.compile("The web API is called to credit the account with (\\d+)");
+    public final static Pattern pattern = Pattern.compile("The web API is called to credit the account with ([\\d.]+)");
 
     public final static Class<?>[] dependencies = { IHttpManager.class };
 

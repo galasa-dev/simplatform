@@ -17,7 +17,7 @@ public class GherkinAccountBalance {
 
     public final static GherkinKeyword keyword = GherkinKeyword.THEN;
 
-    public final static Pattern pattern = Pattern.compile("The balance of the account should be (\\d+)");
+    public final static Pattern pattern = Pattern.compile("The balance of the account should be ([\\d.]+)");
 
     public final static Class<?>[] dependencies = {};
 
