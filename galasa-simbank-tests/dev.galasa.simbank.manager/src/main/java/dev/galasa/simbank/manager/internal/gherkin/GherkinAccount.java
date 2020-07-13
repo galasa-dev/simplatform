@@ -16,7 +16,7 @@ public class GherkinAccount {
 
     public final static GherkinKeyword keyword = GherkinKeyword.GIVEN;
 
-    public final static Pattern pattern = Pattern.compile("I have an account with a balance of (\\d+)");
+    public final static Pattern pattern = Pattern.compile("I have an account with a balance of ([\\d.]+)");
 
     public final static Class<?>[] dependencies = {};
 
