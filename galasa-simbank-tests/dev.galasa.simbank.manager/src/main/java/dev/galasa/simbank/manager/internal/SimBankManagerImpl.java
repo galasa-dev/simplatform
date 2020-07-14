@@ -10,8 +10,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
 
 import javax.validation.constraints.NotNull;
 
@@ -20,15 +18,12 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.annotations.Component;
 
 import dev.galasa.ManagerException;
-import dev.galasa.framework.spi.AbstractGherkinManager;
 import dev.galasa.framework.spi.AbstractManager;
 import dev.galasa.framework.spi.AnnotatedField;
 import dev.galasa.framework.spi.GenerateAnnotatedField;
 import dev.galasa.framework.spi.IConfigurationPropertyStoreService;
 import dev.galasa.framework.spi.IDynamicStatusStoreService;
 import dev.galasa.framework.spi.IFramework;
-import dev.galasa.framework.spi.IGherkinExecutable;
-import dev.galasa.framework.spi.IGherkinManager;
 import dev.galasa.framework.spi.IManager;
 import dev.galasa.framework.spi.ResourceUnavailableException;
 import dev.galasa.framework.spi.language.GalasaTest;
@@ -39,13 +34,6 @@ import dev.galasa.simbank.manager.ISimBankTerminal;
 import dev.galasa.simbank.manager.SimBank;
 import dev.galasa.simbank.manager.SimBankManagerException;
 import dev.galasa.simbank.manager.SimBankTerminal;
-import dev.galasa.simbank.manager.internal.gherkin.GherkinAccount;
-import dev.galasa.simbank.manager.internal.gherkin.GherkinAccountBalance;
-import dev.galasa.simbank.manager.internal.gherkin.GherkinMainMenu;
-import dev.galasa.simbank.manager.internal.gherkin.GherkinNavigateBank;
-import dev.galasa.simbank.manager.internal.gherkin.GherkinSimbank;
-import dev.galasa.simbank.manager.internal.gherkin.GherkinStatements;
-import dev.galasa.simbank.manager.internal.gherkin.GherkinWebApi;
 import dev.galasa.simbank.manager.internal.properties.SimBankDseInstanceName;
 import dev.galasa.simbank.manager.internal.properties.SimBankPropertiesSingleton;
 import dev.galasa.simbank.manager.spi.ISimBankManagerSpi;
@@ -57,8 +45,8 @@ import dev.galasa.zos3270.TerminalInterruptedException;
 import dev.galasa.zos3270.Zos3270ManagerException;
 import dev.galasa.zos3270.spi.IZos3270ManagerSpi;
 
-@Component(service = { IManager.class, IGherkinManager.class })
-public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBankManagerSpi {
+@Component(service = { IManager.class })
+public class SimBankManagerImpl extends AbstractManager implements ISimBankManagerSpi {
 
     private static final Log                   logger        = LogFactory.getLog(SimBankManagerImpl.class);
 
@@ -198,8 +186,6 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
             if (!ourFields.isEmpty()) {
                 youAreRequired(allManagers, activeManagers);
             }
-        } else if(galasaTest.isGherkin()) {
-            GherkinStatements.register(galasaTest, this, allManagers, activeManagers);
         }
 
         try {
@@ -208,55 +194,6 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
             SimBankPropertiesSingleton.setCps(cps);
         } catch (Exception e) {
             throw new SimBankManagerException("Unable to request framework services", e);
-        }
-    }
-
-    @Override
-    public void executeGherkin(@NotNull IGherkinExecutable executable, Map<String, Object> testVariables)
-            throws ManagerException {
-        try {
-            switch(executable.getKeyword()) {
-                case GIVEN:
-                    Matcher matcherSimbank = GherkinSimbank.pattern.matcher(executable.getValue());
-                    if(matcherSimbank.matches()) {
-                        GherkinSimbank.execute(this, logger);
-                        return;
-                    }
-                    Matcher matcherAccount = GherkinAccount.pattern.matcher(executable.getValue());
-                    if(matcherAccount.matches()) {
-                        GherkinAccount.execute(matcherAccount, this, logger, testVariables);
-                        return;
-                    }
-                    break;
-                case WHEN:
-                    Matcher matcherNavigateBank = GherkinNavigateBank.pattern.matcher(executable.getValue());
-                    if(matcherNavigateBank.matches()) {
-                        GherkinNavigateBank.execute(this);
-                        return;
-                    }
-                    Matcher matcherWebApi = GherkinWebApi.pattern.matcher(executable.getValue());
-                    if(matcherWebApi.matches()) {
-                        GherkinWebApi.execute(matcherWebApi, this, testVariables);
-                        return;
-                    }
-                    break;
-                case THEN:
-                    Matcher matcherMainMenu = GherkinMainMenu.pattern.matcher(executable.getValue());
-                    if(matcherMainMenu.matches()) {
-                        GherkinMainMenu.execute(this);
-                        return;
-                    }
-                    Matcher matcherAccountBalance = GherkinAccountBalance.pattern.matcher(executable.getValue());
-                    if(matcherAccountBalance.matches()) {
-                        GherkinAccountBalance.execute(matcherAccountBalance, this, testVariables);
-                        return;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception e) {
-            throw new SimBankManagerException("Unable to execute statement: " + executable.getValue(), e);
         }
     }
 
