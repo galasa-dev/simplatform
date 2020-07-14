@@ -37,17 +37,6 @@ pipeline {
             }
          }
       }
-      stage('SimBank Maven') {
-         steps {
-             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
-               withFolderProperties { withSonarQubeEnv('GalasaSonarQube') {
-                  dir('galasa-simbank-maven') {
-                     sh "mvn --settings ${workspace}/settings.xml -Dmaven.repo.local=${workspace}/repository -Dgpg.skip=${GPG_SKIP} -Dgpg.passphrase=$GPG  -P ${MAVEN_PROFILE} -B -e -fae --non-recursive ${MAVEN_GOAL}"
-                  }
-               } }
-            }
-         }
-      }
       stage('SimBank-Tests') {
          steps {
             withCredentials([string(credentialsId: 'galasa-gpg', variable: 'GPG')]) {
