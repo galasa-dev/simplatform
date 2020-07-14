@@ -253,18 +253,4 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
     public void registerTerminal(SimBankTerminalImpl terminal) {
         this.terminals.add(terminal);
     }
-
-    public void setSimBankInstance(SimBankImpl simbank) {
-        if(this.simBankSingleInstance == null) {
-            this.simBankSingleInstance = simbank;
-        }
-    }
-
-    public void addAccount(String accountNumber, AccountImpl account) {
-        this.accounts.put(accountNumber, account);
-    }
-
-    public AccountImpl getAccount(String accountNumber) {
-        return this.accounts.get(accountNumber);
-    }
 }
