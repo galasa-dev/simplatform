@@ -1,10 +1,14 @@
 package dev.galasa.simbank.manager.internal.gherkin;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
+import dev.galasa.artifact.IBundleResources;
+import dev.galasa.artifact.TestBundleResourceException;
 import dev.galasa.framework.spi.IGherkinExecutable;
 import dev.galasa.framework.spi.IStatementOwner;
 import dev.galasa.framework.spi.language.gherkin.ExecutionMethod;
@@ -18,14 +22,8 @@ import dev.galasa.simbank.manager.internal.SimBankManagerImpl;
 
 public class SimbankStatementOwner implements IStatementOwner {
 
-    private final static String webAPISoap = "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'>"
-            + "<soapenv:Body>" + "<ns1:UPDACCTOperation xmlns:ns1='http://www.UPDACCT.STCUSTN2.Request.com'>"
-            + "<ns1:update_account_record>" + "<ns1:account_key>" + "<ns1:sort_code>00-00-00</ns1:sort_code>"
-            + "<ns1:account_number>++ACCOUNT_NUMBER++</ns1:account_number>" + "</ns1:account_key>"
-            + "<ns1:account_change>++AMOUNT++</ns1:account_change>"
-            + "</ns1:update_account_record></ns1:UPDACCTOperation>" + "</soapenv:Body>" + "</soapenv:Envelope>\n";
-
     SimBankManagerImpl manager;
+    IBundleResources resources;
     IHttpClient client;
     IAccount provisionedAccount;
 
@@ -35,6 +33,10 @@ public class SimbankStatementOwner implements IStatementOwner {
 
     public void setHttpClient(IHttpClient client) {
         this.client = client;
+    }
+
+    public void setBundleResources(IBundleResources resources) {
+        this.resources = resources;
     }
 
     @ExecutionMethod(keyword = GherkinKeyword.GIVEN, regex = "The Simbank is available")
@@ -67,7 +69,7 @@ public class SimbankStatementOwner implements IStatementOwner {
         }
     }
 
-    @ExecutionMethod(keyword = GherkinKeyword.GIVEN, regex = "I have an account with a balance of ([\\d.]+)")
+    @ExecutionMethod(keyword = GherkinKeyword.GIVEN, regex = "I have an account with a balance of (\\d+.\\d\\d)")
     public void generateAccount(IGherkinExecutable executable, Map<String, Object> testVariables)
             throws SimBankManagerException {
         if (manager.getSimBank() == null) {
@@ -79,7 +81,7 @@ public class SimbankStatementOwner implements IStatementOwner {
         provisionedAccount = manager.generateSimBankAccount(false, null, balance);
     }
 
-    @ExecutionMethod(keyword = GherkinKeyword.WHEN, regex = "The web API is called to credit the account with ([\\d.]+)")
+    @ExecutionMethod(keyword = GherkinKeyword.WHEN, regex = "The web API is called to credit the account with (\\d+.\\d\\d)")
     public void creditAccountWithWebApi(IGherkinExecutable executable, Map<String, Object> testVariables)
             throws SimBankManagerException {
         try {
@@ -90,19 +92,22 @@ public class SimbankStatementOwner implements IStatementOwner {
                 throw new SimBankManagerException("A SimBank Account has not been provisioned");
             }
 
-            String accountNumber = provisionedAccount.getAccountNumber();
-            String amount = executable.getRegexGroups().get(0);
-            String soap = webAPISoap.replace("++ACCOUNT_NUMBER++", accountNumber).replace("++AMOUNT++", amount);
+            Map<String, Object> params = new HashMap<>();
+            params.put("ACCOUNT_NUMBER", provisionedAccount.getAccountNumber());
+            params.put("AMOUNT", executable.getRegexGroups().get(0));
+            String text = resources.retrieveSkeletonFileAsString("/webApi.skel", params);
 
-            client.postText(bank.getUpdateAddress(), soap);
+            client.postText(bank.getUpdateAddress(), text);
         } catch (URISyntaxException e) {
             throw new SimBankManagerException("Unable to parse SimBank URI");
         } catch (HttpClientException e) {
             throw new SimBankManagerException("Issue posting data to SimBank web API");
+        } catch (TestBundleResourceException | IOException e) {
+            throw new SimBankManagerException("Issue reading Web Api skeleton file from manager bundle");
         }
     }
 
-    @ExecutionMethod(keyword = GherkinKeyword.THEN, regex = "The balance of the account should be ([\\d.]+)")
+    @ExecutionMethod(keyword = GherkinKeyword.THEN, regex = "The balance of the account should be (\\d+.\\d\\d)")
     public void checkAccountBalance(IGherkinExecutable executable, Map<String, Object> testVariables)
             throws SimBankManagerException {
         if (provisionedAccount == null) {

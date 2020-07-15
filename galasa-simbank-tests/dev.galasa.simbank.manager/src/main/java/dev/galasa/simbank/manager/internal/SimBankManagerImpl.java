@@ -18,6 +18,8 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.annotations.Component;
 
 import dev.galasa.ManagerException;
+import dev.galasa.artifact.IArtifactManager;
+import dev.galasa.artifact.IBundleResources;
 import dev.galasa.framework.spi.AbstractGherkinManager;
 import dev.galasa.framework.spi.AbstractManager;
 import dev.galasa.framework.spi.AnnotatedField;
@@ -65,6 +67,7 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
     private IZosManagerSpi                     zosManager;
     private IZos3270ManagerSpi                 z3270manager;
     private IHttpManagerSpi                    httpManager;
+    private IArtifactManager                   artifactManager;
 
     private SimbankStatementOwner              statementOwner;
 
@@ -100,6 +103,8 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
         if(statementOwner != null) {
             IHttpClient client = httpManager.newHttpClient().build();
             statementOwner.setHttpClient(client);
+            IBundleResources resources = artifactManager.getBundleResources(this.getClass());
+            statementOwner.setBundleResources(resources);
         }
     }
 
@@ -247,6 +252,10 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
         httpManager = addDependentManager(allManagers, activeManagers, IHttpManagerSpi.class);
         if (httpManager == null) {
             throw new ManagerException("The Http Manager is not available");
+        }
+        artifactManager = addDependentManager(allManagers, activeManagers, IArtifactManager.class);
+        if (artifactManager == null) {
+            throw new ManagerException("The Artifact Manager is not available");
         }
     }
 
