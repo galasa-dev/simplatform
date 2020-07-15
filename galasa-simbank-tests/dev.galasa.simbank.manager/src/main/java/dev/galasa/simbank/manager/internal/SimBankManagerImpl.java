@@ -18,22 +18,30 @@ import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.annotations.Component;
 
 import dev.galasa.ManagerException;
+import dev.galasa.framework.spi.AbstractGherkinManager;
 import dev.galasa.framework.spi.AbstractManager;
 import dev.galasa.framework.spi.AnnotatedField;
 import dev.galasa.framework.spi.GenerateAnnotatedField;
 import dev.galasa.framework.spi.IConfigurationPropertyStoreService;
 import dev.galasa.framework.spi.IDynamicStatusStoreService;
 import dev.galasa.framework.spi.IFramework;
+import dev.galasa.framework.spi.IGherkinManager;
 import dev.galasa.framework.spi.IManager;
+import dev.galasa.framework.spi.IStatementOwner;
 import dev.galasa.framework.spi.ResourceUnavailableException;
 import dev.galasa.framework.spi.language.GalasaTest;
+import dev.galasa.http.IHttpClient;
+import dev.galasa.http.IHttpManager;
+import dev.galasa.http.spi.IHttpManagerSpi;
 import dev.galasa.simbank.manager.Account;
+import dev.galasa.simbank.manager.AccountType;
 import dev.galasa.simbank.manager.IAccount;
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.ISimBankTerminal;
 import dev.galasa.simbank.manager.SimBank;
 import dev.galasa.simbank.manager.SimBankManagerException;
 import dev.galasa.simbank.manager.SimBankTerminal;
+import dev.galasa.simbank.manager.internal.gherkin.SimbankStatementOwner;
 import dev.galasa.simbank.manager.internal.properties.SimBankDseInstanceName;
 import dev.galasa.simbank.manager.internal.properties.SimBankPropertiesSingleton;
 import dev.galasa.simbank.manager.spi.ISimBankManagerSpi;
@@ -45,8 +53,8 @@ import dev.galasa.zos3270.TerminalInterruptedException;
 import dev.galasa.zos3270.Zos3270ManagerException;
 import dev.galasa.zos3270.spi.IZos3270ManagerSpi;
 
-@Component(service = { IManager.class })
-public class SimBankManagerImpl extends AbstractManager implements ISimBankManagerSpi {
+@Component(service = { IManager.class, IGherkinManager.class })
+public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBankManagerSpi {
 
     private static final Log                   logger        = LogFactory.getLog(SimBankManagerImpl.class);
 
@@ -56,6 +64,9 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 
     private IZosManagerSpi                     zosManager;
     private IZos3270ManagerSpi                 z3270manager;
+    private IHttpManagerSpi                    httpManager;
+
+    private SimbankStatementOwner              statementOwner;
 
     private SimBankImpl                        simBankSingleInstance;
 
@@ -77,7 +88,7 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
             if (field.getType() == ISimBank.class) {
                 SimBank annotation = field.getAnnotation(SimBank.class);
                 if (annotation != null) {
-                    ISimBank simBank = generateSimBank(field, annotations);
+                    ISimBank simBank = generateSimBankFromAnnotation(field, annotations);
                     registerAnnotatedField(field, simBank);
                 }
             }
@@ -85,12 +96,20 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
 
         // *** Now generate the rest of the fields
         generateAnnotatedFields(SimBankManagerField.class);
+
+        if(statementOwner != null) {
+            IHttpClient client = httpManager.newHttpClient().build();
+            statementOwner.setHttpClient(client);
+        }
     }
 
     @GenerateAnnotatedField(annotation = SimBank.class)
-    public ISimBank generateSimBank(Field field, List<Annotation> annotations) throws SimBankManagerException {
+    public ISimBank generateSimBankFromAnnotation(Field field, List<Annotation> annotations) throws SimBankManagerException {
         SimBank bankAnnotation = field.getAnnotation(SimBank.class);
+        return generateSimBank(bankAnnotation.useTerminal(), bankAnnotation.useJdbc());
+    }
 
+    public ISimBank generateSimBank(Boolean useTerminal, Boolean useJdbc) throws SimBankManagerException {
         if (simBankSingleInstance != null) {
             return simBankSingleInstance;
         }
@@ -104,8 +123,7 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
             }
 
             // *** Retrieve the SimBank instance for the DSE tag
-            SimBankImpl simBank = SimBankImpl.getDSE(this, dseInstanceName, bankAnnotation.useTerminal(),
-                    bankAnnotation.useJdbc());
+            SimBankImpl simBank = SimBankImpl.getDSE(this, dseInstanceName, useTerminal, useJdbc);
             this.simBankSingleInstance = simBank;
 
             logger.info("SimBank instance " + simBank.getInstanceId() + " provisioned for this run");
@@ -119,9 +137,13 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
     }
 
     @GenerateAnnotatedField(annotation = Account.class)
-    public IAccount generateSimBankAccount(Field field, List<Annotation> annotations) throws SimBankManagerException {
+    public IAccount generateSimBankAccountFromAnnotation(Field field, List<Annotation> annotations) throws SimBankManagerException {
         Account accountAnnotation = field.getAnnotation(Account.class);
-        AccountImpl account = AccountImpl.generate(this, accountAnnotation.existing(), accountAnnotation.accountType(), accountAnnotation.balance());
+        return generateSimBankAccount(accountAnnotation.existing(), accountAnnotation.accountType(), accountAnnotation.balance());
+    }
+
+    public IAccount generateSimBankAccount(Boolean existing, AccountType type, String balance)throws SimBankManagerException {
+        AccountImpl account = AccountImpl.generate(this, existing, type, balance);
 
         if (simBankSingleInstance == null) {
             throw new SimBankManagerException("An instance of the SimBank has not been requested");
@@ -195,6 +217,15 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
         } catch (Exception e) {
             throw new SimBankManagerException("Unable to request framework services", e);
         }
+
+        if(galasaTest.isGherkin()) {
+            statementOwner = new SimbankStatementOwner(this);
+            IStatementOwner[] owners = { statementOwner };
+
+            if(registerStatements(galasaTest.getGherkinTest(), owners)) {
+                youAreRequired(allManagers, activeManagers);
+            }
+        }
     }
 
     @Override
@@ -213,11 +244,16 @@ public class SimBankManagerImpl extends AbstractManager implements ISimBankManag
         if (z3270manager == null) {
             throw new Zos3270ManagerException("The zOS 3270 Manager is not available");
         }
+        httpManager = addDependentManager(allManagers, activeManagers, IHttpManagerSpi.class);
+        if (httpManager == null) {
+            throw new ManagerException("The Http Manager is not available");
+        }
     }
 
     @Override
     public boolean areYouProvisionalDependentOn(@NotNull IManager otherManager) {
-        if (otherManager instanceof IZosManager || otherManager instanceof IZos3270Manager) {
+        if (otherManager instanceof IZosManager || otherManager instanceof IZos3270Manager ||
+                otherManager instanceof IHttpManager) {
             return true;
         }
 
