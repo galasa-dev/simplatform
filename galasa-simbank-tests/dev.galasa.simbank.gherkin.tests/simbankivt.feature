@@ -10,7 +10,7 @@ Feature: Simbank IVT
     AND type credentials password on terminal
     AND press terminal key ENTER
     AND wait for terminal keyboard
-    THEN check "SIMPLATFORM MAIN MENU" appears only once in terminal
+    THEN check "SIMPLATFORM MAIN MENU" appears only once on terminal
 	AND press terminal key PF1
     AND wait for terminal keyboard
     AND press terminal key CLEAR
