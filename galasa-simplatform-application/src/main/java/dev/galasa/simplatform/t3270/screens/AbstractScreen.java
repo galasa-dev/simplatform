@@ -1,7 +1,7 @@
 /*
  * Licensed Materials - Property of IBM
  * 
- * (c) Copyright IBM Corp. 2019.
+ * (c) Copyright IBM Corp. 2020.
  */
 package dev.galasa.simplatform.t3270.screens;
 
@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import dev.galasa.zos3270.AttentionIdentification;
-import dev.galasa.zos3270.internal.comms.Network;
 import dev.galasa.zos3270.internal.comms.NetworkServer;
 import dev.galasa.zos3270.internal.comms.NetworkThread;
 import dev.galasa.zos3270.internal.datastream.AbstractOrder;
@@ -143,9 +142,16 @@ public abstract class AbstractScreen implements IScreen {
 
     protected AttentionIdentification receiveScreen(Screen screen) throws ScreenException {
         try {
-            Network.expect(network.getInputStream(), (byte) 0); // Should be D3270
+            int d3270 = network.getInputStream().read();
+            if (d3270 == -1) {
+                throw new ScreenException(); // disconnect. throw silently
+            }
+            if (d3270 != 0) {
+                throw new ScreenException("First byte of the 3270 datastream header should be 0");
+            }
 
-            ByteBuffer buffer = NetworkThread.readTerminatedMessage(network.getInputStream());
+            ByteBuffer buffer = NetworkThread.readTerminatedMessage((byte) 0, network.getInputStream());
+            buffer.get(); // D3270
             buffer.get(); // Request
             buffer.get(); // Response
             buffer.get(); // SEQ
