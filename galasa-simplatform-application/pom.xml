@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>dev.galasa</groupId>
-	<artifactId>galasa-simplatform</artifactId>
+	<artifactId>dev.galasa.galasa-simplatform-parent</artifactId>
 	<version>0.11.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>Galasa SimPlatform</name>
 	<description>The SimPlatform and SimBank applications to allow for Galasa tutorials and samples</description>
@@ -54,6 +54,11 @@
 		<url>https://github.com/galasa-dev/projectmanagement/issues</url>
 		<system>GitHub</system>
 	</issueManagement>
+
+    <modules>
+		<module>galasa-simplatform-3270</module>
+		<module>galasa-simplatform-webapp</module>
+	</modules>
 
 	<distributionManagement>
 		<repository>
@@ -113,7 +118,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<executions>
@@ -181,7 +186,7 @@
 				<configuration>
 					<failOnError>false</failOnError>
 				</configuration>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>

@@ -115,7 +115,7 @@ public class BasicAccountCreditTest {
 
     /**
      * Navigate through the banking application and extract the balance of a given
-     * account
+     * accounti
      * 
      * @param accountNum - Account Number of the account being queried
      * @return Balance of the account being queried

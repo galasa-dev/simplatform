@@ -173,6 +173,16 @@
 			<artifactId>dev.galasa.zosmf.manager</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>dev.galasa</groupId>
+			<artifactId>dev.galasa.docker.manager</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>dev.galasa</groupId>
+			<artifactId>dev.galasa.selenium.manager</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 
