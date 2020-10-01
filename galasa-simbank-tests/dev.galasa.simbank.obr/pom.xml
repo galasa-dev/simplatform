@@ -6,13 +6,13 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simbanktests-parent</artifactId>
-		<version>0.11.0</version>
+		<version>0.12.0-SNAPSHOT</version>
 	</parent>
 
 	<name>Galasa SimBank OBR</name>
 
 	<artifactId>dev.galasa.simbank.obr</artifactId>
-	<version>0.11.0</version>
+	<version>0.12.0-SNAPSHOT</version>
 	<!-- If updating version, reflect change in build/docker/testcatalogs/pom.xml -->
 	<packaging>galasa-obr</packaging>
 
@@ -25,13 +25,13 @@
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.simbank.tests</artifactId>
-			<version>0.11.0</version>
+			<version>0.12.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.simbank.manager</artifactId>
-			<version>0.11.0</version>
+			<version>0.12.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
