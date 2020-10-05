@@ -1,17 +1,251 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Simbank</title>
+	<meta charset="UTF-8">
+	<!-- <link rel="stylesheet" type="text/css"
+		href="${pageContext.request.contextPath}/galasa-simplatform-webapp/simbank/style.css"> -->
+	<title>Simbank</title>
+	<!-- <script src="http://code.jquery.com/jquery-1.5.js">
+	$(document).ready(function(){
+   var $form = $('form');
+   $form.submit(function(){
+      $.post($(this).attr('action'), $(this).serialize(), function(response){
+            console.log("js success")
+      },'json');
+      return false;
+   });
+});
+	</script> -->
 </head>
+
 <body>
-<h4>Enter account number and amount</h4>
-<form action="update" method="post">
-	<label for="accnr">Account number</label><br>
-	<input type="text" id="accnr" name="accnr"><br>
-	<label for="amount">Amount</label><br>
-	<input type="text" id="amount" name="amount"><br>
-	<input type="submit" value="Submit" id = "submit">
-</form>
+
+	<div id="header">
+		<h4 id="title">Galasa SimBank</h4>
+	</div>
+	<div class= "box">
+	<div class="container">
+		<div id="main-title">
+			<h2>Enter account number and amount</h2>
+		</div>
+		<form id="form" action="update" method="post">
+			<div class="form-control">
+				<label for="accnr">Account number</label><br>
+				<input type="text" id="accnr" name="accnr" placeholder="123456789">
+				<small>Error message</small><br>
+			</div>
+			<div class="form-control">
+				<label for="amount">Amount</label><br>
+				<input type="text" id="amount" name="amount" placeholder="10">
+				<small>Error message</small><br>
+			</div>
+				<input type="submit" value="Submit" id="submit">
+				<!-- <script type="text/javascript">
+					$(document).ready(function(){
+					   $("#submit").click(function(){  
+						 $.get("http://localhost:8080/galasa-simplatform-webapp/simbank");        
+					   });
+					});
+				  </script> -->
+			
+	</div>
+</div>
+	</div>
+	</form>
+	<div id="footer">
+		<h5>a footer</h5>
+	</div>
+	<style>
+		*{
+			box-sizing: border-box;
+		}
+		body {
+			margin: 0;
+			font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+			font-size: 16px;
+			background-color: #0c28a7;
+			min-height: 100vh;
+			color: #333;
+		}
+
+		#title {
+			margin: 0%;
+		}
+
+		#header {
+
+			padding: 20px 0px 20px 0px;
+			background: #0a218a;
+			color: white;
+			text-align: center;
+			border-radius: 0px 0px 25px 25px;
+
+		}
+		.box{
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 60vh;
+		}
+		.container {
+			text-align: center;
+			padding: 40px 0px 50px 0px;
+			margin: auto;
+
+		}
+
+		#main-title {
+			color: white;
+			position: relative;
+			left: -10%;
+		}
+
+		#left {
+			float: left;
+			position: relative;
+			left: 38%;
+		}
+
+		label {
+			margin: 10px;
+			color: white;
+			float: left;
+		}
+		#accnr,
+		#amount {
+			font-size: 15px;
+			width: 500px;
+			height: 25px;
+			border-radius: 7px;
+			display: block;
+			font-family: inherit;
+		}
+		small{
+			float: left;
+			color: rgb(219, 0, 0);
+			font-size: 14px;
+			visibility: hidden;
+		}
+		.form-control.success input{
+			border-color: green;
+		}
+		.form-control.error input{
+			border-color: red;
+		}
+
+		.form-control.error small{
+			visibility: visible;
+		}
+
+		#submit {
+			margin: 15px;
+			float: right;
+			position: relative;
+			right: -2%;
+			width: 75px;
+			height: 38px;
+			border-radius: 4px;
+			border: 2px solid white;
+			background-color: gold;
+			color: black;
+			font-family: inherit;
+			font-size: 15px;
+			transition: 0.5s all linear;
+
+		}
+
+		#submit:hover {
+			background: linear-gradient(white, white) center/100% 0px no-repeat;
+			background-size: 100% 100%;
+		}
+
+
+		#footer {
+			text-align: center;
+			background-color: black;
+			color: white;
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			height: 10rem;
+			border-radius: 25px 25px 0px 0px;
+		}
+	</style>
+
+
 </body>
+<script type="text/javascript" >
+
+const form = document.getElementById('form');
+const account = document.getElementById('accnr');
+const amount = document.getElementById('amount');
+var regex = /^[0-9]*$/;
+form.addEventListener('submit',e=>{
+    e.preventDefault();
+    checkInputs();
+});
+function checkInputs(){
+    const acValue = account.value.trim();
+    const amValue = amount.value.trim();
+    console.log("acValue ="+acValue);
+    console.log("acValue = "+amValue);
+    if(acValue === ''){
+        setErrorFor(account,'Account number cannot be blank');
+        console.log('Account number cannot be blank');
+    }else if(!regex.test(acValue)){
+        setErrorFor(account,'Account number cannot contain letters or symbols');
+        console.log('Account number cannot contain letters or symbols');
+    }else if(acValue.length!==9){
+        console.log(acValue.length);
+        setErrorFor(account,'Account number has to contain nine numbers');
+        console.log('Account number has to contain nine numbers');
+    }else{
+        console.log('account nr passed the checks ');
+        sendData(account);
+    }
+    if(amValue === ''){
+        setErrorFor(amount,'Amount cannot be blank');
+        console.log('Amount cannot be blank');
+    }else if(!regex.test(amValue)){
+        setErrorFor(amount,'Amount cannot contain letters or symbols');
+        console.log('Amount cannot contain letters or symbols');
+    }else{
+        setSuccessFor(amount);
+        console.log('amount success');
+    }
+}
+
+function setErrorFor(input, message){
+    const fromControl = input.parentElement;
+    console.log(fromControl);
+    const small = fromControl.querySelector('small');
+    console.log(small);
+    fromControl.className = 'form-control error';
+    small.innerText = message;
+}
+function setSuccessFor(input){
+    const fromControl = input.parentElement;
+    console.log(fromControl);
+    fromControl.className = 'form-control success';
+}
+
+async function sendData(input){
+	const data = {};
+	
+	const response = await fetch(`http://host.docker.internal:2080/updateAccount`, {
+		method: 'POST',
+		headers:{
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data)
+    });
+    
+    if(response!==200){
+        setErrorFor(input,"Account number invalid");
+    }
+    setSuccessFor(input);
+}
+</script>
 </html>
