@@ -2,6 +2,9 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.entity.ContentType;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
@@ -35,7 +38,7 @@ public class SimbankServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/index.html");
+		RequestDispatcher rd = request.getRequestDispatcher("/index.html");
 
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		rd.include(request, response);
@@ -48,23 +51,6 @@ public class SimbankServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		
-		System.out.println(request.getRequestURL());
-		String output = "";
-//		validation checks
-//		if(!request.getParameter("accnr").matches("[0-9]+") ||request.getParameter("accnr").length()!=9){
-//			output = "<p id='output'>Invalid account number</p>";
-//			response.reset();
-//			response.setStatus(400);
-//			out.print(output);
-//			out.flush();
-//		}else if(!request.getParameter("amount").matches("[0-9]+") ) {
-//			output = "<p id='output'>Invalid amount</p>";
-//			response.reset();
-//			response.setStatus(400);
-//			out.print(output);
-//			out.flush();
-//		}else {
 //		Inserting parameters in SOAP requester
 			String xml = "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'>"+
 					"<soapenv:Body>"+
@@ -88,22 +74,17 @@ public class SimbankServlet extends HttpServlet {
 				int statusCode = simbankResp.getStatusLine().getStatusCode();
 				response.reset();
 				response.setStatus(statusCode);
-				
-//		Checking status
-//				if(statusCode != 200) {
-//					output = "<p id='output'>Transaction failed</p>";
-//
-//				}else {
-//					output = "<p id='output'>Transaction complete</p>";
-//				}
-//
-//				out.print(output);
-//				out.flush();
+				ResponseMessageObject obj = new ResponseMessageObject();
+				obj.account =request.getParameter("accnr");
+				obj.amount=request.getParameter("amount");
+				obj.statusCode = statusCode;
+				Gson status = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+				response.setContentType( "application/json");
+			    out.println( status.toJson( obj));
 
 			}catch(Exception e) {
-				e.printStackTrace();
+				throw new ServletException("Servlet error",e);
 			}
-//		}
 
 
 	}

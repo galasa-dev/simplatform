@@ -14,11 +14,6 @@
   	<servlet-name>HelloTest</servlet-name>
   	<url-pattern>/simbank</url-pattern>
   </servlet-mapping>
-  <!-- <servlet-mapping>
-    <servlet-name>HelloTest</servlet-name>
-    <url-pattern>*.css</url-pattern>
-</servlet-mapping> -->
-  
   <servlet-mapping>
   	<servlet-name>HelloTest</servlet-name>
   	<url-pattern>/update</url-pattern>

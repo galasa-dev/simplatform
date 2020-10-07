@@ -130,7 +130,7 @@ public class WebAppIntegrationTest {
 		
 		int port = ports.get("8080/tcp").get(0).getPort();
 
-		String webpage = "http://localhost:" + port + "galasa-simplatform-webapp/simbank";
+		String webpage = "http://localhost:" + port + "galasa-simplatform-webapp";
 
 		IWebPage page = seleniumManager.allocateWebPage(webpage);
 		page.maximize();
@@ -138,7 +138,7 @@ public class WebAppIntegrationTest {
 		page.sendKeysToElementById("accnr", accountNumber);
 		page.sendKeysToElementById("amount", "120");
 		page.clickElementById("submit");
-		assertThat(page.findElementById("output").getText()).contains("Transaction complete");
+		assertThat(page.findElementById("good").getText()).contains("Transaction Successful");
 		page.close();
 		
 		//Charlies code
