@@ -2,15 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>dev.galasa</groupId>
-<<<<<<< HEAD
-	<artifactId>dev.galasa.galasa-simplatform-parent</artifactId>
-	<version>0.11.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-=======
 	<artifactId>galasa-simplatform</artifactId>
 	<version>0.12.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
->>>>>>> 65c466cf1412b526ad9daf3a807ad17718ab0958
 
 	<name>Galasa SimPlatform</name>
 	<description>The SimPlatform and SimBank applications to allow for Galasa tutorials and samples</description>
