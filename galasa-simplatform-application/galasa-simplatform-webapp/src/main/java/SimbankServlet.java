@@ -30,7 +30,6 @@ public class SimbankServlet extends HttpServlet {
 	 */
 	public SimbankServlet() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

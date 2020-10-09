@@ -6,16 +6,16 @@
   <display-name>Archetype Created Web Application</display-name>
 
   <servlet>
-  	<servlet-name>HelloTest</servlet-name>
+  	<servlet-name>SimbankDemo</servlet-name>
   	 <servlet-class>SimbankServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>
-  	<servlet-name>HelloTest</servlet-name>
+  	<servlet-name>SimbankDemo</servlet-name>
   	<url-pattern>/simbank</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  	<servlet-name>HelloTest</servlet-name>
+  	<servlet-name>SimbankDemo</servlet-name>
   	<url-pattern>/update</url-pattern>
   </servlet-mapping>
    

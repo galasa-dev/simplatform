@@ -1,7 +1,6 @@
 package dev.galasa.simbank.tests;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +77,7 @@ public class WebAppIntegrationTest {
 	@Test
 	public void webAppIntegrationTest() throws SeleniumManagerException, DockerManagerException, TimeoutException, KeyboardLockedException, TerminalInterruptedException, TextNotFoundException, FieldNotFoundException, NetworkException, TestBundleResourceException, IOException, ZosBatchException{
 
-		//Dianas code
+		
 		terminal.waitForKeyboard()
 		.positionCursorToFieldContaining("Userid").tab().type("IBMUSER")
 		.positionCursorToFieldContaining("Password").tab().type("SYS1")
@@ -122,10 +121,6 @@ public class WebAppIntegrationTest {
 		}
 		logger.info("Batch job complete RETCODE=" + batchJob.getRetcode());
 		
-		//Dianas code
-		
-		//Charlies code
-		
 		Map<String, List<InetSocketAddress>> ports = container.getExposedPorts();
 		
 		int port = ports.get("8080/tcp").get(0).getPort();
@@ -140,8 +135,6 @@ public class WebAppIntegrationTest {
 		page.clickElementById("submit");
 		assertThat(page.findElementById("good").getText()).contains("Transaction Successful");
 		page.close();
-		
-		//Charlies code
 		
 	}
 

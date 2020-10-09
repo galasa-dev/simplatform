@@ -66,9 +66,7 @@ async function sendData(input, amount) {//call servlet
     const code = jsonResponse.statusCode;
     console.log("code = " + code);
     if (code === 200) {
-        const fromControl = input.parentElement;
-        fromControl.className = 'form-control success';
-        console.log(fromControl);
+        setSuccessFor(input);
         document.getElementById("good").style.visibility = "visible";
 
     } else {

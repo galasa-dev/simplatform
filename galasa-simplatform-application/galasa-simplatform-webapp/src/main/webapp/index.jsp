@@ -9,11 +9,14 @@
 
 <body>
 
-    <div id="header">
-        <h4 id="title">Galasa SimBank</h4>
+    <div class="header">
+        <img id="logo" src="recources/galasa-simbank-wordmark.svg" alt="galasa Logo" height= "30px" >
     </div>
     <div class="box">
         <div class="container">
+            <div id = "good" >
+            <p>You have successfully <b>completed</b> the transaction</p><br>
+        </div>
             <div id="main-title">
                 <h2>Enter account number and amount</h2>
             </div>
@@ -21,15 +24,18 @@
                 <div class="form-control">
                     <label for="accnr">Account number</label><br>
                     <input type="text" id="accnr" name="accnr" placeholder="123456789">
+                    <i class="checkmark"></i>
+                    <i class="misuse"></i>
                     <small>Error message</small><br>
                 </div>
                 <div class="form-control">
                     <label for="amount">Amount</label><br>
                     <input type="text" id="amount" name="amount" placeholder="10">
+                    <i class="checkmark"></i>
+                    <i class="misuse"></i>
                     <small>Error message</small><br>
                 </div>
                 <input type="submit" value="Submit" id="submit">
-                <h1 id = "good">Transaction Successfull</h1><br>
             </form>
         </div>
     </div>

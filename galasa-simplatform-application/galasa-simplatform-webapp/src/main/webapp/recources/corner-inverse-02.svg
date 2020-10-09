@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>corner inverse</title>
+    <g id="Extra" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="01-galasa-simbank" transform="translate(-1536.000000, -744.000000)" fill="#000000">
+            <g id="footer" transform="translate(0.000000, 744.000000)">
+                <path d="M1584,0 C1557.75543,0 1536.43031,21.0626744 1536.00643,47.2062322 L1536,48 L1536,0 L1584,0 Z" id="corner-inverse" transform="translate(1560.000000, 24.000000) scale(-1, -1) translate(-1560.000000, -24.000000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>
