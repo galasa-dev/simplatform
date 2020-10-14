@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>corner inverse</title>
+    <g id="Extra" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="header" transform="translate(0.000000, -112.000000)" fill="#03429D">
+            <path d="M48,112 C21.7554287,112 0.430308574,133.062674 0.00643062861,159.206232 L0,160 L0,112 L48,112 Z" id="corner-inverse"></path>
+        </g>
+    </g>
+</svg>

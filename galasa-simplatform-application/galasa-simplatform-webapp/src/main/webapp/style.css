@@ -1,0 +1,201 @@
+*{
+    box-sizing: border-box;
+}
+@font-face{
+    font-family: "Work Sans";
+    src:url(recources/Work_Sans/static/WorkSans-Medium.ttf);
+}
+@font-face{
+    font-family: "Open Sans Regular";
+    src:url(recources/Open_Sans/OpenSans-Regular.ttf);
+}
+@font-face{
+    font-family: "Open Sans SemiBold";
+    src:url(recources/Open_Sans/OpenSans-SemiBold.ttf);
+}
+body {
+    margin: 0;
+    background: url(recources/galasa-shapes-background.svg), #F4F4F4;
+    min-height: 100vh;
+    color: #333;
+}
+
+
+.header {
+
+    padding: 20px 0px 20px 0px;
+    height: 112px;
+    border-radius: 0 0 48px 0;
+    background-color: #03429D;
+    text-align: left;
+}
+.header:after{
+    padding-top: 46.6px;
+    content:url(recources/corner-inverse-01.svg);
+    display: block;
+    height: 48px;
+    width: 48px;
+    left: 0;
+
+}
+#logo{
+    margin-left: 40px;
+    margin-top: 10px;
+}
+
+.box{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+}
+.container {
+    text-align: center;
+    padding: 40px 0px 50px 0px;
+    margin: auto;
+
+}
+
+#main-title {
+    
+   
+    color: #000000;
+    font-family: "Work Sans";
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 36px;
+    position: relative;
+    
+}
+label {
+    color: #525252;
+    font-family: "Open Sans SemiBold";
+    font-size: 12px;
+    letter-spacing: 0.32px;
+    line-height: 16px;
+    float: left;
+    padding-bottom: 5px;
+}
+#accnr,
+#amount {
+    font-family: "Open Sans Regular";
+    font-size: 16px;
+    width: 544px;
+    height: 40px;
+    border-color: black;
+    border: 1px solid #8D8D8D;
+    border-radius: 4px;
+    display: block;
+    padding: 10px;
+}
+small{
+    font-family: "Open Sans Regular";
+    float: left;
+    color:  #DF0000;
+    font-size: 12px;
+    letter-spacing: 0.32px;
+    line-height: 16px;
+    visibility: hidden;
+    padding-top: 5px;
+}
+#good{
+    margin-left: 8px;
+    box-sizing: border-box;
+    width: 544px;
+    height: 44px;
+    border: 1px solid #24A148;
+    border-radius: 4px;
+    background-color: #E6F4E5;
+    text-align: center;
+}
+#good p{
+    margin: 11px 0 0 0;
+    color: #161616;
+    font-family: "Open Sans Regular";
+    font-size: 14px;
+    letter-spacing: 0.16px;
+}
+.form-control{
+    padding: 8px;
+    position: relative;
+}
+.form-control.success input{
+    border: 1px solid #8D8D8D;
+}
+.form-control.error input{
+    border: 2px solid #DA030F;
+}
+i.checkmark{
+    content: url(recources/checkmark.svg);
+    
+}
+i.misuse{
+    content: url(recources/misuse.svg);
+    
+}
+.form-control i{
+    visibility: hidden;
+	position: absolute;
+	top: 37px;
+    right: -22px;
+    width: 22px;
+    height: 22px;
+}
+.form-control.success i.checkmark {
+	visibility: visible;
+}
+
+.form-control.error i.misuse {
+	visibility: visible;
+}
+
+.form-control.error small{
+    visibility: visible;
+}
+
+#submit {
+    margin: 15px;
+    float: right;
+    position: relative;
+    right: -2%;
+    width: 138px;
+    height: 48px;
+    border-radius: 4px;
+    border: 2px solid #0F55BA;
+    background-color:#0F55BA;
+    color: #FFFFFF;
+    font-family: "Open Sans SemiBold";
+    font-size: 16px;
+    letter-spacing: 0.16px;
+    line-height: 18px;
+    transition: 0.5s all linear;
+
+}
+
+#submit:hover {
+    background: linear-gradient(white, white) center/100% 0px no-repeat;
+    background-size: 100% 100%;
+    color: #000000;
+}
+
+#footer:before{
+    content: url(recources/corner-inverse-02.svg);
+    height: 48px;
+    width: 48px;
+    float:right;
+    display: block;
+    margin-top: -48px;
+}
+
+#footer {
+    text-align: center;
+    color: white;
+    position: absolute;
+    bottom: 0;
+    width: 100%;  
+    height: 112px;
+    border-radius: 50px 0 0 0;
+    background-color: #000000;
+}
