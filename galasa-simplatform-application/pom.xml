@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>dev.galasa</groupId>
-	<artifactId>galasa-simplatform</artifactId>
+	<artifactId>galasa-simplatform-parent</artifactId>
 	<version>0.12.0</version>
 	<packaging>pom</packaging>
 
