@@ -7,7 +7,9 @@
 		<version>0.12.0</version>
 	</parent>
 
+	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simplatform</artifactId>
+	<version>0.12.0</version>
 	<packaging>jar</packaging>
 
 	<build>
