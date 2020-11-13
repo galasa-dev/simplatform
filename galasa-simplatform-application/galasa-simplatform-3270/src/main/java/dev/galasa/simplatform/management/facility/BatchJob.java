@@ -26,6 +26,7 @@ import com.google.gson.JsonObject;
 import dev.galasa.simplatform.application.Bank;
 import dev.galasa.simplatform.exceptions.AccountNotFoundException;
 import dev.galasa.simplatform.exceptions.DuplicateAccountException;
+import dev.galasa.zosbatch.IZosBatchJob.JobStatus;
 
 public class BatchJob {
 	
@@ -53,7 +54,7 @@ public class BatchJob {
 	private String jobid;
 	private String jobname;
 	private String stepname;
-	private String status;
+	private JobStatus status;
     private String retcode;
 	private String jcl;
 	private String program;	
@@ -74,7 +75,6 @@ public class BatchJob {
 	private static final String PROP_REASON = "reason";
 	private static final String PROP_STACK = "stack";
 	private static final String PROP_CATEGORY = "category";
-	private static final String STATUS_OUTPUT = "OUTPUT";
 	
 	private static final String ACCOUNT_OPEN = "ACCOUNT_OPEN";
 	private static final String ACCOUNT_REPORT = "ACCOUNT_REPORT";
@@ -115,7 +115,7 @@ public class BatchJob {
 	
 	private void submitJob() {
 		// Job in input queue
-		setStatus("INPUT");
+		setStatus(JobStatus.INPUT);
 		setRetcode(null);		
 		jobOutputPhase0();
 		// Set the JSON response
@@ -199,7 +199,7 @@ public class BatchJob {
 		return this.stepname;
 	}
 
-	public String getStatus() {
+	public JobStatus getStatus() {
 		return this.status;
 	}
 
@@ -216,7 +216,7 @@ public class BatchJob {
 		statusOutput.addProperty(PROP_OWNER, getOwner());
 		statusOutput.addProperty(PROP_JOBID, getJobid());
 		statusOutput.addProperty(PROP_JOBNAME, getJobname());
-		statusOutput.addProperty(PROP_STATUS, getStatus());
+		statusOutput.addProperty(PROP_STATUS, getStatus().toString());
 		statusOutput.addProperty(PROP_RETCODE, getRetcode());
 		setOutput(statusOutput.toString());
 	}
@@ -249,7 +249,7 @@ public class BatchJob {
 		this.stepname = stepname;		
 	}
 
-	protected void setStatus(String status) {
+	protected void setStatus(JobStatus status) {
 		this.status = status;
 	}
 
@@ -376,7 +376,7 @@ public class BatchJob {
 	}
 
 	private void writeJclError(int stmtNo, String message) {
-		setStatus(STATUS_OUTPUT);
+		setStatus(JobStatus.OUTPUT);
 		setRetcode("JCL ERROR");
 		if (!jclerrorHeadWritten) {
 			jesmsglgJclError();
@@ -474,7 +474,7 @@ public class BatchJob {
 			}
 			writeSysoutreport(processedAccounts, invalidRecords);
 		}
-		setStatus(STATUS_OUTPUT);
+		setStatus(JobStatus.OUTPUT);
 		jobOutputEndJob();
 		refreshJobStatus();
 	}
@@ -647,7 +647,7 @@ public class BatchJob {
 
 	public void writeStackTraceToOutput(Exception e) {
 		log.log(Level.SEVERE, "Exception in Symbank batch processing", e);
-		setStatus(STATUS_OUTPUT);
+		setStatus(JobStatus.OUTPUT);
 		BatchJobOutputFile jobOutputFile = getJobOutputfile(Jobfile.JESMSGLG);
 		jobOutputFile.addRecord(ExceptionUtils.getStackTrace(e));
 	}
