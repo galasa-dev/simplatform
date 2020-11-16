@@ -7,6 +7,8 @@ package dev.galasa.simplatform.management.facility;
 
 import java.util.TimerTask;
 
+import dev.galasa.zosbatch.IZosBatchJob.JobStatus;
+
 public class BatchJobExecutionTask extends TimerTask {
 
 	private BatchJob batchJob;
@@ -21,7 +23,7 @@ public class BatchJobExecutionTask extends TimerTask {
 		
 		try {
 	        // Job is now active	    	
-			batchJob.setStatus("ACTIVE");
+			batchJob.setStatus(JobStatus.ACTIVE);
 			
 			// Check JCL meets our requirements
 			batchJob.parseJclPhase1();
