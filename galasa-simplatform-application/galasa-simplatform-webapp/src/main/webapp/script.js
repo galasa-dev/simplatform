@@ -3,7 +3,8 @@ const form = document.getElementById('form');
 const account = document.getElementById('accnr');
 const amount = document.getElementById('amount');
 document.getElementById("good").style.visibility = "hidden";
-var regex = /^[0-9]*$/;
+var regexNum = /^[0-9]*$/;
+var regexDec = /[0-9]+(\.[0-9][0-9]?)?/;
 form.addEventListener('submit', checkInputs);
 
 function checkInputs(e) {
@@ -15,7 +16,7 @@ function checkInputs(e) {
     const amValue = amount.value.trim();
     if (amValue === '') {
         setErrorFor(amount, 'Amount cannot be blank');
-    } else if (!regex.test(amValue)) {
+    } else if (!regexDec.test(amValue)) {
         setErrorFor(amount, 'Amount cannot contain letters or symbols');
     } else {
         setSuccessFor(amount);
@@ -23,7 +24,7 @@ function checkInputs(e) {
     }
     if (acValue === '') {
         setErrorFor(account, 'Account number cannot be blank');
-    } else if (!regex.test(acValue)) {
+    } else if (!regexNum.test(acValue)) {
         setErrorFor(account, 'Account number cannot contain letters or symbols');
     } else if (acValue.length !== 9) {
         setErrorFor(account, 'Account number has to contain nine numbers');
@@ -54,7 +55,9 @@ async function sendData(input, amount) {//call servlet
     const data = {};
     const acc = input.value.trim();
     const am = amount.value.trim();
-    const response = await fetch(`http://localhost:8080/galasa-simplatform-webapp/simbank?accnr=${acc}&amount=${am}`, {
+    const uri = encodeURI(`${window.location.href}?accnr=${acc}&amount=${am}`);
+    console.log(uri);
+    const response = await fetch(uri, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
