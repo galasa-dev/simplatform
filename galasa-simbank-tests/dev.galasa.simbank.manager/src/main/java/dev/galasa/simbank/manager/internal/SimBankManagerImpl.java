@@ -20,6 +20,7 @@ import org.osgi.service.component.annotations.Component;
 import dev.galasa.ManagerException;
 import dev.galasa.artifact.IArtifactManager;
 import dev.galasa.artifact.IBundleResources;
+import dev.galasa.docker.spi.IDockerManagerSpi;
 import dev.galasa.framework.spi.AbstractGherkinManager;
 import dev.galasa.framework.spi.AbstractManager;
 import dev.galasa.framework.spi.AnnotatedField;
@@ -40,9 +41,11 @@ import dev.galasa.simbank.manager.AccountType;
 import dev.galasa.simbank.manager.IAccount;
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.ISimBankTerminal;
+import dev.galasa.simbank.manager.ISimBankWebApp;
 import dev.galasa.simbank.manager.SimBank;
 import dev.galasa.simbank.manager.SimBankManagerException;
 import dev.galasa.simbank.manager.SimBankTerminal;
+import dev.galasa.simbank.manager.SimBankWebApp;
 import dev.galasa.simbank.manager.internal.gherkin.SimbankStatementOwner;
 import dev.galasa.simbank.manager.internal.properties.SimBankDseInstanceName;
 import dev.galasa.simbank.manager.internal.properties.SimBankPropertiesSingleton;
@@ -68,6 +71,7 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
     private IZos3270ManagerSpi                 z3270manager;
     private IHttpManagerSpi                    httpManager;
     private IArtifactManager                   artifactManager;
+    private IDockerManagerSpi                  dockerManager;
 
     private SimbankStatementOwner              statementOwner;
 
@@ -139,6 +143,11 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
         } catch (Exception e) {
             throw new SimBankManagerException("Unable to generate Sim Bank", e);
         }
+    }
+    
+    @GenerateAnnotatedField(annotation = SimBankWebApp.class)
+    public ISimBankWebApp generateSimbankWebApp(Field field, List<Annotation> annotations) throws SimBankManagerException {
+    	return SimBankWebAppImpl.provision(this);
     }
 
     @GenerateAnnotatedField(annotation = Account.class)
@@ -257,6 +266,10 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
         if (artifactManager == null) {
             throw new ManagerException("The Artifact Manager is not available");
         }
+        dockerManager = addDependentManager(allManagers, activeManagers, IDockerManagerSpi.class);
+        if (dockerManager == null) {
+            throw new ManagerException("The Docker Manager is not available");
+        }
     }
 
     @Override
@@ -297,5 +310,9 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
 
     public void registerTerminal(SimBankTerminalImpl terminal) {
         this.terminals.add(terminal);
+    }
+
+    public IDockerManagerSpi getDockerManager() {
+        return dockerManager;
     }
 }
