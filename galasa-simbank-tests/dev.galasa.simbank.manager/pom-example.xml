@@ -49,6 +49,10 @@
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
+			<artifactId>dev.galasa.docker.manager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.ipnetwork.manager</artifactId>
 		</dependency>
 		<dependency>
