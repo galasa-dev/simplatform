@@ -62,6 +62,10 @@
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
+			<artifactId>dev.galasa.selenium.manager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.zos.manager</artifactId>
 		</dependency>
 		<dependency>
