@@ -3,7 +3,7 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simplatform-parent</artifactId>
-	<version>0.14.0</version>
+	<version>0.15.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Galasa SimPlatform</name>
@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.zos3270.manager</artifactId>
-			<version>0.14.0</version>
+			<version>0.15.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
