@@ -14,7 +14,11 @@
 	<!-- If updating, reflect in dev.galasa.simbank.feature pom.xml and feature.xml -->
 	<packaging>eclipse-plugin</packaging>
 	<name>Galasa SimBank UI</name>
-
+	
+    <properties>
+       <force.version.qualifier.change>100</force.version.qualifier.change>
+    </properties>
+    
 	<build>
 		<plugins>
 			<plugin>
