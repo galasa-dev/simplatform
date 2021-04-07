@@ -1,7 +1,7 @@
 /*
  * Licensed Materials - Property of IBM
  * 
- * (c) Copyright IBM Corp. 2019.
+ * (c) Copyright IBM Corp. 2019,2021.
  */
 package dev.galasa.eclipse.ui.wizards.simbank;
 
@@ -16,10 +16,10 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 
 import dev.galasa.eclipse.simbank.SimBankActivator;
 
-public class ExampleSimbankWizard extends Wizard implements INewWizard {
+public class ExampleMavenSimbankWizard extends Wizard implements INewWizard {
 
-    public ExampleSimbankWizard() {
-        setWindowTitle("Import Galasa SimBank example projects");
+    public ExampleMavenSimbankWizard() {
+        setWindowTitle("Import Galasa SimBank example Maven projects");
     }
 
     @Override
@@ -29,12 +29,12 @@ public class ExampleSimbankWizard extends Wizard implements INewWizard {
 
     @Override
     public boolean performFinish() {
-        String prefix = ((ExampleSimbankWizardPage) getPage("prefix")).getPrefix().trim();
+        String prefix = ((ExampleMavenSimbankWizardPage) getPage("prefix")).getPrefix().trim();
         if (prefix.isEmpty()) {
             return false;
         }
 
-        ExampleSimbankOperation runnable = new ExampleSimbankOperation(prefix);
+        ExampleMavenSimbankOperation runnable = new ExampleMavenSimbankOperation(prefix);
         IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
         try {
             getContainer().run(false, true, op);
@@ -49,7 +49,7 @@ public class ExampleSimbankWizard extends Wizard implements INewWizard {
 
     @Override
     public void addPages() {
-        addPage(new ExampleSimbankWizardPage("prefix"));
+        addPage(new ExampleMavenSimbankWizardPage("prefix"));
     }
 
 }

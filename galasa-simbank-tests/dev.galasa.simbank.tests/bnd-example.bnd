@@ -1,0 +1,6 @@
+-snapshot: ${tstamp}
+Bundle-Name: SimBank Tests
+Export-Package: 
+Import-Package: *
+
+
