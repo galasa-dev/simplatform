@@ -34,14 +34,25 @@
    
    <extension point="org.eclipse.ui.newWizards">
         <wizard
-            name="SimBank example projects"
-            class="dev.galasa.eclipse.ui.wizards.simbank.ExampleSimbankWizard"
+            name="SimBank example Maven projects"
+            class="dev.galasa.eclipse.ui.wizards.simbank.ExampleMavenSimbankWizard"
             category="org.eclipse.ui.Examples/dev.galasa.eclipse.wizards.examples"
-            id="dev.galasa.eclipse.ui.wizards.simbank.ExampleSimbankWizard"
+            id="dev.galasa.eclipse.ui.wizards.simbank.ExampleMavenSimbankWizard"
             project="true"
             icon="icons/galasa-dark-new.png">
             <description>
-                Create example test projects that use SimBank to demonstrate the capabilities of Galasa 
+                Create example Maven test projects that use SimBank to demonstrate the capabilities of Galasa 
+            </description>
+        </wizard>
+        <wizard
+            name="SimBank example Gradle projects"
+            class="dev.galasa.eclipse.ui.wizards.simbank.ExampleGradleSimbankWizard"
+            category="org.eclipse.ui.Examples/dev.galasa.eclipse.wizards.examples"
+            id="dev.galasa.eclipse.ui.wizards.simbank.ExampleGradleSimbankWizard"
+            project="true"
+            icon="icons/galasa-dark-new.png">
+            <description>
+                Create example Gradle test projects that use SimBank to demonstrate the capabilities of Galasa 
             </description>
         </wizard>
     </extension>

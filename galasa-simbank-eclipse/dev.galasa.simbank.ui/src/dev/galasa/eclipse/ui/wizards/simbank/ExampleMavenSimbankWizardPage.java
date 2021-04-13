@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
-public class ExampleSimbankWizardPage extends WizardPage implements Listener {
+public class ExampleMavenSimbankWizardPage extends WizardPage implements Listener {
 
     private Text            prefixNameField;
     private Label           testProjectName;
@@ -25,7 +25,7 @@ public class ExampleSimbankWizardPage extends WizardPage implements Listener {
 
     private static String[] invalidCharacters = { "!", "@", "£", "$", "^", "&", "*", };
 
-    public ExampleSimbankWizardPage(String pageName) {
+    public ExampleMavenSimbankWizardPage(String pageName) {
         super(pageName);
 
         setTitle("Example projects for the SimBank tutorial");

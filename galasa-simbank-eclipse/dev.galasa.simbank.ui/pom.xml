@@ -16,7 +16,7 @@
 	<name>Galasa SimBank UI</name>
 	
     <properties>
-       <force.version.qualifier.change>100</force.version.qualifier.change>
+       <force.version.qualifier.change>101</force.version.qualifier.change>
     </properties>
     
 	<build>

@@ -1,0 +1,8 @@
+-snapshot: ${tstamp}
+Bundle-Name: SimBank Manager
+Export-Package: dev.galasa.simbank.manager,\
+    dev.galasa.simbank.manager.spi
+Import-Package: javax.validation.constraints;resolution:=optional, \
+    *
+
+

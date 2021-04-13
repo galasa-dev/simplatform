@@ -17,7 +17,10 @@
 		<fileSet>
 			<directory>${basedir}/dev.galasa.simbank.tests</directory>
 			<includes>
-				<include>pom-example.xml</include>
+                <include>pom-example.xml</include>
+                <include>bnd-example.bnd</include>
+                <include>build-example.gradle</include>
+                <include>settings-example.gradle</include>
 			</includes>
 		</fileSet>
 		<fileSet>
@@ -30,6 +33,9 @@
 			<directory>${basedir}/dev.galasa.simbank.manager</directory>
 			<includes>
 				<include>pom-example.xml</include>
+                <include>bnd-example.bnd</include>
+                <include>build-example.gradle</include>
+                <include>settings-example.gradle</include>
 			</includes>
 		</fileSet>
 	</fileSets>

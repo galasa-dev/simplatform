@@ -1,7 +1,7 @@
 /*
  * Licensed Materials - Property of IBM
  * 
- * (c) Copyright IBM Corp. 2019.
+ * (c) Copyright IBM Corp. 2019,2021.
  */
 package dev.galasa.eclipse.ui.wizards.simbank;
 
@@ -38,11 +38,11 @@ import org.osgi.framework.Bundle;
 
 import dev.galasa.eclipse.simbank.SimBankActivator;
 
-public class ExampleSimbankOperation implements IRunnableWithProgress {
+public class ExampleMavenSimbankOperation implements IRunnableWithProgress {
 
     private final String prefix;
 
-    public ExampleSimbankOperation(String prefix) {
+    public ExampleMavenSimbankOperation(String prefix) {
         this.prefix = prefix;
     }
 
@@ -80,7 +80,7 @@ public class ExampleSimbankOperation implements IRunnableWithProgress {
                 Enumeration<? extends ZipEntry> entries = zip.entries();
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
-                    System.out.println(entry);
+
                     String fileName = entry.getName();
                     String[] fileNameParts = fileName.split("/");
                     if (fileNameParts.length < 3) {
@@ -122,6 +122,12 @@ public class ExampleSimbankOperation implements IRunnableWithProgress {
                             ByteArrayInputStream bais = new ByteArrayInputStream(prePrefix.getBytes("utf-8"));
                             IFile file = container.getFile(new Path(name));
                             file.create(bais, IResource.NONE, monitor);
+                        } else if ("bnd-example.bnd".equals(name)) {
+                        	continue;
+                        } else if ("build-example.gradle".equals(name)) {
+                        	continue;
+                        } else if ("settings-example.gradle".equals(name)) {
+                        	continue;
                         } else {
                             IFile file = container.getFile(new Path(name));
                             file.create(zip.getInputStream(entry), IResource.NONE, monitor);
