@@ -1,7 +1,7 @@
 /*
  * Licensed Materials - Property of IBM
  * 
- * (c) Copyright IBM Corp. 2019.
+ * (c) Copyright IBM Corp. 2019,2021.
  */
 package dev.galasa.simbank.manager.internal;
 
@@ -220,7 +220,7 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
         if(galasaTest.isJava()) {
             List<AnnotatedField> ourFields = findAnnotatedFields(SimBankManagerField.class);
             if (!ourFields.isEmpty()) {
-                youAreRequired(allManagers, activeManagers);
+                youAreRequired(allManagers, activeManagers, galasaTest);
             }
         }
 
@@ -237,36 +237,36 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
             IStatementOwner[] owners = { statementOwner };
 
             if(registerStatements(galasaTest.getGherkinTest(), owners)) {
-                youAreRequired(allManagers, activeManagers);
+                youAreRequired(allManagers, activeManagers, galasaTest);
             }
         }
     }
 
     @Override
-    public void youAreRequired(@NotNull List<IManager> allManagers, @NotNull List<IManager> activeManagers)
+    public void youAreRequired(@NotNull List<IManager> allManagers, @NotNull List<IManager> activeManagers, @NotNull GalasaTest galasaTest)
             throws ManagerException {
         if (activeManagers.contains(this)) {
             return;
         }
 
         activeManagers.add(this);
-        zosManager = addDependentManager(allManagers, activeManagers, IZosManagerSpi.class);
+        zosManager = addDependentManager(allManagers, activeManagers, galasaTest, IZosManagerSpi.class);
         if (zosManager == null) {
             throw new Zos3270ManagerException("The zOS Manager is not available");
         }
-        z3270manager = addDependentManager(allManagers, activeManagers, IZos3270ManagerSpi.class);
+        z3270manager = addDependentManager(allManagers, activeManagers, galasaTest, IZos3270ManagerSpi.class);
         if (z3270manager == null) {
             throw new Zos3270ManagerException("The zOS 3270 Manager is not available");
         }
-        httpManager = addDependentManager(allManagers, activeManagers, IHttpManagerSpi.class);
+        httpManager = addDependentManager(allManagers, activeManagers, galasaTest, IHttpManagerSpi.class);
         if (httpManager == null) {
             throw new ManagerException("The Http Manager is not available");
         }
-        artifactManager = addDependentManager(allManagers, activeManagers, IArtifactManager.class);
+        artifactManager = addDependentManager(allManagers, activeManagers, galasaTest, IArtifactManager.class);
         if (artifactManager == null) {
             throw new ManagerException("The Artifact Manager is not available");
         }
-        dockerManager = addDependentManager(allManagers, activeManagers, IDockerManagerSpi.class);
+        dockerManager = addDependentManager(allManagers, activeManagers, galasaTest, IDockerManagerSpi.class);
         if (dockerManager == null) {
             throw new ManagerException("The Docker Manager is not available");
         }
