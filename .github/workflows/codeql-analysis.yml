@@ -20,6 +20,10 @@ on:
   schedule:
     - cron: '41 6 * * 2'
 
+paths:
+  - galasa-simplatform-application
+  - galasa-simbank-tests
+
 jobs:
   analyze:
     name: Analyze
