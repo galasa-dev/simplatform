@@ -1,7 +1,7 @@
 /*
  * Licensed Materials - Property of IBM
  * 
- * (c) Copyright IBM Corp. 2019.
+ * (c) Copyright IBM Corp. 2019,2021.
  */
 package dev.galasa.simbank.manager.internal;
 
@@ -41,8 +41,8 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
 
     @Override
     public void gotoMainMenu() throws TimeoutException, KeyboardLockedException, DatastreamException, NetworkException,
-            FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException, SimBankManagerException,
-            TerminalInterruptedException {
+    FieldNotFoundException, TextNotFoundException, SimBankManagerException,
+    TerminalInterruptedException {
 
         waitForKeyboard();
 
@@ -66,26 +66,30 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
     }
 
     private void logonSessionManager() throws DatastreamException, TimeoutException, KeyboardLockedException,
-            NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException,
-            SimBankManagerException, TerminalInterruptedException {
+    NetworkException, FieldNotFoundException, TextNotFoundException,
+    SimBankManagerException, TerminalInterruptedException {
         verifyTextInField(("SIMPLATFORM LOGON SCREEN")).positionCursorToFieldContaining("Userid").tab()
-                .type(credentials.getUsername()).positionCursorToFieldContaining("Password").tab()
-                .type(credentials.getPassword()).enter().waitForKeyboard();
+        .type(credentials.getUsername()).positionCursorToFieldContaining("Password").tab()
+        .type(credentials.getPassword()).enter().waitForKeyboard();
 
         selectionApplication();
     }
 
     private void selectionApplication() throws DatastreamException, TimeoutException, KeyboardLockedException,
-            NetworkException, FieldNotFoundException, TextNotFoundException, ConfigurationPropertyStoreException,
-            SimBankManagerException, TerminalInterruptedException {
-        verifyTextInField("SIMPLATFORM MAIN MENU").positionCursorToFieldContaining("===>").tab()
-                .type(SimBankApplicationName.get(this.application)).enter().waitForKeyboard();
+    NetworkException, FieldNotFoundException, TextNotFoundException,
+    SimBankManagerException, TerminalInterruptedException {
+        try {
+            verifyTextInField("SIMPLATFORM MAIN MENU").positionCursorToFieldContaining("===>").tab()
+            .type(SimBankApplicationName.get(this.application)).enter().waitForKeyboard();
+        } catch(ConfigurationPropertyStoreException e) {
+            throw new SimBankManagerException("Unable to get application name", e);
+        }
 
         enterCICSTransaction();
     }
 
     private void enterCICSTransaction() throws TimeoutException, KeyboardLockedException, NetworkException,
-            TextNotFoundException, FieldNotFoundException, TerminalInterruptedException {
+    TextNotFoundException, FieldNotFoundException, TerminalInterruptedException {
         verifyTextInField("DFHZC2312").clear().waitForKeyboard().type("bank").enter().waitForKeyboard();
     }
 
