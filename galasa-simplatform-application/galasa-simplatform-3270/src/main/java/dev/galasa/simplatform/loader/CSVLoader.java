@@ -61,7 +61,9 @@ public class CSVLoader {
             StringTokenizer token = new StringTokenizer(s, ",");
             while (token.hasMoreTokens()) {
                 try {
-                    bank.openAccount(token.nextToken(), token.nextToken(), Double.parseDouble(token.nextToken()));
+                    bank.openAccount(validateAlphaNumericString(token.nextToken()), 
+                    		         validateSortCode(token.nextToken()), 
+                    		         Double.parseDouble(validateAmountCode(token.nextToken())));
                 } catch (Exception e) {
                     continue;
                 }
@@ -75,8 +77,8 @@ public class CSVLoader {
             StringTokenizer token = new StringTokenizer(s, ",");
             while (token.hasMoreTokens()) {
                 try {
-                    String user = token.nextToken();
-                    String password = token.nextToken();
+                    String user = validateAlphaNumericString(token.nextToken());
+                    String password = validateAlphaNumericString(token.nextToken());
                     saf.addUser(user, password);
                 } catch (Exception e) {
                     continue;
@@ -94,5 +96,18 @@ public class CSVLoader {
             inputData.add(line);
         }
         return inputData;
+    }
+    
+    //In this demo only alphanumeric user and passwords are allowed
+    private static String validateAlphaNumericString(String s) {
+    	return s.replaceAll("[^a-zA-Z0-9]", "");
+    }
+    
+    private static String validateSortCode(String s) {
+    	return s.replaceAll("[^a-zA-Z0-9-]", "");
+    }
+    
+    private static String validateAmountCode(String s) {
+    	return s.replaceAll("[^0-9.]", "");
     }
 }
