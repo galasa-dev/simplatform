@@ -21,8 +21,15 @@ public class SecurityAuthorizationFacility {
         }
 
     }
+    
+    //In this demo only alphanumeric user and passwords are allowed
+    private String validateString(String s) {
+    	return s.replaceAll("[^a-zA-Z0-9]", "");
+    }
 
     public boolean addUser(String user, String pass) {
+    	user = validateString(user);
+    	pass = validateString(pass);
         if (accounts.get(user) != null)
             return false;
         accounts.put(user, new User(user, pass));
@@ -31,6 +38,8 @@ public class SecurityAuthorizationFacility {
     }
 
     public boolean authenticate(String user, String pass) {
+    	user = validateString(user);
+    	pass = validateString(pass);
         if (accounts.get(user) == null) {
             log.info("User: " + user + " NOT authenticated");
             return false;
@@ -46,3 +55,4 @@ public class SecurityAuthorizationFacility {
     }
 
 }
+;
