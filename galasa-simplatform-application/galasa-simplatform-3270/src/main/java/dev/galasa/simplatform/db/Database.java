@@ -1,7 +1,7 @@
 /*
  * Licensed Materials - Property of IBM
  * 
- * (c) Copyright IBM Corp. 2019.
+ * (c) Copyright IBM Corp. 2021.
  */
 package dev.galasa.simplatform.db;
 
@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -85,12 +86,18 @@ public class Database {
         }
     }
 
-    public boolean execute(String sql) {
+    public boolean execute(String sql, String... values) {
     	boolean sucess = true;
     	exceptionMessage = null;
+ 
         try {
-            Statement stmt = conn.createStatement();
-            stmt.execute(sql);
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            int pos = 1;
+            for(String value : values){
+                stmt.setString(pos, value);
+                pos++;
+            }
+            stmt.execute();
         } catch (SQLException se) {
         	logException(sql, se);
         	sucess = false;
@@ -98,14 +105,21 @@ public class Database {
         return sucess;
     }
 
-    public ResultSet getExecutionResults(String sql) {
-        try {
-            Statement stmt = conn.createStatement();
-            return stmt.executeQuery(sql);
+
+    public ResultSet getExecutionResults(String sql, String... values){
+        try{
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            int pos = 1;
+            for(String value : values){
+                stmt.setString(pos, value);
+                pos++;
+            }
+            return stmt.executeQuery();
         } catch (SQLException se) {
             return null;
         }
     }
+
 
 	public String getExceptionMessage() {
 		return exceptionMessage;

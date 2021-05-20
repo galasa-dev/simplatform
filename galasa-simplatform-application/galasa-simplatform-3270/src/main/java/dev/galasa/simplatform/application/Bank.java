@@ -1,7 +1,7 @@
 /*
  * Licensed Materials - Property of IBM
  * 
- * (c) Copyright IBM Corp. 2019.
+ * (c) Copyright IBM Corp. 2021.
  */
 package dev.galasa.simplatform.application;
 
@@ -30,8 +30,10 @@ public class Bank {
             log.info("Account: " + accountNumber + " not found");
             throw new AccountNotFoundException("Account: " + accountNumber + " not found");
         }
+
         ResultSet results = database
-                .getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + accountNumber + "'");
+                .getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = ?", accountNumber);
+
         try {
             results.next();
             log.info("Account: " + accountNumber + " found");
@@ -54,7 +56,7 @@ public class Bank {
     public boolean accountExists(String account) {
         log.info("Checking if account: " + account + " exists");
         ResultSet results = database
-                .getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = '" + account + "'");
+                .getExecutionResults("SELECT * FROM ACCOUNTS WHERE ACCOUNT_NUM = ?", account);
         try {
             if (results.next()) {
                 log.info("Account exists");
@@ -87,8 +89,7 @@ public class Bank {
             throw new DuplicateAccountException("Account: " + account + " already exists at this bank");
         }
         log.info("Creating account: " + account);
-        return database.execute("INSERT INTO ACCOUNTS ( ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES ('" + account + "','"
-                + sortCode + "'," + amount + ")");
+        return database.execute("INSERT INTO ACCOUNTS ( ACCOUNT_NUM, SORT_CODE, BALANCE) VALUES (?,?,?)", account,sortCode,Double.toString(amount));
     }
 
     public void creditAccount(String account, double amount)
@@ -98,9 +99,7 @@ public class Bank {
     }
 
     public void persistAccount(Account account) {
-        String query = "UPDATE ACCOUNTS SET SORT_CODE = '" + account.getSortCode() + "', BALANCE = "
-                + account.getBalance().toPlainString() + " WHERE ACCOUNT_NUM = '" + account.getAccountNumber() + "'";
-        database.execute(query);
+        database.execute("UPDATE ACCOUNTS SET SORT_CODE = ?, BALANCE = ? WHERE ACCOUNT_NUM = ?",account.getSortCode(),account.getBalance().toPlainString(),account.getAccountNumber());
     }
 
 	public String getDatabaseException() {
