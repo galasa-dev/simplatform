@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simbank-eclipse</artifactId>
-		<version>0.15.0-SNAPSHOT</version>
+		<version>0.15.0</version>
 	</parent>
 
 
 	<artifactId>dev.galasa.simbank.feature</artifactId>
-	<version>0.15.0-SNAPSHOT</version>
+	<version>0.15.0</version>
 	<!-- If updating version, reflect in feature.xml  and in build/eclipse/dev.galasa.eclipse.site/pom.xml (multiple entries) and category.xml  -->
 	<packaging>eclipse-feature</packaging>
 	<name>Galasa SimBank Feature</name>
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.simbank.ui</artifactId>
-			<version>0.15.0-SNAPSHOT</version>
+			<version>0.15.0</version>
 		</dependency>
 	</dependencies>
 
