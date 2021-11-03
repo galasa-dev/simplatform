@@ -41,7 +41,7 @@
 								<item>
 									<groupId>dev.galasa</groupId>
 									<artifactId>galasa-simbanktests-parent</artifactId>
-									<version>0.15.0</version>
+									<version>0.16.0</version>
 									<classifier>examples</classifier>
 									<type>zip</type>
 								</item>
