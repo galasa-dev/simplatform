@@ -1,0 +1,110 @@
+#
+# Licensed Materials - Property of IBM
+# 
+# (c) Copyright IBM Corp. 2021.
+#
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: simplatform-repo-build
+  namespace: galasa-tekton
+spec:
+  workspaces:
+  - name: git-workspace
+    optional: false
+    mountpath: /workspace/git
+  params:
+  - name: distBranch
+    type: string
+  - name: mavenCentralRepo
+    type: string
+    default: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+  - name: managersSourceRepo
+    type: string
+    default: https://repo.maven.apache.org/maven2/
+  - name: dockerRepo
+    type: string
+    default: nexus.cics-ts.hur.hdclab.intranet.ibm.com:8080
+  - name: noPush
+    type: string
+    default: ""
+  steps:
+  - name: get-commit
+    workingDir: /workspace/git/simplatform
+    image: $(params.dockerRepo)/galasa/galasa-build
+    script: |
+      #!/bin/sh
+      set +e
+      COMMIT="$(git log --format="%H" -n 1)"
+      echo $COMMIT > /workspace/git/simplatform/docker/simplatform.githash
+      echo commit is $COMMIT
+  - name: gradle-build-simplatform
+    workingDir: /workspace/git/simplatform/galasa-simplatform-application
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mvn
+    - -Dgpg.skip=true
+    - -Dgalasa.release.repo=file:/workspace/git/simplatform/docker/repo
+    - -Dgalasa.source.repo=$(params.managersSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
+    - --settings
+    - /workspace/git/simplatform/settings.xml
+    - -B
+    - -e
+    - -fae
+    - deploy
+  - name: gradle-build-simtests
+    workingDir: /workspace/git/simplatform/galasa-simbank-tests
+    image: $(params.dockerRepo)/galasa/galasa-build
+    command:
+    - mvn
+    - -Dgpg.skip=true
+    - -Dgalasa.release.repo=file:/workspace/git/simplatform/docker/repo
+    - -Dgalasa.source.repo=$(params.managersSourceRepo)
+    - -Dgalasa.central.repo=$(params.mavenCentralRepo)
+    - --settings
+    - /workspace/git/simplatform/settings.xml
+    - -B
+    - -e
+    - -fae
+    - deploy
+  - name: build-repo-image
+    workingDir: /workspace/git/simplatform/docker
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git/simplatform/docker
+    - --destination=$(params.dockerRepo)/galasadev/galasa-maven-simplatform:$(params.distBranch)
+    - $(params.noPush)
+    - --oci-layout-path=/workspace/git-simplaform/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=baseVersion=0.16.0
+    - --build-arg=branch=$(params.distBranch)
+    - --build-arg=gitHash=$(resources.inputs.git-simplatform.commit)
+  - name: build-jar-image
+    workingDir: /workspace/git/simplatform/galasa-simplatform-application/galasa-simplatform-3270
+    image: $(params.dockerRepo)/library/kaniko-executor:latest
+    env:
+    - name: DOCKER_CONFIG
+      value: /tekton/home/.docker
+    command:
+    - /kaniko/executor
+    - --dockerfile=./Dockerfile
+    - --context=/workspace/git/simplatform/galasa-simplatform-application/galasa-simplatform-3270
+    - --destination=$(params.dockerRepo)/galasadev/galasa-simplatform-amd64:$(params.distBranch)
+    - $(params.noPush)
+    - --oci-layout-path=/workspace/git-simplaform/docker/image-digest
+    - --skip-tls-verify
+    - --skip-tls-verify-pull
+    - --single-snapshot
+    - --verbosity=info
+    - --build-arg=dockerRepository=$(params.dockerRepo)
+    - --build-arg=jdkImage=library/openjdk:8-jdk
