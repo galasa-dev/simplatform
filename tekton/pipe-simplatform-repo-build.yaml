@@ -1,0 +1,71 @@
+#
+# Copyright contributors to the Galasa project 
+#
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: simplatform-repo-build
+  namespace: galasa-tekton
+spec:
+  workspaces:
+  - name: git-workspace
+    optional: false
+  params:
+  - name: distBranch
+    type: string
+  - name: managersBranch
+    type: string
+  - name: refspec
+    type: string
+  - name: noPush
+    type: string
+    default: ""
+  tasks:
+  - name: clone-simplatform
+    taskRef: 
+      name: git-clone
+    params:
+    - name: url
+      value: https://github.com/galasa-dev/simplatform
+    - name: revision
+      value: $(params.distBranch)
+    - name: refspec
+      value: $(params.refspec)
+    - name: depth
+      value: "99999999"
+    - name: subdirectory
+      value: simplatform
+    workspaces:
+     - name: output
+       workspace: git-workspace
+  - name: simplatform
+    taskRef:
+      name: simplatform-repo-build
+    runAfter:
+    - clone-simplatform
+    params:
+    - name: distBranch
+      value: $(params.distBranch)
+    - name: managersSourceRepo
+      value: http://cicscit.hursley.ibm.com/galasadev/$(params.managersBranch)/maven/managers/
+    - name: mavenCentralRepo
+      value: https://nexus.cics-ts.hur.hdclab.intranet.ibm.com/repository/proxy/
+    - name: noPush
+      value: $(params.noPush)
+    workspaces:
+     - name: git-workspace
+       workspace: git-workspace
+  - name: recycle-simplatform
+    taskRef:
+      name: recycle-deployment
+    runAfter:
+    - simplatform
+    when:
+    - input: "$(params.noPush)"
+      operator: notin
+      values: ["--no-push"]
+    params:
+    - name: namespace
+      value: galasa-development
+    - name: deployment
+      value: maven-$(params.distBranch)-simplatform
