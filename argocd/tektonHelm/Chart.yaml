@@ -1,0 +1,9 @@
+#
+# Copyright contributors to the Galasa project 
+#
+apiVersion: v2
+name: galasa-tekton
+description: Galasa Tekton configuration
+type: application
+version: 0.1.0
+appVersion: "0.20.0"

@@ -1,0 +1,11 @@
+#
+# Copyright contributors to the Galasa project 
+#
+branch: main
+
+managersBranch: main
+
+mavenRepoBaseImageVersion: 0.16.0
+
+dockerRegistry: harbor-cicsk8s.hursley.ibm.com
+mavenProxy: https://artifactory-cicsk8s.hursley.ibm.com/artifactory/maven-proxy/
