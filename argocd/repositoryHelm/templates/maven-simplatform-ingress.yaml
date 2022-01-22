@@ -4,7 +4,7 @@
 kind: Ingress
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: maven-gradle
+  name: maven-simplatform
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
 spec:
@@ -19,8 +19,8 @@ spec:
       paths:
       - backend:
           service:
-            name: maven-gradle
+            name: maven-simplatform
             port:
               number: 80
-        path: /{{ .Values.branch}}/maven/gradle
+        path: /{{ .Values.branch}}/maven/simplatform
         pathType: Prefix
