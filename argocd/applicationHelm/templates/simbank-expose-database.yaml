@@ -1,0 +1,17 @@
+#
+# Copyright contributors to the Galasa project 
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: simbank-database-external
+  namespace: galasa-prod
+spec:
+  type: NodePort
+  ports:
+  - name: databas
+    port: 2027
+    protocol: TCP
+    targetPort: 2027
+  selector:
+    app: simbank
