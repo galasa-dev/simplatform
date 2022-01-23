@@ -1,3 +1,6 @@
+#
+# Copyright contributors to the Galasa project 
+#
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
