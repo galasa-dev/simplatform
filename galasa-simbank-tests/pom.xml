@@ -3,7 +3,7 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simbanktests-parent</artifactId>
-	<version>0.16.0</version>
+	<version>0.23.0</version>
 	<!-- If updating version,  reflect change in dev.galasa.simbank.ui -->
 	<packaging>pom</packaging>
 
