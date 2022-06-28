@@ -3,7 +3,7 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simplatform-parent</artifactId>
-	<version>0.15.0</version>
+	<version>0.24.0</version>
 	<packaging>pom</packaging>
 
 	<name>Galasa SimPlatform</name>
