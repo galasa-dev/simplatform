@@ -57,10 +57,10 @@ public class SimBankIVT {
     }
 
     /**
-     * Test which checks the Simbank application is working and can be logged into using the 3270 terminal.
+     * Test which logs onto Galasa SimBank using Zos3270Terminal manager. Checks to see if the Simbank application is reachable.
      * 
      * Credentials are hard coded here which raises security issues.
-     * Credentials should be stored securely outside of tests and called in with methods.
+     * Credentials should be given in Galasa configuration so they can be called in to the test when needed.
      * Log in is usually handled and defined in the image so that the log in process shouldn't have to be repeated in every test.
      * These details would be stored in credentials.properties and referenced in the cps.properties file.
      * See https://galasa.dev/docs/getting-started/ for more details. 
