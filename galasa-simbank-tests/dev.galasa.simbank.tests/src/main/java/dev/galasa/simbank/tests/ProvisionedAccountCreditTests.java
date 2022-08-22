@@ -1,7 +1,5 @@
 /*
- * Licensed Materials - Property of IBM
- * 
- * (c) Copyright IBM Corp. 2019.
+ * Copyright contributors to the Galasa project
  */
 package dev.galasa.simbank.tests;
 
@@ -57,6 +55,11 @@ public class ProvisionedAccountCreditTests {
      * Test which checks the initial balance of an account, uses the webservice to
      * credit the account, then checks the balance again. The test passes if the
      * final balance is equal to the old balance + the credited amount.
+     * 
+     * This test is an improved version of BasicAccountCreditTest.
+     * Log in is not hard coded and makes use of the cps.properties file to get the credentials.
+     * Navigating through menus is not hard coded and makes use of method such as '.getBalance()' so handle this
+     * which makes the test focus on the test objective itself.
      * 
      * @throws Exception catchall exception
      */

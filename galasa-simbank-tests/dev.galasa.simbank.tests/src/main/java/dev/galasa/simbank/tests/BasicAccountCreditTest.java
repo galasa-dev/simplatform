@@ -1,7 +1,5 @@
 /*
- * Licensed Materials - Property of IBM
- * 
- * (c) Copyright IBM Corp. 2019.
+ * Copyright contributors to the Galasa project
  */
 package dev.galasa.simbank.tests;
 
@@ -62,6 +60,16 @@ public class BasicAccountCreditTest {
      * Test which checks the initial balance of an account, uses the webservice to
      * credit the account, then checks the balance again. The test passes if the
      * final balance is equal to the old balance + the credited amount.
+     * 
+     * This test works as expected however it has security issues as the credentials are hard coded.
+     * Sensitive information should not be hard coded and should be stored externally. 
+     * The coreManager could be used to register credentials and make use of methods to get the Username and Password when needed.
+     * Storing credentials externally means they can be referenced within tests instead of hard coding in every test.
+     * 
+     * The test also uses hard coded account details which is not maintainable.
+     * If the account gets deleted or details are changed, then every test using that account will need to be updated manually and individually.
+     * If account details are stored externally and referenced in tests using method calls,
+     * this would save time and remove unnecessary potential of mistakes in account details.
      * 
      * @throws TestBundleResourceException
      * @throws URISyntaxException
