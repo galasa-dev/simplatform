@@ -1,7 +1,5 @@
 /*
- * Licensed Materials - Property of IBM
- * 
- * (c) Copyright IBM Corp. 2019.
+ * Copyright contributors to the Galasa project
  */
 package dev.galasa.simbank.tests;
 
@@ -57,6 +55,23 @@ public class ProvisionedAccountCreditTests {
      * Test which checks the initial balance of an account, uses the webservice to
      * credit the account, then checks the balance again. The test passes if the
      * final balance is equal to the old balance + the credited amount.
+     * 
+     * This test is an improved version of BasicAccountCreditTest that makes use of the Simbank manager.
+     * Log in is not hard coded as the Simbank manager handles the login process and retrieval of credentials that are held in credentials.properties.
+     * 
+     * The Simbank manager provides contextual knowledge for the Simbank application. 
+     * The tester does not need to know about how to log on or make an account, they can simply use the 
+     * Simbank manager's annotations and their methods to accomplish this. 
+     * The Simbank manager encapsulates the different technologies used to make up the application where 
+     * Simbank's managers use other managers to perform a task such as "log on".
+     * An application manager also provides maintainability benefits.
+     * If a part of the application changes such as a new screen added to the log in, then only a single change is needed in the application manager
+     * rather than changing every test where logging into the application is required.
+     * This test uses a provisioned account object.
+     * The getBalance() method defined in the BasicAccountCreditTest has been moved and adapted into the Account implementation to declutter the test class.
+     * 
+     * Navigating through menus is not hard coded and makes use of methods such as '.getBalance()' to handle this
+     * which makes the test focus on the test objective itself.
      * 
      * @throws Exception catchall exception
      */
