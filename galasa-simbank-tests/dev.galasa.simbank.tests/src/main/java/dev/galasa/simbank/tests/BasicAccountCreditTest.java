@@ -69,7 +69,7 @@ public class BasicAccountCreditTest {
      * This test hard codes accounts numbers which brings several issues when we look at the longevity and scalability of this test.
      * For example, running multiple tests in parallel could lead to collisions if the same account is being used in different tests.
      * This could lead to tests failing incorrectly.
-     * To avoid this, credentials setup in Galasa configuration and provisioning an account to the test would mean 
+     * To avoid this, provisioning an account to the test would mean 
      * multiple tests can run in parallel without collisions as a unique account is provided to each test. 
      * An implementation of this can be seen in ProvisionedAccountCreditTest.
      * 
