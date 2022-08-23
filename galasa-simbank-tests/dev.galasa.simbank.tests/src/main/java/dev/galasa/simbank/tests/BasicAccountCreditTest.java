@@ -64,17 +64,14 @@ public class BasicAccountCreditTest {
      * This test works as expected however it has security issues as the credentials are hard coded.
      * Sensitive information should not be hard coded and should be stored within Galasa configuration. 
      * The coreManager could be used to register credentials and make use of methods to get the Username and Password when needed.
-     * Having credentials configured in the Galasa plugin means they can be referenced within tests instead of hard coding in every test.
+     * Having credentials configured in the Galasa configuration means they can be referenced within tests instead of hard coding in every test.
      * 
-     * The test also uses hard coded account details which is not maintainable.
-     * If the account gets deleted or details are changed, then every test using that account will need to be updated manually and individually.
-     * If account details are stored in Galasa configuration or provisioned when needed,
-     * this would save time and remove unnecessary potential of mistakes in account details.
-     * 
-     * Running multiple tests in parallel could lead to collisions if the same account is being used in different tests.
+     * This test hard codes accounts numbers which brings several issues when we look at the longevity and scalability of this test.
+     * For example, running multiple tests in parallel could lead to collisions if the same account is being used in different tests.
      * This could lead to tests failing incorrectly.
      * To avoid this, credentials setup in Galasa configuration and provisioning an account to the test would mean 
-     * multiple tests can run in parallel without collisions as a unique account is provided to each test.
+     * multiple tests can run in parallel without collisions as a unique account is provided to each test. 
+     * An implementation of this can be seen in ProvisionedAccountCreditTest.
      * 
      * @throws TestBundleResourceException
      * @throws URISyntaxException
