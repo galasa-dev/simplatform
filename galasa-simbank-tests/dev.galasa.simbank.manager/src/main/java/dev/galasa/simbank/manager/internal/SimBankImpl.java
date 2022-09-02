@@ -1,7 +1,5 @@
 /*
- * Licensed Materials - Property of IBM
- * 
- * (c) Copyright IBM Corp. 2019.
+ * Copyright contributors to the Galasa project
  */
 package dev.galasa.simbank.manager.internal;
 
@@ -174,7 +172,7 @@ public class SimBankImpl implements ISimBank {
     private SimBankTerminalImpl connectTerminal(String id) throws SimBankManagerException {
         try {
             SimBankTerminalImpl terminal = new SimBankTerminalImpl(id, host, instanceId, credentials, telnetPort,
-                    telnetSecure, manager.getFramework(), autoConnect, zosImage);
+                    telnetSecure, manager.getFramework(), autoConnect, zosImage, manager.getTextScanManager());
             manager.registerTerminal(terminal);
             terminal.connect();
 
@@ -221,7 +219,7 @@ public class SimBankImpl implements ISimBank {
             String id = "simbank-" + terminalNumber;
 
             SimBankTerminalImpl terminal = new SimBankTerminalImpl(id, host, instanceId, credentials, telnetPort,
-                    telnetSecure, manager.getFramework(), true, zosImage);
+                    telnetSecure, manager.getFramework(), true, zosImage, manager.getTextScanManager());
             manager.registerTerminal(terminal);
             terminal.connect();
 

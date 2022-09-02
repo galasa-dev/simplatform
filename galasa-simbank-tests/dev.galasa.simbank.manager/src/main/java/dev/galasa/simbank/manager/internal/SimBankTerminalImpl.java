@@ -1,7 +1,5 @@
 /*
- * Licensed Materials - Property of IBM
- * 
- * (c) Copyright IBM Corp. 2019,2021.
+ * Copyright contributors to the Galasa project
  */
 package dev.galasa.simbank.manager.internal;
 
@@ -14,6 +12,7 @@ import dev.galasa.framework.spi.IFramework;
 import dev.galasa.simbank.manager.ISimBankTerminal;
 import dev.galasa.simbank.manager.SimBankManagerException;
 import dev.galasa.simbank.manager.internal.properties.SimBankApplicationName;
+import dev.galasa.textscan.spi.ITextScannerManagerSpi;
 import dev.galasa.zos.IZosImage;
 import dev.galasa.zos3270.FieldNotFoundException;
 import dev.galasa.zos3270.KeyboardLockedException;
@@ -33,8 +32,8 @@ public class SimBankTerminalImpl extends Zos3270TerminalImpl implements ISimBank
     private final String                       application;
 
     public SimBankTerminalImpl(String id, String host, String application, ICredentialsUsernamePassword credentials,
-            int port, boolean tls, IFramework framework, boolean autoConnect, IZosImage zosImage) throws Zos3270ManagerException, TerminalInterruptedException {
-        super(id, host, port, tls, framework, autoConnect, zosImage);
+            int port, boolean tls, IFramework framework, boolean autoConnect, IZosImage zosImage, ITextScannerManagerSpi textScanner) throws Zos3270ManagerException, TerminalInterruptedException {
+        super(id, host, port, tls, framework, autoConnect, zosImage, textScanner);
         this.credentials = credentials;
         this.application = application;
     }
