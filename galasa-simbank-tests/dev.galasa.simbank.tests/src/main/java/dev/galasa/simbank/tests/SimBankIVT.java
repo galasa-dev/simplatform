@@ -48,14 +48,6 @@ public class SimBankIVT {
     @CoreManager
     public ICoreManager     coreManager;
 
-    @Test
-    public void testNotNull() {
-        // Check all objects loaded
-        assertThat(terminal).isNotNull();
-        assertThat(resources).isNotNull();
-        assertThat(client).isNotNull();
-    }
-
     /**
      * Test which logs onto Galasa SimBank using Zos3270Terminal manager. Checks to see if the Simbank application is reachable.
      * 
@@ -65,23 +57,10 @@ public class SimBankIVT {
      * These details would be stored in credentials.properties and referenced in the cps.properties file.
      * See https://galasa.dev/docs/getting-started/ for more details. 
      * 
-     * @throws TestBundleResourceException
-     * @throws URISyntaxException
-     * @throws IOException
-     * @throws HttpClientException
-     * @throws ZosManagerException
-     * @throws TextNotFoundException
-     * @throws FieldNotFoundException
-     * @throws NetworkException
-     * @throws KeyboardLockedException
-     * @throws TimeoutException
-     * @throws DatastreamException
-     * @throws InterruptedException
+     * @throws Exception
      */
     @Test
-    public void checkBankIsAvailable() throws TestBundleResourceException, URISyntaxException, IOException,
-            HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException,
-            NetworkException, FieldNotFoundException, TextNotFoundException, TerminalInterruptedException {
+    public void checkBankIsAvailable() throws Exception{
         // Register the password to the confidential text filtering service
         coreManager.registerConfidentialText("SYS1", "IBMUSER password");
 

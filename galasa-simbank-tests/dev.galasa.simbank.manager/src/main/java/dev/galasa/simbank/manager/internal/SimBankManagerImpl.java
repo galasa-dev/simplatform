@@ -50,6 +50,7 @@ import dev.galasa.simbank.manager.internal.gherkin.SimbankStatementOwner;
 import dev.galasa.simbank.manager.internal.properties.SimBankDseInstanceName;
 import dev.galasa.simbank.manager.internal.properties.SimBankPropertiesSingleton;
 import dev.galasa.simbank.manager.spi.ISimBankManagerSpi;
+import dev.galasa.textscan.spi.ITextScannerManagerSpi;
 import dev.galasa.zos.IZosImage;
 import dev.galasa.zos.IZosManager;
 import dev.galasa.zos.spi.IZosManagerSpi;
@@ -72,6 +73,7 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
     private IHttpManagerSpi                    httpManager;
     private IArtifactManager                   artifactManager;
     private IDockerManagerSpi                  dockerManager;
+    private ITextScannerManagerSpi             textScanner;
 
     private SimbankStatementOwner              statementOwner;
 
@@ -270,6 +272,10 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
         if (dockerManager == null) {
             throw new ManagerException("The Docker Manager is not available");
         }
+        textScanner = addDependentManager(allManagers, activeManagers, galasaTest, ITextScannerManagerSpi.class);
+        if (textScanner == null) {
+            throw new ManagerException("The text scanner is not available");
+        }  
     }
 
     @Override
@@ -314,5 +320,9 @@ public class SimBankManagerImpl extends AbstractGherkinManager implements ISimBa
 
     public IDockerManagerSpi getDockerManager() {
         return dockerManager;
+    }
+    
+    public ITextScannerManagerSpi getTextScanManager() {
+    	return this.textScanner;
     }
 }
