@@ -73,23 +73,10 @@ public class BasicAccountCreditTest {
      * multiple tests can run in parallel without collisions as a unique account is provided to each test. 
      * An implementation of this can be seen in ProvisionedAccountCreditTest.
      * 
-     * @throws TestBundleResourceException
-     * @throws URISyntaxException
-     * @throws IOException
-     * @throws HttpClientException
-     * @throws ZosManagerException
-     * @throws TextNotFoundException
-     * @throws FieldNotFoundException
-     * @throws NetworkException
-     * @throws KeyboardLockedException
-     * @throws TimeoutException
-     * @throws DatastreamException
-     * @throws InterruptedException
+     * @throws Exception
      */
     @Test
-    public void updateAccountWebServiceTest() throws TestBundleResourceException, URISyntaxException, IOException,
-            HttpClientException, ZosManagerException, DatastreamException, TimeoutException, KeyboardLockedException,
-            NetworkException, FieldNotFoundException, TextNotFoundException, TerminalInterruptedException {
+    public void updateAccountWebServiceTest() throws Exception {
         // Register the password to the confidential text filtering service
         coreManager.registerConfidentialText("SYS1", "IBMUSER password");
 
@@ -138,8 +125,7 @@ public class BasicAccountCreditTest {
      * @throws InterruptedException
      */
     private BigDecimal getBalance(String accountNum)
-            throws DatastreamException, TimeoutException, KeyboardLockedException, NetworkException,
-            FieldNotFoundException, TextNotFoundException, TerminalInterruptedException {
+            throws Exception {
         BigDecimal amount = BigDecimal.ZERO;
         // Open account menu and enter account number
         terminal.pf1().waitForKeyboard().positionCursorToFieldContaining("Account Number").tab().type(accountNum)
