@@ -21,6 +21,7 @@ dependencies {
     implementation 'dev.galasa:dev.galasa.docker.manager:0.+'
     implementation 'dev.galasa:dev.galasa.http.manager:0.+'
     implementation 'dev.galasa:dev.galasa.zos3270.manager:0.+'
+    implementation 'dev.galasa:dev.galasa.textscan.manager:0.+'
     
     implementation 'commons-logging:commons-logging:1.2'
     implementation 'org.apache.derby:derbyclient:10.14.+'
