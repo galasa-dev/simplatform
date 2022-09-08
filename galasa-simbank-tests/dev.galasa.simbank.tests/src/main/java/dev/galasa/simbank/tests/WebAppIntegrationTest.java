@@ -1,3 +1,6 @@
+/*
+ * Copyright contributors to the Galasa project
+ */
 package dev.galasa.simbank.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,9 +18,9 @@ import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IBundleResources;
 import dev.galasa.core.manager.Logger;
 import dev.galasa.selenium.IFirefoxOptions;
-import dev.galasa.selenium.ISeleniumManager;
+import dev.galasa.selenium.IWebDriver;
 import dev.galasa.selenium.IWebPage;
-import dev.galasa.selenium.SeleniumManager;
+import dev.galasa.selenium.WebDriver;
 import dev.galasa.selenium.SeleniumManagerException;
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.ISimBankTerminal;
@@ -51,8 +54,8 @@ public class WebAppIntegrationTest {
 	public IZosBatch zosBatch;
 
 	// Test technology objects
-	@SeleniumManager
-	public ISeleniumManager seleniumManager;
+	@WebDriver
+	public IWebDriver webDriver;
 	@BundleResources
 	public IBundleResources resources;
 
@@ -78,8 +81,8 @@ public class WebAppIntegrationTest {
 		 * Here we generate a random amount that we want to credit to the new account.
 		 */
 		BigDecimal creditAmount = generateRandomBigDecimalFromRange(
-    		new BigDecimal(0.00).setScale(2, BigDecimal.ROUND_HALF_UP),
-    		new BigDecimal(500.00).setScale(2, BigDecimal.ROUND_HALF_UP));
+				new BigDecimal(0.00).setScale(2, RoundingMode.HALF_UP),
+    		new BigDecimal(500.00).setScale(2, RoundingMode.HALF_UP));
 		logger.info("Amount to be credited to account: "+ creditAmount.toString());
 
 		/*
@@ -120,11 +123,10 @@ public class WebAppIntegrationTest {
 			throws SimBankManagerException, SeleniumManagerException {
 		String webpage = webApp.getHostName() + "/galasa-simplatform-webapp/simbank";
 		// Selenium Options to run the driver headlessly
-		IFirefoxOptions options = seleniumManager.getFirefoxOptions();
-//		options.setHeadless(true);
+		IFirefoxOptions options = webDriver.getFirefoxOptions();
 
 		// Open the Simbank Web Application in a Firefox browser
-		IWebPage page = seleniumManager.allocateWebPage(webpage, options);
+		IWebPage page = webDriver.allocateWebPage(webpage, options);
 		page.takeScreenShot();
 		assertThat(page.getTitle()).containsOnlyOnce("Simbank");
 		
@@ -286,6 +288,6 @@ public class WebAppIntegrationTest {
 
 	public BigDecimal generateRandomBigDecimalFromRange(BigDecimal min, BigDecimal max) {
 		BigDecimal randomBigDecimal = min.add(new BigDecimal(Math.random()).multiply(max.subtract(min)));
-		return randomBigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP);
+		return randomBigDecimal.setScale(2,RoundingMode.HALF_UP);
 	}
 }
