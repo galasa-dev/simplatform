@@ -124,7 +124,6 @@ public class WebAppIntegrationTest {
 		String webpage = webApp.getHostName() + "/galasa-simplatform-webapp/simbank";
 		// Selenium Options to run the driver headlessly
 		IFirefoxOptions options = webDriver.getFirefoxOptions();
-//		options.setHeadless(true);
 
 		// Open the Simbank Web Application in a Firefox browser
 		IWebPage page = webDriver.allocateWebPage(webpage, options);
