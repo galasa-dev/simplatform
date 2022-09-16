@@ -1,5 +1,7 @@
 /*
- * Copyright contributors to the Galasa project
+ * Licensed Materials - Property of IBM
+ * 
+ * (c) Copyright IBM Corp. 2019.
  */
 package dev.galasa.simbank.manager.internal;
 
@@ -143,7 +145,7 @@ public class SimBankImpl implements ISimBank {
     private void connectJdbc() throws SimBankManagerException {
         try {
             Class<?> load = org.apache.derby.jdbc.ClientDriver.class;
-            load.newInstance();
+            load.getDeclaredConstructor().newInstance();
 
             jdbcUri = new URI(
                     "jdbc:derby://" + host + ":" + Integer.toString(databasePort) + "/galasaBankDB;create=false");
