@@ -143,7 +143,7 @@ public class SimBankImpl implements ISimBank {
     private void connectJdbc() throws SimBankManagerException {
         try {
             Class<?> load = org.apache.derby.jdbc.ClientDriver.class;
-            load.newInstance();
+            load.getDeclaredConstructor().newInstance();
 
             jdbcUri = new URI(
                     "jdbc:derby://" + host + ":" + Integer.toString(databasePort) + "/galasaBankDB;create=false");
