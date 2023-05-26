@@ -1,6 +1,0 @@
-#
-# Copyright contributors to the Galasa project 
-#
-branch: prod
-
-registry: harbor-cicsk8s.hursley.ibm.com

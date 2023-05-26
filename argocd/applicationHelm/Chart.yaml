@@ -1,9 +1,0 @@
-#
-# Copyright contributors to the Galasa project 
-#
-apiVersion: v2
-name: galasa-simplatform
-description: SimPlatform application
-type: application
-version: 0.1.0
-appVersion: "0.16.0"

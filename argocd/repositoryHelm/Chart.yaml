@@ -1,9 +1,0 @@
-#
-# Copyright contributors to the Galasa project 
-#
-apiVersion: v2
-name: galasa-repositories
-description: The repositories for a Galasa build
-type: application
-version: 0.1.0
-appVersion: "0.20.0"
