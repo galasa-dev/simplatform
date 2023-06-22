@@ -2,7 +2,7 @@
 
 #-----------------------------------------------------------------------------------------                   
 #
-# Objectives: Build this repository code locally.
+# Objectives: Start the Simbank application
 # 
 #-----------------------------------------------------------------------------------------                   
 
@@ -60,25 +60,15 @@ note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" 
 # Functions
 #-----------------------------------------------------------------------------------------                   
 function usage {
-    info "Syntax: build-locally.sh [OPTIONS]"
+    info "Syntax: run-locally.sh [OPTIONS]"
     cat << EOF
 Options are:
 -h | --help : Display this help text
+--server : Launch the back-end server 3270 application. Ctrl-C to end it.
+--ui : Launch the web user interface application which talks to the back-end server. Ctrl-C to end it.
 
 Environment Variables:
-SOURCE_MAVEN :
-    Used to indicate where parts of the OBR can be obtained.
-    Optional. Defaults to https://galasadev-cicsk8s.hursley.ibm.com/main/maven/obr/
-     
-LOGS_DIR :
-    Controls where logs are placed. 
-    Optional. Defaults to creating a new temporary folder
-
-GPG_PASSPHRASE :
-    Mandatory.
-    Controls how the obr is signed. Needs to be the alias of the private key of a 
-    public-private gpg pair. eg: For development you could use your signing github
-    passphrase.
+None
 
 EOF
 }
@@ -87,11 +77,21 @@ EOF
 # Process parameters
 #-----------------------------------------------------------------------------------------                   
 export build_type=""
+export is_server=false
+export is_ui=false
+export mode="*"
+
 
 while [ "$1" != "" ]; do
     case $1 in
         -h | --help )           usage
                                 exit
+                                ;;
+        --server )              is_server=true
+                                mode="server"
+                                ;;
+        --ui )                  is_ui=true
+                                mode="ui"
                                 ;;
         * )                     error "Unexpected argument $1"
                                 usage
@@ -100,8 +100,14 @@ while [ "$1" != "" ]; do
     shift
 done
 
-if [[ -z $GPG_PASSPHRASE ]]; then
-    error "Environment variable GPG_PASSPHRASE needs to be set."
+if [[  "$is_ui" == false ]] && [[ "$is_server" == false ]]; then
+    error "Not enough parameters. Either the --server or --ui parameter is needed."
+    usage 
+    exit 1
+fi
+
+if [[ "$is_ui" == true ]] && [[ "$is_server" == true  ]]; then
+    error "Too many parameters. Either the --server or --ui parameter is needed, not both."
     usage
     exit 1
 fi
@@ -109,60 +115,34 @@ fi
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
 #-----------------------------------------------------------------------------------------                   
-source_dir="."
 
-project=$(basename ${BASEDIR})
-h1 "Building ${project}"
+SIMBANK_VERSION="0.24.0"
 
+function run_server {
+    h1 "Running Simbank back-end server application (version ${SIMBANK_VERSION}) ..."
+    info "Use Ctrl-C to stop it.\n"
 
-# Over-rode SOURCE_MAVEN if you want to build from a different maven repo...
-if [[ -z ${SOURCE_MAVEN} ]]; then
-    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
-    info "SOURCE_MAVEN repo defaulting to ${SOURCE_MAVEN}."
-    info "Set this environment variable if you want to over-ride this value."
-else
-    info "SOURCE_MAVEN set to ${SOURCE_MAVEN} by caller."
-fi
+    java -jar ~/.m2/repository/dev/galasa/galasa-simplatform/${SIMBANK_VERSION}/galasa-simplatform-${SIMBANK_VERSION}.jar
+    rc=$?
+    if [[ "${rc}" != "130" ]]; then
+        error "Failed. Exit code was ${rc}"
+        exit 1
+    fi
+    info "Passed. Exit code was $rc. (130 means user killed the process)"
+    success "Ran Simbank application OK"
+}
 
-# Create a temporary dir.
-# Note: This bash 'spell' works in OSX and Linux.
-if [[ -z ${LOGS_DIR} ]]; then
-    export LOGS_DIR=$(mktemp -d 2>/dev/null || mktemp -d -t "galasa-logs")
-    info "Logs are stored in the ${LOGS_DIR} folder."
-    info "Over-ride this setting using the LOGS_DIR environment variable."
-else
-    mkdir -p ${LOGS_DIR} 2>&1 > /dev/null # Don't show output. We don't care if it already existed.
-    info "Logs are stored in the ${LOGS_DIR} folder."
-    info "Over-ridden by caller using the LOGS_DIR variable."
-fi
+function run_ui {
+    h1 "Running Simbank web user interface application (version ${SIMBANK_VERSION}) ..."
+    info "Use Ctrl-C to stop it.\n"
+    container_id=$(docker run --rm -p 8080:8080 -d galasa-simplatform-webapp)
+    info "Launch the Simbank web UI here: http://localhost:8080/galasa-simplatform-webapp/index.html"
+    docker attach ${container_id}
+}
 
-info "Using source code at ${source_dir}"
-cd ${BASEDIR}/${source_dir}
-if [[ "${DEBUG}" == "1" ]]; then
-    OPTIONAL_DEBUG_FLAG="-debug"
-else
-    OPTIONAL_DEBUG_FLAG="-info"
-fi
-
-log_file=${LOGS_DIR}/${project}.txt
-info "Log will be placed at ${log_file}"
-date > ${log_file}
-
-
-
-cd ${BASEDIR}/galasa-simplatform-application
-mvn clean install
-rc=$?
-if [[ "${rc}" != "0" ]]; then 
-    error "make clean install failed. rc=${rc}"
-    exit 1
-fi
-
-cd $BASEDIR/galasa-simplatform-application/galasa-simplatform-webapp
-docker build --tag galasa-simplatform-webapp . 
-rc=$?
-if [[ "${rc}" != "0" ]]; then 
-    error "Failed to create a docker image for the UI. rc=${rc}"
-    exit 1
-fi
-
+case $mode in
+    server )        run_server
+                    ;;
+    ui )            run_ui
+                    ;;
+esac

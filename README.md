@@ -20,3 +20,13 @@ Take a look at the [contribution guidelines](https://github.com/galasa-dev/proje
 ## License
 
 This code is under the [Eclipse Public License 2.0](https://github.com/galasa-dev/maven/blob/main/LICENSE).
+
+
+## Building the code locally
+Use the `./build-locally.sh` script to build the code.
+
+## Run the code locally
+- Use the `./run-locally.sh --server` to start the simbank server inside a local JVM.
+- Use the `./run-locally.sh --ui` to start the simbank UI inside a docker container.
+- Launch the Simbank web UI here: http://localhost:8080/galasa-simplatform-webapp/index.html
+
