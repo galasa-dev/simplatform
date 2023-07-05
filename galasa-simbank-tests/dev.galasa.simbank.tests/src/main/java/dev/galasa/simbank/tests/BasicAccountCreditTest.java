@@ -5,30 +5,24 @@ package dev.galasa.simbank.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import dev.galasa.Test;
 import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IBundleResources;
-import dev.galasa.artifact.TestBundleResourceException;
 import dev.galasa.core.manager.CoreManager;
 import dev.galasa.core.manager.ICoreManager;
 import dev.galasa.http.HttpClient;
-import dev.galasa.http.HttpClientException;
 import dev.galasa.http.IHttpClient;
 import dev.galasa.simbank.manager.ISimBank;
 import dev.galasa.simbank.manager.SimBank;
 import dev.galasa.zos.IZosImage;
 import dev.galasa.zos.ZosImage;
-import dev.galasa.zos.ZosManagerException;
 import dev.galasa.zos3270.FieldNotFoundException;
 import dev.galasa.zos3270.ITerminal;
 import dev.galasa.zos3270.KeyboardLockedException;
-import dev.galasa.zos3270.TerminalInterruptedException;
 import dev.galasa.zos3270.TextNotFoundException;
 import dev.galasa.zos3270.TimeoutException;
 import dev.galasa.zos3270.Zos3270Terminal;
