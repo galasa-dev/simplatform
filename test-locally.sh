@@ -60,25 +60,13 @@ note() { printf "\n${underline}${bold}${blue}Note:${reset} ${blue}%s${reset}\n" 
 # Functions
 #-----------------------------------------------------------------------------------------                   
 function usage {
-    info "Syntax: build-locally.sh [OPTIONS]"
+    info "Syntax: test-locally.sh [OPTIONS]"
     cat << EOF
 Options are:
 -h | --help : Display this help text
 
 Environment Variables:
-SOURCE_MAVEN :
-    Used to indicate where parts of the OBR can be obtained.
-    Optional. Defaults to https://galasadev-cicsk8s.hursley.ibm.com/main/maven/obr/
-     
-LOGS_DIR :
-    Controls where logs are placed. 
-    Optional. Defaults to creating a new temporary folder
-
-GPG_PASSPHRASE :
-    Mandatory.
-    Controls how the obr is signed. Needs to be the alias of the private key of a 
-    public-private gpg pair. eg: For development you could use your signing github
-    passphrase.
+None
 
 EOF
 }
@@ -100,11 +88,14 @@ while [ "$1" != "" ]; do
     shift
 done
 
-if [[ -z $GPG_PASSPHRASE ]]; then
-    error "Environment variable GPG_PASSPHRASE needs to be set."
-    usage
-    exit 1
-fi
+function checkGalasaCtlAvailable {
+    which galasactl
+    rc=$?
+    if [[ "${rc}" != "0" ]]; then 
+        error  "The 'galasactl' tool is not available. Install the tool and try again. rc:$rc"
+        exit 1
+    fi
+}
 
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
@@ -112,66 +103,29 @@ fi
 source_dir="."
 
 project=$(basename ${BASEDIR})
-h1 "Building ${project}"
+SIMBANK_VERSION="0.24.0"
 
+h1 "Running Simbank application tests"
 
-# Over-rode SOURCE_MAVEN if you want to build from a different maven repo...
-if [[ -z ${SOURCE_MAVEN} ]]; then
-    export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
-    info "SOURCE_MAVEN repo defaulting to ${SOURCE_MAVEN}."
-    info "Set this environment variable if you want to over-ride this value."
-else
-    info "SOURCE_MAVEN set to ${SOURCE_MAVEN} by caller."
+checkGalasaCtlAvailable
+
+TEST_OBR_VERSION="0.25.0"
+
+mkdir -p ${BASEDIR}/temp
+cd ${BASEDIR}/temp
+
+cmd="galasactl runs submit local \
+--obr mvn:dev.galasa/dev.galasa.simbank.obr/${TEST_OBR_VERSION}/obr \
+--class dev.galasa.simbank.tests/dev.galasa.simbank.tests.SIMBANKIVT \
+--log ${BASEDIR}/temp/log.txt"
+
+info "Command is ${cmd}"
+
+$cmd
+rc=$?
+if [[ "${rc}" != "0" ]]; then
+    error "Command to run tests failed. rc=${rc}. Log is at ${BASEDIR}/temp/log.txt"
+    exit 1
 fi
 
-# Create a temporary dir.
-# Note: This bash 'spell' works in OSX and Linux.
-if [[ -z ${LOGS_DIR} ]]; then
-    export LOGS_DIR=$(mktemp -d 2>/dev/null || mktemp -d -t "galasa-logs")
-    info "Logs are stored in the ${LOGS_DIR} folder."
-    info "Over-ride this setting using the LOGS_DIR environment variable."
-else
-    mkdir -p ${LOGS_DIR} 2>&1 > /dev/null # Don't show output. We don't care if it already existed.
-    info "Logs are stored in the ${LOGS_DIR} folder."
-    info "Over-ridden by caller using the LOGS_DIR variable."
-fi
-
-info "Using source code at ${source_dir}"
-cd ${BASEDIR}/${source_dir}
-if [[ "${DEBUG}" == "1" ]]; then
-    OPTIONAL_DEBUG_FLAG="-debug"
-else
-    OPTIONAL_DEBUG_FLAG="-info"
-fi
-
-log_file=${LOGS_DIR}/${project}.txt
-info "Log will be placed at ${log_file}"
-date > ${log_file}
-
-
-function build_code {
-    h1 "Building using maven"
-    cd ${BASEDIR}/galasa-simplatform-application
-    mvn clean install
-    rc=$?
-    if [[ "${rc}" != "0" ]]; then 
-        error "make clean install failed. rc=${rc}"
-        exit 1
-    fi
-    success "OK"
-}
-
-function build_docker_image {
-    h1 "Building docker image"
-    cd $BASEDIR/galasa-simplatform-application/galasa-simplatform-webapp
-    docker build --tag galasa-simplatform-webapp . 
-    rc=$?
-    if [[ "${rc}" != "0" ]]; then 
-        error "Failed to create a docker image for the UI. rc=${rc}"
-        exit 1
-    fi
-    success "OK"
-}
-
-build_code
-build_docker_image
+success "Ran Simbank test OK"

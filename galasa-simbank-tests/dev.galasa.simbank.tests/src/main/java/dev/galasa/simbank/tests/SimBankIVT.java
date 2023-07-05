@@ -5,30 +5,18 @@ package dev.galasa.simbank.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import dev.galasa.Test;
 import dev.galasa.artifact.BundleResources;
 import dev.galasa.artifact.IBundleResources;
-import dev.galasa.artifact.TestBundleResourceException;
 import dev.galasa.core.manager.CoreManager;
 import dev.galasa.core.manager.ICoreManager;
 import dev.galasa.http.HttpClient;
-import dev.galasa.http.HttpClientException;
 import dev.galasa.http.IHttpClient;
 import dev.galasa.zos.IZosImage;
 import dev.galasa.zos.ZosImage;
 import dev.galasa.zos.ZosManagerException;
-import dev.galasa.zos3270.FieldNotFoundException;
 import dev.galasa.zos3270.ITerminal;
-import dev.galasa.zos3270.KeyboardLockedException;
-import dev.galasa.zos3270.TerminalInterruptedException;
-import dev.galasa.zos3270.TextNotFoundException;
-import dev.galasa.zos3270.TimeoutException;
 import dev.galasa.zos3270.Zos3270Terminal;
-import dev.galasa.zos3270.spi.DatastreamException;
-import dev.galasa.zos3270.spi.NetworkException;
 
 @Test
 public class SimBankIVT {

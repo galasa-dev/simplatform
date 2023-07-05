@@ -1,7 +1,5 @@
 /*
- * Licensed Materials - Property of IBM
- * 
- * (c) Copyright IBM Corp. 2019.
+ * Copyright contributors to the Galasa project
  */
 package dev.galasa.simbank.manager.internal.resourcemanagement;
 
@@ -24,7 +22,6 @@ public class SimBankResourceManagement implements IResourceManagementProvider {
     private IFramework                         framework;
     private IResourceManagement                resourceManagement;
     private IDynamicStatusStoreService         dss;
-    private IConfigurationPropertyStoreService cps;
 
     private AccountResourceMonitor             accountResourceMonitor;
 
@@ -34,13 +31,13 @@ public class SimBankResourceManagement implements IResourceManagementProvider {
         this.framework = framework;
         this.resourceManagement = resourceManagement;
         try {
-            this.cps = this.framework.getConfigurationPropertyService(SimBankManagerImpl.NAMESPACE);
             this.dss = this.framework.getDynamicStatusStoreService(SimBankManagerImpl.NAMESPACE);
             SimBankPropertiesSingleton
                     .setCps(this.framework.getConfigurationPropertyService(SimBankManagerImpl.NAMESPACE));
 
             Class<?> load = org.apache.derby.jdbc.ClientDriver.class;
-            load.newInstance();
+            load.getDeclaredConstructors()[0].newInstance();
+
         } catch (Exception e) {
             throw new ResourceManagerException("Unable to initialise SimBank resource monitor", e);
         }
