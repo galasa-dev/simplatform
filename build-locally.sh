@@ -149,9 +149,21 @@ info "Log will be placed at ${log_file}"
 date > ${log_file}
 
 
-function build_code {
-    h1 "Building using maven"
+function build_application_code {
+    h1 "Building simplatform application using maven"
     cd ${BASEDIR}/galasa-simplatform-application
+    mvn clean install
+    rc=$?
+    if [[ "${rc}" != "0" ]]; then 
+        error "make clean install failed. rc=${rc}"
+        exit 1
+    fi
+    success "OK"
+}
+
+function build_test_code {
+    h1 "Building simbank tests using maven"
+    cd ${BASEDIR}/galasa-simbank-tests
     mvn clean install
     rc=$?
     if [[ "${rc}" != "0" ]]; then 
@@ -173,5 +185,6 @@ function build_docker_image {
     success "OK"
 }
 
-build_code
+build_application_code
+build_test_code
 build_docker_image
