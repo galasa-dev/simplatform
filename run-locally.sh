@@ -66,9 +66,10 @@ Options are:
 -h | --help : Display this help text
 --server : Launch the back-end server 3270 application. Ctrl-C to end it.
 --ui : Launch the web user interface application which talks to the back-end server. Ctrl-C to end it.
-
+--tests : Launch the tests
 Environment Variables:
 None
+
 
 EOF
 }
@@ -79,7 +80,6 @@ EOF
 export build_type=""
 export is_server=false
 export is_ui=false
-export mode="*"
 
 
 while [ "$1" != "" ]; do
@@ -88,10 +88,10 @@ while [ "$1" != "" ]; do
                                 exit
                                 ;;
         --server )              is_server=true
-                                mode="server"
                                 ;;
         --ui )                  is_ui=true
-                                mode="ui"
+                                ;;
+        --tests )               is_tests=true
                                 ;;
         * )                     error "Unexpected argument $1"
                                 usage
@@ -100,14 +100,14 @@ while [ "$1" != "" ]; do
     shift
 done
 
-if [[  "$is_ui" == false ]] && [[ "$is_server" == false ]]; then
-    error "Not enough parameters. Either the --server or --ui parameter is needed."
+if [[ "$is_ui" == false ]] && [[ "$is_server" == false  ]] && [[ "$is_tests" == false ]] ; then
+    error "Not enough parameters."
     usage 
     exit 1
 fi
 
-if [[ "$is_ui" == true ]] && [[ "$is_server" == true  ]]; then
-    error "Too many parameters. Either the --server or --ui parameter is needed, not both."
+if [[ "$is_ui" == true ]]  && [[ "$is_server" == true  ]] && [[ "$is_tests" == true  ]]; then
+    error "Too many parameters. Either the --server, --ui or --tests parameter is needed, not both."
     usage
     exit 1
 fi
@@ -140,9 +140,34 @@ function run_ui {
     docker attach ${container_id}
 }
 
-case $mode in
-    server )        run_server
-                    ;;
-    ui )            run_ui
-                    ;;
-esac
+function run_tests {
+    h1 "Running Simbank tests ..."
+    
+    cmd="galasactl runs submit local --log - \
+    --obr mvn:dev.galasa.example.banking/dev.galasa.example.banking.obr/0.0.1-SNAPSHOT/obr \
+    --class dev.galasa.example.banking.account/dev.galasa.example.banking.account.TestAccount \
+    "
+
+    info "Running this command: $cmd"
+    $cmd
+    rc=$?
+    if [[ "${rc}" != "0" ]]; then
+        error "Failed to run the tests. Exit code was ${rc}"
+        exit 1
+    fi
+    success "Tests ran OK"
+}
+
+
+if [[ "$is_server" == true ]]; then 
+    run_server 
+fi
+
+if [[ "$is_ui" == true ]]; then 
+    run_ui 
+fi
+
+if [[ "$is_tests" == true ]]; then 
+    run_tests 
+fi
+
