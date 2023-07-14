@@ -74,12 +74,6 @@ LOGS_DIR :
     Controls where logs are placed. 
     Optional. Defaults to creating a new temporary folder
 
-GPG_PASSPHRASE :
-    Mandatory.
-    Controls how the obr is signed. Needs to be the alias of the private key of a 
-    public-private gpg pair. eg: For development you could use your signing github
-    passphrase.
-
 EOF
 }
 
@@ -100,11 +94,6 @@ while [ "$1" != "" ]; do
     shift
 done
 
-if [[ -z $GPG_PASSPHRASE ]]; then
-    error "Environment variable GPG_PASSPHRASE needs to be set."
-    usage
-    exit 1
-fi
 
 #-----------------------------------------------------------------------------------------                   
 # Main logic.
