@@ -1,5 +1,10 @@
 #! /usr/bin/env bash 
 
+#
+# Copyright contributors to the Galasa project
+#
+# SPDX-License-Identifier: EPL-2.0
+#
 #-----------------------------------------------------------------------------------------                   
 #
 # Objectives: Start the Simbank application
@@ -170,4 +175,3 @@ fi
 if [[ "$is_tests" == true ]]; then 
     run_tests 
 fi
-
