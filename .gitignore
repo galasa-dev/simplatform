@@ -22,4 +22,6 @@ dependency-reduced-pom.xml
 velocity.log
 .vscode
 temp/
+**/.gradle
+**/target
 
