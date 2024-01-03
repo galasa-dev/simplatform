@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.zos.manager</artifactId>
-			<version>0.15.0</version>
+			<version>0.28.0</version>
 		</dependency>
 	</dependencies>
 
