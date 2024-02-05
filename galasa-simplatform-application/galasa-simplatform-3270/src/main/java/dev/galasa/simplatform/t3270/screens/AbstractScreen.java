@@ -164,7 +164,7 @@ public abstract class AbstractScreen implements IScreen {
                 buffer.get(cursor);
 
                 if (buffer.hasRemaining()) {
-                    List<AbstractOrder> orders = NetworkThread.processOrders(buffer);
+                    List<AbstractOrder> orders = NetworkThread.processOrders(buffer, screen.getCodePage());
 
                     screen.processOrders(orders, new WriteControlCharacter());
                 }
