@@ -73,7 +73,7 @@ Options are:
 Environment Variables:
 SOURCE_MAVEN :
     Used to indicate where parts of the OBR can be obtained.
-    Optional. Defaults to https://galasadev-cicsk8s.hursley.ibm.com/main/maven/obr/
+    Optional. Defaults to https://development.galasa.dev/main/maven-repo/obr/
      
 LOGS_DIR :
     Controls where logs are placed. 

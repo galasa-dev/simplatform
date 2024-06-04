@@ -45,7 +45,6 @@ public class SimbankServlet extends HttpServlet {
 
 		RequestDispatcher rd = request.getRequestDispatcher("/index.html");
 
-		response.setHeader("Access-Control-Allow-Origin", "*");
 		rd.include(request, response);
 
 
@@ -75,7 +74,6 @@ public class SimbankServlet extends HttpServlet {
 				Request post = Request.Post("http://host.docker.internal:2080/updateAccount").bodyString(xml, ContentType.APPLICATION_XML);
 				Response resp = post.execute();
 				HttpResponse simbankResp = resp.returnResponse();
-				response.setHeader("Access-Control-Allow-Origin", "*");
 				int statusCode = simbankResp.getStatusLine().getStatusCode();
 				response.reset();
 				response.setStatus(statusCode);
