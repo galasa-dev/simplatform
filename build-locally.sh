@@ -155,7 +155,7 @@ function check_exit_code () {
 function check_secrets {
     h2 "updating secrets baseline"
     cd ${BASEDIR}
-    detect-secrets scan --exclude-files "build-images/github-webhook-receiver/go.sum|go.work.sum|offline-tools/copyrighter/go.sum|build-images/github-webhook-monitor/go.sum" --update .secrets.baseline
+    detect-secrets scan --update .secrets.baseline
     rc=$? 
     check_exit_code $rc "Failed to run detect-secrets. Please check it is installed properly" 
     success "updated secrets file"
