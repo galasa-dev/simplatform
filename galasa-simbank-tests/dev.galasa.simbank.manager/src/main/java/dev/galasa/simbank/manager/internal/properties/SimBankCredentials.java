@@ -22,7 +22,7 @@ import dev.galasa.simbank.manager.SimBankManagerException;
  * Default = SIMFRAME
  * </p>
  * 
- * @author Michael Baylis
+ *  
  *
  */
 public class SimBankCredentials extends CpsProperties {

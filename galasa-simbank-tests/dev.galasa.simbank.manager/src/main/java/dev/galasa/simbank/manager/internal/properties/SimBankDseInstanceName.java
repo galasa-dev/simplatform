@@ -23,7 +23,7 @@ import dev.galasa.simbank.manager.SimBankManagerException;
  * There is no default as the manager would be expected to provision an instance
  * </p>
  * 
- * @author Michael Baylis
+ *  
  *
  */
 public class SimBankDseInstanceName extends CpsProperties {

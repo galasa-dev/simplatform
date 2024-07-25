@@ -25,7 +25,7 @@ import dev.galasa.simbank.manager.SimBankManagerException;
  * Default = 2080
  * </p>
  * 
- * @author Michael Baylis
+ *  
  *
  */
 public class SimBankWebNetPort extends CpsProperties {

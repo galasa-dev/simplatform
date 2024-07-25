@@ -22,7 +22,7 @@ import dev.galasa.simbank.manager.SimBankManagerException;
  * Default = BANKTEST
  * </p>
  * 
- * @author Michael Baylis
+ *  
  *
  */
 public class SimBankApplicationName extends CpsProperties {

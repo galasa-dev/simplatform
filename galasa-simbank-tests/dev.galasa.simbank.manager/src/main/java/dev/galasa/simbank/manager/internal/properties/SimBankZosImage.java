@@ -25,7 +25,7 @@ import dev.galasa.simbank.manager.SimBankManagerException;
  * Default = simframe
  * </p>
  * 
- * @author Michael Baylis
+ *  
  *
  */
 public class SimBankZosImage extends CpsProperties {
