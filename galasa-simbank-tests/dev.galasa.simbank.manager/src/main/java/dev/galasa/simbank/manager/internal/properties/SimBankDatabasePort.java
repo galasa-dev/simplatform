@@ -25,7 +25,7 @@ import dev.galasa.simbank.manager.SimBankManagerException;
  * Default = 2027
  * </p>
  * 
- * @author Michael Baylis
+ *  
  *
  */
 public class SimBankDatabasePort extends CpsProperties {
