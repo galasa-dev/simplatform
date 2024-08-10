@@ -46,6 +46,11 @@ jobs:
                 -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
                 --batch-mode --errors --fail-at-end \
                 --settings ${{github.workspace}}/settings.xml
+
+            - name: list artefacts
+              run: |
+               cd repo
+               ls
             
             - name: Login to Github Container Registry
               uses: docker/login-action@v3
