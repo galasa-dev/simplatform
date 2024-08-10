@@ -47,11 +47,6 @@ jobs:
                 --batch-mode --errors --fail-at-end \
                 --settings ${{github.workspace}}/settings.xml
 
-            - name: list artefacts
-              run: |
-               cd ${{github.workspace}}/repo
-               ls
-            
             - name: Login to Github Container Registry
               uses: docker/login-action@v3
               with:
@@ -94,4 +89,17 @@ jobs:
                 push: true
                 tags: ${{ steps.metadata-simplatform-jar.outputs.tags }}
                 labels: ${{ steps.metadata-simplatform-jar.outputs.labels }}
+              
+            - name: Recycle application in ArgoCD
+              env: 
+                ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+              run: |
+                docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-maven-repos restart --kind Deployment --resource-name simplatform-gh --server argocd.galasa.dev
+              
+              # Wait for the application to show as healthy in ArgoCD
+            - name: Wait for app health in ArgoCD
+              env: 
+                ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+              run: |
+                docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait gh-maven-repos --resource apps:Deployment:simplatform-gh --health --server argocd.galasa.dev
         
