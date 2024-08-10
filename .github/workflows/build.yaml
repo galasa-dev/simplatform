@@ -67,8 +67,8 @@ jobs:
                 context: .
                 file: dockerfiles/dockerfile.simplatform
                 push: true
-                tags: ${{ steps.metadata.outputs.tags }}
-                labels: ${{ steps.metadata.outputs.labels }}
+                tags: ${{ steps.metadata-simplatform.outputs.tags }}
+                labels: ${{ steps.metadata-simplatform.outputs.labels }}
                 build-args: |
                  baseVersion=${{env.IMAGE_TAG}}
                  dockerRepository=harbor.galasa.dev
@@ -87,6 +87,6 @@ jobs:
                 context: .
                 file: dockerfiles/dockerfile.simplatform-amd64
                 push: true
-                tags: ${{ steps.metadata.outputs.tags }}
-                labels: ${{ steps.metadata.outputs.labels }}
+                tags: ${{ steps.metadata-simplatform-jar.outputs.tags }}
+                labels: ${{ steps.metadata-simplatform-jar.outputs.labels }}
         
