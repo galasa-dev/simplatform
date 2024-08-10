@@ -1,0 +1,92 @@
+name: Main Build
+
+on:
+    pull_request:
+        branches: [main]
+
+env:
+  IMAGE_TAG: latest
+  REGISTRY: ghcr.io
+  NAMESPACE: jaydee029
+
+jobs:
+    build-simplatform:
+        name: Building Simple Platform 
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+
+            - name: Set up JDK
+              uses: actions/setup-java@v4
+              with:
+                java-version: '11'
+                distribution: 'semeru'
+                cache: maven
+
+            - name: Print Githash
+              run: |
+                echo $GITHUB_SHA > ./simplatform.githash
+              
+            - name: Building galasa-simplatform-application using maven
+              run: |
+               mvn -f galasa-simplatform-application/pom.xml deploy \
+               -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
+               -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+               -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
+               --batch-mode --errors --fail-at-end \
+               --settings ${{github.workspace}}/settings.xml
+              
+            - name: Building galasa-simbank-tests using maven
+              run: |
+                mvn -f galasa-simbank-tests/pom.xml deploy \
+                -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
+                -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+                -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
+                --batch-mode --errors --fail-at-end \
+                --settings ${{github.workspace}}/settings.xml
+            
+            - name: Login to Github Container Registry
+              uses: docker/login-action@v3
+              with:
+                registry: ${{ env.REGISTRY }}
+                username: ${{ github.actor }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+        
+            - name: Extract metadata for Simplatform image
+              id: metadata-simplatform
+              uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+              with:
+                  images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/simplatform-artefacts
+        
+            - name: Build Simplatform image for development Maven registry
+              id: build-simplatform
+              uses: docker/build-push-action@v5
+              with:
+                context: .
+                file: dockerfiles/dockerfile.simplatform
+                push: true
+                tags: ${{ steps.metadata.outputs.tags }}
+                labels: ${{ steps.metadata.outputs.labels }}
+                build-args: |
+                 baseVersion=${{env.IMAGE_TAG}}
+                 dockerRepository=harbor.galasa.dev
+                 branch=main
+                
+            - name: Extract metadata for Simplatform image
+              id: metadata-simplatform-jar
+              uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+              with:
+                images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/simplatform-jar-artefacts
+           
+            - name: Build Simplatform image for development Maven registry
+              id: build-simplatform-jar
+              uses: docker/build-push-action@v5
+              with:
+                context: .
+                file: dockerfiles/dockerfile.simplatform-amd64
+                push: true
+                tags: ${{ steps.metadata.outputs.tags }}
+                labels: ${{ steps.metadata.outputs.labels }}
+        
