@@ -1,13 +1,13 @@
 name: Main Build
 
 on:
-    pull_request:
+    push:
         branches: [main]
 
 env:
   IMAGE_TAG: latest
   REGISTRY: ghcr.io
-  NAMESPACE: jaydee029
+  NAMESPACE: galasa-dev
 
 jobs:
     build-simplatform:
