@@ -49,7 +49,7 @@ jobs:
 
             - name: list artefacts
               run: |
-               cd repo
+               cd ${{github.workspace}}/repo
                ls
             
             - name: Login to Github Container Registry
