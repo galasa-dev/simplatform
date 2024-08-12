@@ -1,6 +1,6 @@
 ARG baseVersion
 ARG dockerRepository
-FROM ${dockerRepository}/galasadev/galasa-base:${baseVersion}
+FROM ${dockerRepository}/galasa-dev/base-image:${baseVersion}
 
 ARG branch
 
