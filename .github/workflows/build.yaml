@@ -5,13 +5,12 @@ on:
         branches: [main]
 
 env:
-  IMAGE_TAG: latest
   REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
 
 jobs:
     build-simplatform:
-        name: Building Simple Platform 
+        name: Building Simplatform 
         runs-on: ubuntu-latest
 
         steps:
@@ -54,11 +53,11 @@ jobs:
                 username: ${{ github.actor }}
                 password: ${{ secrets.GITHUB_TOKEN }}
         
-            - name: Extract metadata for Simplatform image
+            - name: Extract metadata for Simplatform maven artefacts image
               id: metadata-simplatform
               uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
               with:
-                  images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/simplatform-artefacts
+                  images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/simplatform-maven-artefacts
         
             - name: Build Simplatform image for development Maven registry
               id: build-simplatform
@@ -70,17 +69,17 @@ jobs:
                 tags: ${{ steps.metadata-simplatform.outputs.tags }}
                 labels: ${{ steps.metadata-simplatform.outputs.labels }}
                 build-args: |
-                 baseVersion=${{env.IMAGE_TAG}}
+                 baseVersion=latest
                  dockerRepository=harbor.galasa.dev
                  branch=main
                 
-            - name: Extract metadata for Simplatform image
+            - name: Extract metadata for Simplatform jar image
               id: metadata-simplatform-jar
               uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
               with:
-                images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/simplatform-jar-artefacts
+                images: ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/simplatform-jar
            
-            - name: Build Simplatform image for development Maven registry
+            - name: Build simplatform jar image
               id: build-simplatform-jar
               uses: docker/build-push-action@v5
               with:
@@ -94,12 +93,12 @@ jobs:
               env: 
                 ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
               run: |
-                docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-maven-repos restart --kind Deployment --resource-name simplatform-gh --server argocd.galasa.dev
+                docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-simplatform restart --kind Deployment --resource-name simplatform-gh --server argocd.galasa.dev
               
               # Wait for the application to show as healthy in ArgoCD
             - name: Wait for app health in ArgoCD
               env: 
                 ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
               run: |
-                docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait gh-maven-repos --resource apps:Deployment:simplatform-gh --health --server argocd.galasa.dev
+                docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait gh-simplatform --resource apps:Deployment:simplatform-gh --health --server argocd.galasa.dev
         
