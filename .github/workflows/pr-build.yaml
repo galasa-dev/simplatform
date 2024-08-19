@@ -51,7 +51,7 @@ jobs:
                 tags: simplatform-maven-artefacts:test
                 build-args: |
                   baseVersion=latest
-                  dockerRepository=harbor.galasa.dev
+                  dockerRepository=ghcr.io
                   branch=main
             
             - name: Build Simplatform jar image for testing

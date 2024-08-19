@@ -70,7 +70,7 @@ jobs:
                 labels: ${{ steps.metadata-simplatform.outputs.labels }}
                 build-args: |
                  baseVersion=latest
-                 dockerRepository=harbor.galasa.dev
+                 dockerRepository=ghcr.io
                  branch=main
                 
             - name: Extract metadata for Simplatform jar image
