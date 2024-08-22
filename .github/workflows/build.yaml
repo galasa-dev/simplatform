@@ -39,11 +39,12 @@ jobs:
                --settings ${{github.workspace}}/settings.xml 2>&1 | tee galasa-simplatform-application-build.log
               
             - name: Upload galasa-simplatform-application Maven Build Log
-              if: always()
+              if: failure()
               uses: actions/upload-artifact@v4
               with:
                 name: galasa-simplatform-application-build-log
                 path: galasa-simplatform-application-build.log
+                retention-days: 7
 
             - name: Building galasa-simbank-tests using maven
               run: |
@@ -56,11 +57,12 @@ jobs:
                 --settings ${{github.workspace}}/settings.xml 2>&1 | tee galasa-simbank-tests-build.log
 
             - name: Upload galasa-simbank-tests Maven Build Log
-              if: always()
+              if: failure()
               uses: actions/upload-artifact@v4
               with:
                 name: galasa-simbank-tests-build-log
                 path: galasa-simbank-tests-build.log
+                retention-days: 7
 
             - name: Login to Github Container Registry
               uses: docker/login-action@v3
