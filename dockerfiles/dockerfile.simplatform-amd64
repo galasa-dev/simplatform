@@ -1,0 +1,20 @@
+FROM harbor.galasa.dev/docker_proxy_cache/library/openjdk:11-jdk
+
+RUN mkdir /galasa
+
+RUN useradd -u 1000 -d /galasa galasa              && \
+    chown -R galasa:galasa /galasa
+
+WORKDIR /galasa
+
+USER galasa
+
+COPY galasa-simplatform-application/galasa-simplatform-3270/target/galasa-simplatform-0.24.0.jar /galasa/simplatform.jar
+
+VOLUME /galasa/.galasa
+VOLUME /galasa/load
+
+EXPOSE 2080/tcp
+EXPOSE 2023/tcp
+EXPOSE 2027/tcp
+EXPOSE 2040/tcp
