@@ -8,15 +8,10 @@ package dev.galasa.simbank.tests;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import dev.galasa.Test;
-import dev.galasa.artifact.BundleResources;
-import dev.galasa.artifact.IBundleResources;
 import dev.galasa.core.manager.CoreManager;
 import dev.galasa.core.manager.ICoreManager;
-import dev.galasa.http.HttpClient;
-import dev.galasa.http.IHttpClient;
 import dev.galasa.zos.IZosImage;
 import dev.galasa.zos.ZosImage;
-import dev.galasa.zos.ZosManagerException;
 import dev.galasa.zos3270.ITerminal;
 import dev.galasa.zos3270.Zos3270Terminal;
 
@@ -28,12 +23,6 @@ public class SimBankIVT {
 
     @Zos3270Terminal(imageTag = "SIMBANK")
     public ITerminal        terminal;
-
-    @BundleResources
-    public IBundleResources resources;
-
-    @HttpClient
-    public IHttpClient      client;
 
     @CoreManager
     public ICoreManager     coreManager;
@@ -50,7 +39,7 @@ public class SimBankIVT {
      * @throws Exception
      */
     @Test
-    public void checkBankIsAvailable() throws Exception{
+    public void checkBankIsAvailable() throws Exception {
         // Register the password to the confidential text filtering service
         coreManager.registerConfidentialText("SYS1", "IBMUSER password");
 
