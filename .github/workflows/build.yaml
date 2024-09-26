@@ -1,14 +1,24 @@
 name: Main build
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
 
 env:
   REGISTRY: ghcr.io
   NAMESPACE: galasa-dev
+  BRANCH: ${{ github.ref_name }}
 
 jobs:
+  log-github-ref:
+    name: Log the GitHub ref this workflow is running on (Branch or tag that received dispatch)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log GitHub ref of workflow
+        run: |
+          echo "This workflow is running on GitHub ref ${{ env.BRANCH }}"
+          
   build-simplatform:
     name: Building Simplatform web application and tests
     runs-on: ubuntu-latest
@@ -31,7 +41,7 @@ jobs:
         run: |
           set -o pipefail
           mvn -f galasa-simplatform-application/pom.xml deploy -X \
-          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
+          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.BRANCH }}/maven-repo/obr \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           --batch-mode --errors --fail-at-end \
@@ -49,7 +59,7 @@ jobs:
         run: |
           set -o pipefail
           mvn -f galasa-simbank-tests/pom.xml deploy -X \
-          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
+          -Dgalasa.source.repo=https://development.galasa.dev/${{ env.BRANCH }}/maven-repo/obr \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           --batch-mode --errors --fail-at-end \
@@ -88,7 +98,7 @@ jobs:
           build-args: |
             baseVersion=latest
             dockerRepository=ghcr.io
-            branch=main
+            branch=${{ env.BRANCH }}
           
       - name: Extract metadata for Simplatform jar image
         id: metadata-simplatform-jar

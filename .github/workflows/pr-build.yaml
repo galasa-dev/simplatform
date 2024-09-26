@@ -28,7 +28,7 @@ jobs:
           set -o pipefail
           mvn -f galasa-simplatform-application/pom.xml deploy -X \
           -Dgpg.skip=true \
-          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
+          -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/obr \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           --batch-mode --errors --fail-at-end \
@@ -47,7 +47,7 @@ jobs:
           set -o pipefail
           mvn -f galasa-simbank-tests/pom.xml deploy -X \
           -Dgpg.skip=true \
-          -Dgalasa.source.repo=https://development.galasa.dev/gh/maven-repo/obr \
+          -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/obr \
           -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           --batch-mode --errors --fail-at-end \
