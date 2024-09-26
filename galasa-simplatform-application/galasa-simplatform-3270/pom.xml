@@ -10,6 +10,7 @@
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simplatform</artifactId>
 	<version>0.38.0</version>
+	<!-- If updating the version, also update in dockerfiles/dockerfile.simplatform-amd64 -->
 	<packaging>jar</packaging>
 
 	<dependencies>
