@@ -52,7 +52,6 @@ jobs:
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           --batch-mode --errors --fail-at-end \
           --settings ${{ github.workspace }}/settings.xml 2>&1 | tee galasa-simbank-tests-build.log
-
       - name: Upload galasa-simbank-tests Maven Build Log
         if: failure()
         uses: actions/upload-artifact@v4
