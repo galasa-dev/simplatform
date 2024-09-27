@@ -1,0 +1,81 @@
+name: PR build
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-simplatform:
+    name: Build Simplatform web application and tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'semeru'
+
+      - name: Print Githash
+        run: |
+          echo $GITHUB_SHA > ./simplatform.githash
+        
+      - name: Building galasa-simplatform-application using maven
+        run: |
+          set -o pipefail
+          mvn -f galasa-simplatform-application/pom.xml deploy -X \
+          -Dgpg.skip=true \
+          -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/obr \
+          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+          -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
+          --batch-mode --errors --fail-at-end \
+          --settings ${{ github.workspace }}/settings.xml 2>&1 | tee galasa-simplatform-application-build.log
+      
+      - name: Upload galasa-simplatform-application Maven Build Log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: galasa-simplatform-application-build-log
+          path: galasa-simplatform-application-build.log
+          retention-days: 7
+
+      - name: Building galasa-simbank-tests using maven
+        run: |
+          set -o pipefail
+          mvn -f galasa-simbank-tests/pom.xml deploy -X \
+          -Dgpg.skip=true \
+          -Dgalasa.source.repo=https://development.galasa.dev/main/maven-repo/obr \
+          -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+          -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
+          --batch-mode --errors --fail-at-end \
+          --settings ${{ github.workspace }}/settings.xml 2>&1 | tee galasa-simbank-tests-build.log
+      - name: Upload galasa-simbank-tests Maven Build Log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: galasa-simbank-tests-build-log
+          path: galasa-simbank-tests-build.log
+          retention-days: 7
+
+      - name: Build Simplatform image for testing
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: dockerfiles/dockerfile.simplatform
+          load: true
+          tags: simplatform-maven-artefacts:test
+          build-args: |
+            baseVersion=latest
+            dockerRepository=ghcr.io
+            branch=main
+      
+      - name: Build Simplatform jar image for testing
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: dockerfiles/dockerfile.simplatform-amd64
+          load: true
+          tags: simplatform-jar:test
