@@ -64,6 +64,7 @@ jobs:
           -Dgalasa.release.repo=file:${{ github.workspace }}/repo \
           --batch-mode --errors --fail-at-end \
           --settings ${{ github.workspace }}/settings.xml 2>&1 | tee galasa-simbank-tests-build.log
+
       - name: Upload galasa-simbank-tests Maven Build Log
         if: failure()
         uses: actions/upload-artifact@v4
@@ -119,10 +120,10 @@ jobs:
         env: 
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run gh-simplatform restart --kind Deployment --resource-name simplatform-gh --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.BRANCH }}-simplatform restart --kind Deployment --resource-name simplatform-${{ env.BRANCH }} --server argocd.galasa.dev
         
       - name: Wait for app health in ArgoCD
         env: 
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait gh-simplatform --resource apps:Deployment:simplatform-gh --health --server argocd.galasa.dev
+          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.BRANCH }}-simplatform --resource apps:Deployment:simplatform-${{ env.BRANCH }} --health --server argocd.galasa.dev
