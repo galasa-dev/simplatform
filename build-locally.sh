@@ -152,30 +152,6 @@ function check_exit_code () {
     fi
 }
 
-function check_secrets {
-    h2 "updating secrets baseline"
-    cd ${BASEDIR}
-    detect-secrets scan --update .secrets.baseline
-    rc=$? 
-    check_exit_code $rc "Failed to run detect-secrets. Please check it is installed properly" 
-    success "updated secrets file"
-
-    h2 "running audit for secrets"
-    detect-secrets audit .secrets.baseline
-    rc=$? 
-    check_exit_code $rc "Failed to audit detect-secrets."
-    
-    #Check all secrets have been audited
-    secrets=$(grep -c hashed_secret .secrets.baseline)
-    audits=$(grep -c is_secret .secrets.baseline)
-    if [[ "$secrets" != "$audits" ]]; then 
-        error "Not all secrets found have been audited"
-        exit 1  
-    fi
-    sed -i '' '/[ ]*"generated_at": ".*",/d' .secrets.baseline
-    success "secrets audit complete"
-}
-
 function build_application_code {
     h1 "Building simplatform application using maven"
     cd ${BASEDIR}/galasa-simplatform-application
@@ -200,19 +176,5 @@ function build_test_code {
     success "OK"
 }
 
-function build_docker_image {
-    h1 "Building docker image"
-    cd $BASEDIR/galasa-simplatform-application/galasa-simplatform-webapp
-    docker build --tag galasa-simplatform-webapp . 
-    rc=$?
-    if [[ "${rc}" != "0" ]]; then 
-        error "Failed to create a docker image for the UI. rc=${rc}"
-        exit 1
-    fi
-    success "OK"
-}
-
 build_application_code
 build_test_code
-build_docker_image
-check_secrets
