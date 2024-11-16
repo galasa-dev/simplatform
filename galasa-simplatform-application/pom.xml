@@ -3,7 +3,7 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simplatform-parent</artifactId>
-	<version>0.24.0</version>
+	<version>0.38.0</version>
 	<packaging>pom</packaging>
 
 	<name>Galasa SimPlatform</name>
@@ -76,7 +76,7 @@
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>1.2</version>
+			<version>1.3.4</version>
 		</dependency>
 
 		<dependency>
