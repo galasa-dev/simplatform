@@ -108,7 +108,7 @@ function checkGalasaCtlAvailable {
 source_dir="."
 
 project=$(basename ${BASEDIR})
-SIMBANK_VERSION="0.24.0"
+SIMBANK_VERSION="0.38.0"
 
 h1 "Running Simbank application tests"
 
