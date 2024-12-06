@@ -3,7 +3,7 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simbanktests-parent</artifactId>
-	<version>0.38.0</version>
+	<version>0.39.0</version>
 	<!-- If updating version,  reflect change in dev.galasa.simbank.ui -->
 	<packaging>pom</packaging>
 
@@ -76,7 +76,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>galasa-bom</artifactId>
-				<version>0.38.0</version>
+				<version>0.39.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -184,7 +184,7 @@
 				<plugin>
 					<groupId>dev.galasa</groupId>
 					<artifactId>galasa-maven-plugin</artifactId>
-					<version>0.38.0</version>
+					<version>0.39.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
