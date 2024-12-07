@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simbanktests-parent</artifactId>
-		<version>0.38.0</version>
+		<version>0.39.0</version>
 	</parent>
 	
 	<name>Galasa SimBank Manager</name>
 
 	<artifactId>dev.galasa.simbank.manager</artifactId>
-	<version>0.38.0</version>
+	<version>0.39.0</version>
 	<!-- If updating version, reflect in dev.galasa.simbank.feature, dev.galasa.simbank.tests and dev.galasa.simbank.obr -->
 	<packaging>bundle</packaging>
 
