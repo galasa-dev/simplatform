@@ -77,8 +77,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: galasa-team
-          password: ${{ secrets.GALASA_TEAM_WRITE_PACKAGES_TOKEN }}
+          username: ${{ secrets.WRITE_GITHUB_PACKAGES_USERNAME }}
+          password: ${{ secrets.WRITE_GITHUB_PACKAGES_TOKEN }}
 
       - name: Extract metadata for Simplatform maven artefacts image
         id: metadata-simplatform
