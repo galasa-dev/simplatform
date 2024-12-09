@@ -22,6 +22,12 @@ jobs:
       - name: Print Githash
         run: |
           echo $GITHUB_SHA > ./simplatform.githash
+
+      - name: Turn script into an executable
+        run: chmod +x detect-secrets.sh
+    
+      - name: Run the detect secrets script
+        run: ./detect-secrets.sh
         
       - name: Building galasa-simplatform-application using maven
         run: |
