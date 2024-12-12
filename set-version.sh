@@ -167,6 +167,4 @@ replace_line_following ${BASEDIR}/galasa-maven-plugin/pom.xml ${BASEDIR}/galasa-
 replace_line_following ${BASEDIR}/galasa-maven-plugin/pom.xml ${BASEDIR}/galasa-maven-plugin/pom.xml $temp_dir "^.*dev.galasa.platform.*$" "version" "	
 
 
-<artifactId>galasa-bom</artifactId>
-				<version>0.39.0</version>			<version>$component_version</version>"
 

@@ -73,6 +73,7 @@
 
 	<dependencyManagement>
 		<dependencies>
+		
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>galasa-bom</artifactId>
@@ -80,6 +81,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
+			<dependency>
+				<groupId>org.apache.derby</groupId>
+				<artifactId>derbyclient</artifactId>
+				<version>10.14.2.0</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -166,7 +174,6 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
 
 	<build>
 		<pluginManagement>
