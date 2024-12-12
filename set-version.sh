@@ -66,7 +66,7 @@ set-version.sh [OPTIONS]
 Options are:
 -v | --version xxx : Mandatory. Set the version number to something explicitly. 
     Re-builds the release.yaml based on the contents of sub-projects.
-    For example '--version 0.39.0'
+    For example '--version 0.40.0'
 EOF
 }
 
@@ -100,6 +100,14 @@ fi
 temp_dir=$BASEDIR/temp/version_bump
 mkdir -p $temp_dir
 
+function check_for_error {
+    rc=$?
+    error_message=$1
+    if [[ "${rc}" != "0" ]]; then 
+        error "$error_message"
+        exit 1
+    fi
+}
 
 #-------------------------------------------------------------------------------
 function replace_line_following {
@@ -155,16 +163,92 @@ function replace_line_following {
 temp_dir="$BASEDIR/temp"
 mkdir -p $temp_dir
 
-cd ${BASEDIR}/galasa-simbank-application
-mvn versions:set -DnewVersion=$component_version
-mvn versions:commit
+function update_simplatform_application() {
+    h2 "Upgrading the pom.xml files for simplatform application" 
 
-cd ${BASEDIR}/galasa-simbank-tests
-mvn versions:set -DnewVersion=$component_version
-mvn versions:commit
+    h2 "Upgrading the maven version"
+    cd ${BASEDIR}/galasa-simplatform-application
+    mvn versions:set -DnewVersion=$component_version
+    check_for_error "Failed to set the version of the simbank application at ${BASEDIR}/galasa-simplatform-application"
+    mvn versions:commit
+    check_for_error "Failed to commit the version upgrade and clean up maven artifacts at ${BASEDIR}/galasa-simbank-application"
+    success "OK"
 
-replace_line_following ${BASEDIR}/galasa-maven-plugin/pom.xml ${BASEDIR}/galasa-maven-plugin/pom.xml $temp_dir "^.*dev.galasa.plugin.common.*$" "version" "				<version>$component_version</version>"
-replace_line_following ${BASEDIR}/galasa-maven-plugin/pom.xml ${BASEDIR}/galasa-maven-plugin/pom.xml $temp_dir "^.*dev.galasa.platform.*$" "version" "	
 
 
+    success "OK"
+}
+
+function update_simplatform_docker_file() {
+    h2 "Updating the docker file at galasa-simplatform-application/galasa-simplatform-3270/Dockerfile"
+    cat $BASEDIR/galasa-simplatform-application/galasa-simplatform-3270/Dockerfile \
+    | sed "s/galasa-simplatform-[0-9.]*jar/galasa-simplatform-$component_version.jar/1" \
+    > $temp_dir/simplatform-dockerfile.txt
+    check_for_error "Failed to update the docker file at galasa-simplatform-application/galasa-simplatform-3270/Dockerfile"
+    cp $temp_dir/simplatform-dockerfile.txt $BASEDIR/galasa-simplatform-application/galasa-simplatform-3270/Dockerfile
+    success "OK"
+}
+
+function update_simplatform_docker_amd64file() {
+    h2 "Updating the docker file at dockerfiles/dockerfile.simplatform-amd64"
+    cat $BASEDIR/dockerfiles/dockerfile.simplatform-amd64 \
+    | sed "s/galasa-simplatform-[0-9.]*jar/galasa-simplatform-$component_version.jar/1" \
+    > $temp_dir/simplatform-dockerfile_amd64.txt
+    check_for_error "Failed to update the docker file at dockerfiles/dockerfile.simplatform-amd64"
+    cp $temp_dir/simplatform-dockerfile_amd64.txt $BASEDIR/dockerfiles/dockerfile.simplatform-amd64
+    success "OK"
+}
+
+function update_simbank_tests() {
+    h2 "Upgrading the pom.xml files for simbank tests" 
+    cd ${BASEDIR}/galasa-simbank-tests
+    mvn versions:set -DnewVersion=$component_version
+    check_for_error "Failed to set the version of the simbank tests at ${BASEDIR}/galasa-simbank-tests"
+    mvn versions:commit
+    check_for_error "Failed to commit the version upgrade and clean up maven artifacts at ${BASEDIR}/galasa-simbank-tests"
+    success "OK"
+}
+
+function update_run_locally_script() {
+    h2 "Updating the run-locally.sh script"
+    cat $BASEDIR/run-locally.sh \
+    | sed "s/SIMBANK_VERSION=\".*\"/SIMBANK_VERSION=\"$component_version\"/1" \
+    > $temp_dir/run-locally.sh
+    check_for_error "Failed to update the run-locally.sh script"
+    cp $temp_dir/run-locally.sh $BASEDIR/run-locally.sh
+    success "OK"
+}
+
+function update_test_locally_script() {
+    h2 "Updating the test-locally.sh script"
+    cat $BASEDIR/test-locally.sh \
+    | sed "s/SIMBANK_VERSION=\".*\"/SIMBANK_VERSION=\"$component_version\"/1" \
+    | sed "s/TEST_OBR_VERSION=\".*\"/TEST_OBR_VERSION=\"$component_version\"/1" \
+    > $temp_dir/test-locally.sh
+    check_for_error "Failed to update the test-locally.sh script"
+    cp $temp_dir/test-locally.sh $BASEDIR/test-locally.sh
+    success "OK"
+}
+
+replace_line_following ${BASEDIR}/galasa-simbank-tests/dev.galasa.simbank.manager/pom-example.xml ${BASEDIR}/galasa-simbank-tests/dev.galasa.simbank.manager/pom-example.xml $temp_dir \
+"^.*galasa-bom.*$" "version" "				<version>$component_version</version>"
+
+replace_line_following ${BASEDIR}/galasa-simbank-tests/dev.galasa.simbank.tests/pom-example.xml ${BASEDIR}/galasa-simbank-tests/dev.galasa.simbank.tests/pom-example.xml $temp_dir \
+"^.*galasa-bom.*$" "version" "				<version>$component_version</version>"
+
+replace_line_following ${BASEDIR}/galasa-simbank-tests/pom.xml ${BASEDIR}/galasa-simbank-tests/pom.xml $temp_dir \
+"^.*galasa-bom.*$" "version" "				<version>$component_version</version>"
+
+replace_line_following ${BASEDIR}/galasa-simbank-tests/pom.xml ${BASEDIR}/galasa-simbank-tests/pom.xml $temp_dir \
+"^.*galasa-maven-plugin.*$" "version" "				    <version>$component_version</version>"
+
+replace_line_following ${BASEDIR}/galasa-simplatform-application/pom.xml ${BASEDIR}/galasa-simplatform-application/pom.xml $temp_dir \
+"^.*galasa-bom.*$" "version" "				<version>$component_version</version>"
+
+update_simplatform_docker_amd64file
+update_run_locally_script
+update_test_locally_script
+update_simplatform_docker_file
+update_simbank_tests
+update_simplatform_application
 

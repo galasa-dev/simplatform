@@ -16,12 +16,10 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.8.1</version>
 		</dependency>
 		<dependency>
 			<groupId>dev.galasa</groupId>
 			<artifactId>dev.galasa.zos.manager</artifactId>
-			<version>0.39.0</version>
 		</dependency>
 	</dependencies>
 
