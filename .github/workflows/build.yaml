@@ -21,7 +21,7 @@ jobs:
 
   check-required-secrets-configured:
     name: Check required secrets configured
-    uses: galasa-dev/galasa/.github/workflows/check-required-secrets-configured.yaml@main
+    uses: jadecarino/galasa/.github/workflows/check-required-secrets-configured.yaml@main
     secrets: inherit
     with:
       write_github_packages_username: 'true'
