@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  NAMESPACE: galasa-dev
+  NAMESPACE: ${{ github.repository_owner }}
   BRANCH: ${{ github.ref_name }}
 
 jobs:
@@ -21,11 +21,13 @@ jobs:
 
   check-required-secrets-configured:
     name: Check required secrets configured
-    uses: jadecarino/galasa/.github/workflows/check-required-secrets-configured.yaml@main
-    secrets: inherit
+    uses: galasa-dev/galasa/.github/workflows/check-required-secrets-configured.yaml@main
     with:
-      write_github_packages_username: 'true'
-      write_github_packages_token: 'true'
+      check_write_github_packages_username: 'true'
+      check_write_github_packages_token: 'true'
+    secrets:
+      WRITE_GITHUB_PACKAGES_USERNAME: ${{ secrets.WRITE_GITHUB_PACKAGES_USERNAME }}
+      WRITE_GITHUB_PACKAGES_TOKEN: ${{ secrets.WRITE_GITHUB_PACKAGES_TOKEN }}
 
   build-simplatform:
     name: Building Simplatform web application and tests
