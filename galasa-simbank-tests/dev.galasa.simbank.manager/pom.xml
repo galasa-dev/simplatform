@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simbanktests-parent</artifactId>
-		<version>0.25.0</version>
+		<version>0.39.0</version>
 	</parent>
 	
 	<name>Galasa SimBank Manager</name>
 
 	<artifactId>dev.galasa.simbank.manager</artifactId>
-	<version>0.25.0</version>
+	<version>0.39.0</version>
 	<!-- If updating version, reflect in dev.galasa.simbank.feature, dev.galasa.simbank.tests and dev.galasa.simbank.obr -->
 	<packaging>bundle</packaging>
 
@@ -26,7 +26,6 @@
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derbyclient</artifactId>
-			<version>10.14.2.0</version>
 		</dependency>
 	</dependencies>
 
