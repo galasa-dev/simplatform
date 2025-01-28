@@ -26,7 +26,6 @@ jobs:
       check_write_github_packages_username: 'true'
       check_write_github_packages_token: 'true'
     secrets:
-      WRITE_GITHUB_PACKAGES_USERNAME: ${{ secrets.WRITE_GITHUB_PACKAGES_USERNAME }}
       WRITE_GITHUB_PACKAGES_TOKEN: ${{ secrets.WRITE_GITHUB_PACKAGES_TOKEN }}
 
   build-simplatform:
@@ -88,7 +87,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.WRITE_GITHUB_PACKAGES_USERNAME }}
+          username: ${{ vars.WRITE_GITHUB_PACKAGES_USERNAME }}
           password: ${{ secrets.WRITE_GITHUB_PACKAGES_TOKEN }}
 
       - name: Extract metadata for Simplatform maven artefacts image
