@@ -1,4 +1,4 @@
-FROM harbor.galasa.dev/docker_proxy_cache/library/openjdk:11-jdk
+FROM ghcr.io/galasa-dev/openjdk:11-jdk
 
 RUN mkdir /galasa
 
