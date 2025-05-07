@@ -205,4 +205,5 @@ function build_docker_image {
 build_application_code
 build_test_code
 build_docker_image
-check_secrets
+
+${BASEDIR}/detect-secrets.sh
