@@ -98,13 +98,13 @@ function checkGalasaCtlAvailable {
 source_dir="."
 
 project=$(basename ${BASEDIR})
-SIMBANK_VERSION="0.41.0"
+SIMBANK_VERSION="0.42.0"
 
 h1 "Running Simbank application tests"
 
 checkGalasaCtlAvailable
 
-TEST_OBR_VERSION="0.41.0"
+TEST_OBR_VERSION="0.42.0"
 
 mkdir -p ${BASEDIR}/temp
 cd ${BASEDIR}/temp

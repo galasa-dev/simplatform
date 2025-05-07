@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>dev.galasa</groupId>
 		<artifactId>galasa-simplatform-parent</artifactId>
-		<version>0.41.0</version>
+		<version>0.42.0</version>
 	</parent>
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simplatform-webapp</artifactId>
-	<version>0.41.0</version>
+	<version>0.42.0</version>
 	<packaging>war</packaging>
 
 	<name>galasa-simplatform-webapp Maven Webapp</name>
