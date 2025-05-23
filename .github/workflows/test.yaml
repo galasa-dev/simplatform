@@ -32,7 +32,7 @@ jobs:
       - name: Get Galasa Version from build.properties file
         id: get-galasa-version
         run: |
-          cat build.properties | grep "=" >> $GITHUB_OUTPUT
+          cat ${{ github.workspace }}/galasa/build.properties | grep "=" >> $GITHUB_OUTPUT
 
     outputs:
       galasa-version: ${{ steps.get-galasa-version.outputs.GALASA_VERSION }}
