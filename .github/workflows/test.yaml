@@ -57,7 +57,7 @@ jobs:
           path: ${{ github.workspace }}/simplatform
             
 
-      - name: Build Simplatform application
+      - name: Build Simplatform
         working-directory: ${{ github.workspace }}/simplatform
         run: |
           ./build-locally.sh

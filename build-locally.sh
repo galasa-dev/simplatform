@@ -172,7 +172,10 @@ function check_secrets {
 function build_application_code {
     h1 "Building simplatform application using maven"
     cd ${BASEDIR}/galasa-simplatform-application
-    mvn clean install -Dgalasa.source.repo=${SOURCE_MAVEN}
+    mvn clean install \
+    -Dgalasa.source.repo=${SOURCE_MAVEN} \
+    -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+    --settings ${BASEDIR}/settings.xml
     rc=$?
     if [[ "${rc}" != "0" ]]; then 
         error "make clean install failed. rc=${rc}"
@@ -184,7 +187,10 @@ function build_application_code {
 function build_test_code {
     h1 "Building simbank tests using maven"
     cd ${BASEDIR}/galasa-simbank-tests
-    mvn clean install -Dgalasa.source.repo=${SOURCE_MAVEN}
+    mvn clean install \
+    -Dgalasa.source.repo=${SOURCE_MAVEN} \
+    -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+    --settings ${BASEDIR}/settings.xml
     rc=$?
     if [[ "${rc}" != "0" ]]; then 
         error "make clean install failed. rc=${rc}"
