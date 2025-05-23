@@ -121,6 +121,8 @@ jobs:
     #----------------------------------------------------------------------------------
     # Run the Simbank tests
       - name: Run the SimBankIVT
+        env:
+          GALASA_VERSION: ${{ needs.get-galasa-version.outputs.galasa-version }}
         run: |
           galasactl runs submit local \
           --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
