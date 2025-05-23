@@ -156,7 +156,7 @@ jobs:
         # Skip this step for forks
         # Only report results if this workflow was called from 
         # a regression run as Main builds run multiple times a day.
-        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name 'workflow_dispatch' }}
+        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
         run: |
           jq -s '{ tests: map(.tests[]) }' ${{ github.workspace }}/.galasa/temp/test-1.json ${{ github.workspace }}/.galasa/temp/test-2.json ${{ github.workspace }}/.galasa/temp/test-3.json > ${{ github.workspace }}/.galasa/temp/tests.json
 
@@ -164,7 +164,7 @@ jobs:
         # Skip this step for forks.
         # Only report results if this workflow was called from 
         # a regression run as Main builds run multiple times a day.
-        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name 'workflow_dispatch' }}
+        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
         env: 
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: |
