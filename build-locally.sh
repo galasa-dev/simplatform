@@ -80,14 +80,22 @@ EOF
 #-----------------------------------------------------------------------------------------                   
 export build_type=""
 
+SKIP_DOCKER=false
+SKIP_SECRETS=false
+
 while [ "$1" != "" ]; do
     case $1 in
+        --skip-docker )         SKIP_DOCKER=true
+                                ;;
+        --skip-secrets )        SKIP_SECRETS=true
+                                ;;
         -h | --help )           usage
                                 exit
                                 ;;
         * )                     error "Unexpected argument $1"
                                 usage
                                 exit 1
+                                ;;
     esac
     shift
 done
@@ -213,5 +221,11 @@ function build_docker_image {
 
 build_application_code
 build_test_code
-build_docker_image
-check_secrets
+
+if [ "$SKIP_DOCKER" = false ]; then
+    build_docker_image
+fi
+
+if [ "$SKIP_SECRETS" = false ]; then
+    check_secrets
+fi
