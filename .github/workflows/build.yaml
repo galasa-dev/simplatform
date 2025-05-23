@@ -83,6 +83,12 @@ jobs:
           path: galasa-simbank-tests-build.log
           retention-days: 7
 
+      - name: Upload Simplatform
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplatform
+          path: /home/runner/.m2/repository
+
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
         with:
@@ -141,6 +147,12 @@ jobs:
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
           docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.BRANCH }}-simplatform --resource apps:Deployment:simplatform-${{ env.BRANCH }} --health --server argocd.galasa.dev
+
+  # run-simbank-tests:
+  #   name: Run the SimBank Tests
+  #   needs: [build-simplatform]
+  #   uses: ./.github/workflows/test.yaml
+  #   secrets: inherit
 
   report-failure:
     # Skip this job for forks
