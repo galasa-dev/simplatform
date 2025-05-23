@@ -81,8 +81,8 @@ jobs:
             echo "${{ secrets.SIMBANK_CREDENTIALS }}" >> credentials.properties
     
         # The credentials.properties file should look something like this:
-        # secure.credentials.MYSIMBANKUSER.username=XXX
-        # secure.credentials.MYSIMBANKUSER.password=XXX
+        # secure.credentials.SIMBANK.username=XXX
+        # secure.credentials.SIMBANK.password=XXX
         # Needs to be created dynamically as they cannot be checked into GitHub and exposed.
 
       - name: Initialise local Galasa environment to create remaining files and folders
