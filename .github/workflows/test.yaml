@@ -69,10 +69,6 @@ jobs:
           brew install --no-quarantine galasactl
     #----------------------------------------------------------------------------------
     # Set up Galasa environment
-      - name: Make Galasa home directory
-        run: |
-          mkdir ${{ env.GALASA_HOME }}
-
       - name: Create credentials.properties file
         working-directory: ${{ env.GALASA_HOME }}
         run: |
@@ -128,6 +124,28 @@ jobs:
           --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
           --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
           --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.SimBankIVT \
+          --remoteMaven https://development.galasa.dev/main/maven-repo/obr \
+          --log -
+
+      - name: Run the BasicAccountCreditTest
+        env:
+          GALASA_VERSION: ${{ needs.get-galasa-version.outputs.galasa-version }}
+        run: |
+          galasactl runs submit local \
+          --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
+          --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
+          --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.BasicAccountCreditTest \
+          --remoteMaven https://development.galasa.dev/main/maven-repo/obr \
+          --log -
+
+      - name: Run the ProvisionedAccountCreditTests
+        env:
+          GALASA_VERSION: ${{ needs.get-galasa-version.outputs.galasa-version }}
+        run: |
+          galasactl runs submit local \
+          --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
+          --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
+          --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.ProvisionedAccountCreditTests \
           --remoteMaven https://development.galasa.dev/main/maven-repo/obr \
           --log -
 
