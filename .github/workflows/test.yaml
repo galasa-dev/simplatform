@@ -60,7 +60,7 @@ jobs:
       - name: Build Simplatform
         working-directory: ${{ github.workspace }}/simplatform
         run: |
-          ./build-locally.sh
+          ./build-locally.sh --skip-docker --skip-secrets
 
     #----------------------------------------------------------------------------------
     # Set up Galasa environment
