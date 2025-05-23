@@ -51,6 +51,12 @@ jobs:
 
     steps:
     #----------------------------------------------------------------------------------
+      - name: Checkout the Simplatform repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.NAMESPACE }}/simplatform
+
+    #----------------------------------------------------------------------------------
     # Set up pre-requesite technology (Java, Gradle and galasactl)
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -91,17 +97,9 @@ jobs:
         with:
           name: simplatform
           path: /home/runner/.m2/repository
-        
-      - name: Checkout the Simplatform repository
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.NAMESPACE }}/simplatform
-          path: ${{ github.workspace }}/simplatform
 
       - name: Build SimBank using local build script
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        working-directory: ${{ github.workspace }}/simplatform
         run: |
           ./build-locally.sh --skip-docker --skip-secrets
 
