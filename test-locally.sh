@@ -183,11 +183,12 @@ source_dir="."
 project=$(basename ${BASEDIR})
 SIMBANK_VERSION="0.42.0"
 
-h1 "Running Simbank application tests"
-
 checkGalasaCtlAvailable
 checkSimBankTestAreBuilt
 checkSimBankAppIsBuilt
+
+mkdir -p ${BASEDIR}/temp
+cd ${BASEDIR}/temp
 
 # Start the Simbank back-end server application in a background process...
 h1 "Running Simbank back-end server application (version ${SIMBANK_VERSION}) ..."
@@ -198,8 +199,7 @@ success "Simbank application started OK."
 
 TEST_OBR_VERSION="0.42.0"
 
-mkdir -p ${BASEDIR}/temp
-cd ${BASEDIR}/temp
+h1 "Running Simbank tests"
 
 runSimBankIVT
 runBasicAccountCreditTest
