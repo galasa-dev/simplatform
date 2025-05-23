@@ -6,6 +6,7 @@
 name: Test SimBank
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
     branches: [main]
@@ -18,7 +19,7 @@ jobs:
     name: Get Galasa Version
     # Use the build.properties file in the galasa repo to source the galasa-version output variable.
     # This variable can be referenced by other jobs in this flow using ${{ needs.get-galasa-version.outputs.galasa-version }}
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout 'galasa' repository
@@ -37,33 +38,39 @@ jobs:
     outputs:
       galasa-version: ${{ steps.get-galasa-version.outputs.GALASA_VERSION }}
 
-  run-simbank-tests:
-    name: Run SimBank Tests
-    runs-on: ubuntu-latest
+  build-and-run-simbank-tests:
+    name: Build and Run SimBank Tests
+    runs-on: macos-latest
 
-    needs: get-galasa-version
+    needs: [get-galasa-version]
 
     env:
       GALASA_HOME: ${{ github.workspace }}/.galasa
 
     steps:
-
     #----------------------------------------------------------------------------------
-    # Build the Simplatform application that the tests connect to
-      - name: Checkout the Simplatform repository
-        uses: actions/checkout@v4
+    # Set up pre-requesite technology (Java, Gradle and galasactl)
+      - name: Setup JDK
+        uses: actions/setup-java@v4
         with:
-          repository: ${{ env.NAMESPACE }}/simplatform
-          path: ${{ github.workspace }}/simplatform
-            
+          java-version: '17'
+          distribution: 'semeru'
 
-      - name: Build Simplatform
-        working-directory: ${{ github.workspace }}/simplatform
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.9'
+
+      - name: Install galasactl with Homebrew
         run: |
-          ./build-locally.sh --skip-docker --skip-secrets
-
+          brew tap galasa-dev/tap
+          brew install --no-quarantine galasactl
     #----------------------------------------------------------------------------------
     # Set up Galasa environment
+      - name: Make Galasa home directory
+        run: |
+          mkdir ${{ env.GALASA_HOME }}
+
       - name: Create credentials.properties file
         working-directory: ${{ env.GALASA_HOME }}
         run: |
@@ -79,6 +86,28 @@ jobs:
             galasactl local init --log -
 
     #----------------------------------------------------------------------------------
+    # Download or build the Simplatform application that the tests connect to
+      - name: Download SimBank from Main Build
+        if: ${{ github.event.name == 'workflow_call' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: simplatform
+          path: /home/runner/.m2/repository
+        
+      - name: Checkout the Simplatform repository
+        if: ${{ github.event.name == 'workflow_dispatch' || github.event.name == 'push' }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.NAMESPACE }}/simplatform
+          path: ${{ github.workspace }}/simplatform
+
+      - name: Build SimBank using local build script
+        if: ${{ github.event.name == 'workflow_dispatch' || github.event.name == 'push' }}
+        working-directory: ${{ github.workspace }}/simplatform
+        run: |
+          ./build-locally.sh --skip-docker --skip-secrets
+
+    #----------------------------------------------------------------------------------
     # Run the Simplatform application 
       - name: Start the Simplatform application
         env:
@@ -89,26 +118,8 @@ jobs:
 
     #----------------------------------------------------------------------------------
     # Run the Simbank tests
-    #   - name: Ensure permissions for mounted /galasa directory
-    #     run: |
-    #       sudo mkdir -p ${{ github.workspace }}/galasa
-    #       sudo chown -R 999:999 ${{ github.workspace }}/galasa
-
-    #   - name: Clean /galasa workspace in CLI image
-    #     run: |
-    #       docker run --rm \
-    #       --user galasa:galasa \
-    #       -v ${{ github.workspace }}/galasa:/galasa \
-    #       ghcr.io/${{ env.NAMESPACE }}/galasactl-x86_64:main \
-    #       rm -rf /galasa/*
-
       - name: Run the SimBankIVT
         run: |
-          docker run --rm \
-          --env GALASA_HOME=${{ env.GALASA_HOME }} \
-          --user galasa:galasa \
-          -v ${{ github.workspace }}/galasa:/galasa:rw \
-          ghcr.io/${{ env.NAMESPACE }}/galasactl-x86_64:main \
           galasactl runs submit local \
           --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
           --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
