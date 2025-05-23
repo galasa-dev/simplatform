@@ -91,13 +91,17 @@ jobs:
 
     #----------------------------------------------------------------------------------
     # Download or build the Simplatform application that the tests connect to
+
+      # If this workflow was called after a Main build, it will share the github.event_name
+      # with the calling workflow, which is 'push'. Download the artifacts from that build.
       - name: Download SimBank from Main Build
-        if: ${{ github.event_name == 'workflow_call' }}
+        if: ${{ github.event_name == 'push' }}
         uses: actions/download-artifact@v4
         with:
           name: simplatform
           path: /home/runner/.m2/repository
 
+      # If this workflow was called by the daily regression test run, build the code.
       - name: Build SimBank using local build script
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
@@ -123,7 +127,7 @@ jobs:
           --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
           --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.SimBankIVT \
           --remoteMaven https://development.galasa.dev/main/maven-repo/obr \
-          --reportjson ${{ github.workspace }}/.galasa/temp/test-1.json \
+          --reportjson ${{ github.workspace }}/.galasa/test-1.json \
           --log -
 
       - name: Run the BasicAccountCreditTest
@@ -135,7 +139,7 @@ jobs:
           --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
           --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.BasicAccountCreditTest \
           --remoteMaven https://development.galasa.dev/main/maven-repo/obr \
-          --reportjson ${{ github.workspace }}/.galasa/temp/test-2.json \
+          --reportjson ${{ github.workspace }}/.galasa/test-2.json \
           --log -
 
       - name: Run the ProvisionedAccountCreditTests
@@ -147,7 +151,7 @@ jobs:
           --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
           --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.ProvisionedAccountCreditTests \
           --remoteMaven https://development.galasa.dev/main/maven-repo/obr \
-          --reportjson ${{ github.workspace }}/.galasa/temp/test-3.json \
+          --reportjson ${{ github.workspace }}/.galasa/test-3.json \
           --log -
 
     #----------------------------------------------------------------------------------
@@ -158,7 +162,7 @@ jobs:
         # a regression run as Main builds run multiple times a day.
         if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
         run: |
-          jq -s '{ tests: map(.tests[]) }' ${{ github.workspace }}/.galasa/temp/test-1.json ${{ github.workspace }}/.galasa/temp/test-2.json ${{ github.workspace }}/.galasa/temp/test-3.json > ${{ github.workspace }}/.galasa/temp/tests.json
+          jq -s '{ tests: map(.tests[]) }' ${{ github.workspace }}/.galasa/test-1.json ${{ github.workspace }}/.galasa/test-2.json ${{ github.workspace }}/.galasa/test-3.json > ${{ github.workspace }}/.galasa/tests.json
 
       - name: Report results into Slack channel
         # Skip this step for forks.
