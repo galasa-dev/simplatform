@@ -128,6 +128,7 @@ jobs:
           --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
           --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
           --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.SimBankIVT \
+          --remoteMaven https://development.galasa.dev/main/maven-repo/obr \
           --log -
 
       # - name: Report results into Slack channel
