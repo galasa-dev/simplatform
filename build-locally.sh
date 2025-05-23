@@ -9,6 +9,9 @@
 #
 # Objectives: Build this repository code locally.
 # 
+# Environment variable overrides:
+# SOURCE_MAVEN - Optional. Where a maven repository is from which the build will draw artifacts.
+# 
 #-----------------------------------------------------------------------------------------                   
 
 # Where is this script executing from ?
@@ -77,14 +80,22 @@ EOF
 #-----------------------------------------------------------------------------------------                   
 export build_type=""
 
+SKIP_DOCKER=false
+SKIP_SECRETS=false
+
 while [ "$1" != "" ]; do
     case $1 in
+        --skip-docker )         SKIP_DOCKER=true
+                                ;;
+        --skip-secrets )        SKIP_SECRETS=true
+                                ;;
         -h | --help )           usage
                                 exit
                                 ;;
         * )                     error "Unexpected argument $1"
                                 usage
                                 exit 1
+                                ;;
     esac
     shift
 done
@@ -99,11 +110,11 @@ project=$(basename ${BASEDIR})
 h1 "Building ${project}"
 
 
-# Over-rode SOURCE_MAVEN if you want to build from a different maven repo...
+# Override SOURCE_MAVEN if you want to build from a different maven repo...
 if [[ -z ${SOURCE_MAVEN} ]]; then
     export SOURCE_MAVEN=https://development.galasa.dev/main/maven-repo/obr/
     info "SOURCE_MAVEN repo defaulting to ${SOURCE_MAVEN}."
-    info "Set this environment variable if you want to over-ride this value."
+    info "Set this environment variable if you want to override this value."
 else
     info "SOURCE_MAVEN set to ${SOURCE_MAVEN} by caller."
 fi
@@ -169,7 +180,10 @@ function check_secrets {
 function build_application_code {
     h1 "Building simplatform application using maven"
     cd ${BASEDIR}/galasa-simplatform-application
-    mvn clean install
+    mvn clean install \
+    -Dgalasa.source.repo=${SOURCE_MAVEN} \
+    -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+    --settings ${BASEDIR}/settings.xml
     rc=$?
     if [[ "${rc}" != "0" ]]; then 
         error "make clean install failed. rc=${rc}"
@@ -181,7 +195,10 @@ function build_application_code {
 function build_test_code {
     h1 "Building simbank tests using maven"
     cd ${BASEDIR}/galasa-simbank-tests
-    mvn clean install
+    mvn clean install \
+    -Dgalasa.source.repo=${SOURCE_MAVEN} \
+    -Dgalasa.central.repo=https://repo.maven.apache.org/maven2/ \
+    --settings ${BASEDIR}/settings.xml
     rc=$?
     if [[ "${rc}" != "0" ]]; then 
         error "make clean install failed. rc=${rc}"
@@ -204,5 +221,11 @@ function build_docker_image {
 
 build_application_code
 build_test_code
-build_docker_image
-check_secrets
+
+if [ "$SKIP_DOCKER" = false ]; then
+    build_docker_image
+fi
+
+if [ "$SKIP_SECRETS" = false ]; then
+    check_secrets
+fi
