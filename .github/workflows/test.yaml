@@ -94,6 +94,9 @@ jobs:
 
       # If this workflow was called after a Main build, it will share the github.event_name
       # with the calling workflow, which is 'push'. Download the artifacts from that build.
+      - name: Ensure local Maven repo exists
+        run: mkdir -p /home/runner/.m2/repository
+
       - name: Download SimBank from Main Build
         if: ${{ github.event_name == 'push' }}
         uses: actions/download-artifact@v4
@@ -164,11 +167,35 @@ jobs:
         run: |
           jq -s '{ tests: map(.tests[]) }' ${{ github.workspace }}/.galasa/test-1.json ${{ github.workspace }}/.galasa/test-2.json ${{ github.workspace }}/.galasa/test-3.json > ${{ github.workspace }}/.galasa/tests.json
 
+      # The test report must be sent to Slack in the next job that uses the ubuntu-latest runner.
+      # We need to run a Docker image to communicate with the Slack webhook and the macos-latest
+      # runner does not have `docker` installed. Upload the report and download in the next job.
+      - name: Upload combined test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests.json
+          path: ${{ github.workspace }}/.galasa/tests.json
+
+  report-simbank-test-results:
+    name: Report Simbank Test results into Slack
+    runs-on: ubuntu-latest
+
+    # Skip this job for forks.
+    # Only report results if this workflow was called from 
+    # a regression run as Main builds run multiple times a day.
+    if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
+
+    needs: [build-and-run-simbank-tests]
+
+    steps:
+
+      - name: Download Test Report
+        uses: actions/download-artifact@v4
+        with:
+          name: tests.json
+          path: ${{ github.workspace }}/.galasa/tests.json
+
       - name: Report results into Slack channel
-        # Skip this step for forks.
-        # Only report results if this workflow was called from 
-        # a regression run as Main builds run multiple times a day.
-        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
         env: 
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: |
