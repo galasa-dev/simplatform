@@ -187,7 +187,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tests.json
-          path: ${{ github.workspace }}/.galasa/tests.json
+          path: ${{ github.workspace }}/.galasa
 
       - name: Report results into Slack channel
         env: 
@@ -195,7 +195,7 @@ jobs:
         run: |
           docker run --rm \
             --env SLACK_WEBHOOK=${{ env.SLACK_WEBHOOK }} \
-            -v ${{ github.workspace }}/.galasa:/galasa:rw \
+            -v ${{ github.workspace }}/.galasa:/galasa \
             ghcr.io/${{ env.NAMESPACE }}/galasabld-ibm:main \
             slackpost tests \
             --path /galasa/tests.json \
