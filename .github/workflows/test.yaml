@@ -68,6 +68,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '8.9'
+          cache-disabled: true
 
       - name: Install galasactl with Homebrew
         run: |
@@ -95,14 +96,18 @@ jobs:
       # If this workflow was called after a Main build, it will share the github.event_name
       # with the calling workflow, which is 'push'. Download the artifacts from that build.
       - name: Ensure local Maven repo exists
-        run: mkdir -p /home/runner/.m2/repository
+        env:
+          HOME: /Users/runner
+        run: mkdir -p ${{ env.HOME }}/.m2/repository
 
       - name: Download SimBank from Main Build
         if: ${{ github.event_name == 'push' }}
         uses: actions/download-artifact@v4
+        env:
+          HOME: /Users/runner
         with:
           name: simplatform
-          path: /home/runner/.m2/repository
+          path: ${{ env.HOME }}/.m2/repository
 
       # If this workflow was called by the daily regression test run, build the code.
       - name: Build SimBank using local build script
