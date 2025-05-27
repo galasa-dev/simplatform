@@ -76,16 +76,6 @@ jobs:
           brew install --no-quarantine galasactl
     #----------------------------------------------------------------------------------
     # Set up Galasa environment
-      - name: Create credentials.properties file
-        working-directory: ${{ env.GALASA_HOME }}
-        run: |
-            echo "${{ secrets.SIMBANK_CREDENTIALS }}" >> credentials.properties
-    
-        # The credentials.properties file should look something like this:
-        # secure.credentials.SIMBANK.username=XXX
-        # secure.credentials.SIMBANK.password=XXX
-        # Needs to be created dynamically as they cannot be checked into GitHub and exposed.
-
       - name: Initialise local Galasa environment to create remaining files and folders
         run: |
             galasactl local init --log -
@@ -164,10 +154,9 @@ jobs:
 
     #----------------------------------------------------------------------------------
     # Combine test reports and report to Slack channel
+    # Skip these steps for forks. Only report results if this workflow was
+    # called from a regression run as Main builds run multiple times a day.
       - name: Combine test reports
-        # Skip this step for forks
-        # Only report results if this workflow was called from 
-        # a regression run as Main builds run multiple times a day.
         if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
         run: |
           jq -s '{ tests: map(.tests[]) }' ${{ github.workspace }}/.galasa/test-1.json ${{ github.workspace }}/.galasa/test-2.json ${{ github.workspace }}/.galasa/test-3.json > ${{ github.workspace }}/.galasa/tests.json
@@ -176,6 +165,7 @@ jobs:
       # We need to run a Docker image to communicate with the Slack webhook and the macos-latest
       # runner does not have `docker` installed. Upload the report and download in the next job.
       - name: Upload combined test report
+        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4
         with:
           name: tests.json
@@ -185,9 +175,8 @@ jobs:
     name: Report Simbank Test results into Slack
     runs-on: ubuntu-latest
 
-    # Skip this job for forks.
-    # Only report results if this workflow was called from 
-    # a regression run as Main builds run multiple times a day.
+    # Skip this job for forks. Only report results if this workflow was
+    # called from a regression run as Main builds run multiple times a day.
     if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
 
     needs: [build-and-run-simbank-tests]
@@ -206,7 +195,7 @@ jobs:
         run: |
           docker run --rm \
             --env SLACK_WEBHOOK=${{ env.SLACK_WEBHOOK }} \
-            -v ${{ github.workspace }}/.galasa/temp:/galasa:rw \
+            -v ${{ github.workspace }}/.galasa:/galasa:rw \
             ghcr.io/${{ env.NAMESPACE }}/galasabld-ibm:main \
             slackpost tests \
             --path /galasa/tests.json \
