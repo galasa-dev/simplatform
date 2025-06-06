@@ -8,10 +8,8 @@ name: Test SimBank
 on:
   # This workflow_call is used after the Main Build of Simplatform.
   workflow_call:
-  # This workflow_dispatch allows this workflow to be called by a 
-  # scheduled regression run in the Automation repository. It also
-  # allows this workflow to be called by pressing 'Run Workflow'.
-  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *" # Daily at 06:00
 
 env:
   NAMESPACE: ${{ github.repository_owner }}
@@ -101,7 +99,7 @@ jobs:
 
       # If this workflow was called by the daily regression test run, build the code.
       - name: Build SimBank using local build script
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'schedule' }}
         run: |
           ./build-locally.sh --skip-docker --skip-secrets
 
@@ -157,7 +155,7 @@ jobs:
     # Skip these steps for forks. Only report results if this workflow was
     # called from a regression run as Main builds run multiple times a day.
       - name: Combine test reports
-        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
         run: |
           jq -s '{ tests: map(.tests[]) }' ${{ github.workspace }}/.galasa/test-1.json ${{ github.workspace }}/.galasa/test-2.json ${{ github.workspace }}/.galasa/test-3.json > ${{ github.workspace }}/.galasa/tests.json
 
@@ -165,7 +163,7 @@ jobs:
       # We need to run a Docker image to communicate with the Slack webhook and the macos-latest
       # runner does not have `docker` installed. Upload the report and download in the next job.
       - name: Upload combined test report
-        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
         uses: actions/upload-artifact@v4
         with:
           name: tests.json
@@ -177,7 +175,7 @@ jobs:
 
     # Skip this job for forks. Only report results if this workflow was
     # called from a regression run as Main builds run multiple times a day.
-    if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
 
     needs: [build-and-run-simbank-tests]
 
