@@ -6,6 +6,8 @@
 name: Test SimBank
 
 on:
+  # This workflow_dispatch is used in the release process.
+  workflow_dispatch:
   # This workflow_call is used after the Main Build of Simplatform.
   workflow_call:
   schedule:
