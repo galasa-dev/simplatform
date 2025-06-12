@@ -99,9 +99,9 @@ jobs:
           name: simplatform
           path: ${{ env.HOME }}/.m2/repository
 
-      # If this workflow was called by the daily regression test run, build the code.
+      # If this workflow was called by the daily regression test run or the release, build the code.
       - name: Build SimBank using local build script
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
         run: |
           ./build-locally.sh --skip-docker --skip-secrets
 
