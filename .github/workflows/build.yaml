@@ -138,15 +138,42 @@ jobs:
         env: 
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app actions run ${{ env.BRANCH }}-simplatform restart --kind Deployment --resource-name simplatform-${{ env.BRANCH }} --server argocd.galasa.dev
-        
+          for i in {1..10}; do
+            docker run \
+            --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} \
+            --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main \
+            app actions run ${{ env.BRANCH }}-simplatform restart \
+            --kind Deployment \
+            --resource-name \
+            simplatform-${{ env.BRANCH }} \
+            --server argocd.galasa.dev \
+            --grpc-web \
+          && exit 0 || sleep 10
+          done
+
+          echo "ArgoCD still uncontactable after 10 attempts."
+          exit 1
+
       - name: Wait for app health in ArgoCD
         # Skip this step for forks
         if: ${{ github.repository_owner == 'galasa-dev' }}
         env: 
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
-          docker run --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main app wait ${{ env.BRANCH }}-simplatform --resource apps:Deployment:simplatform-${{ env.BRANCH }} --health --server argocd.galasa.dev
+          for i in {1..10}; do
+            docker run \
+            --env ARGOCD_AUTH_TOKEN=${{ env.ARGOCD_AUTH_TOKEN }} \
+            --rm -v ${{ github.workspace }}:/var/workspace ghcr.io/galasa-dev/argocdcli:main \
+            app wait ${{ env.BRANCH }}-simplatform \
+            --resource apps:Deployment:simplatform-${{ env.BRANCH }} \
+            --health \
+            --server argocd.galasa.dev \
+            --grpc-web \
+            && exit 0 || sleep 10
+          done
+
+          echo "ArgoCD still uncontactable after 10 attempts."
+          exit 1
 
   run-simbank-tests:
     name: Run the SimBank Tests
