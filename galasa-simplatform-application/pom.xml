@@ -3,7 +3,7 @@
 
 	<groupId>dev.galasa</groupId>
 	<artifactId>galasa-simplatform-parent</artifactId>
-	<version>0.43.0</version>
+	<version>0.44.0</version>
 	<packaging>pom</packaging>
 
 	<name>Galasa SimPlatform</name>
@@ -85,7 +85,7 @@
 			<dependency>
 				<groupId>dev.galasa</groupId>
 				<artifactId>galasa-bom</artifactId>
-				<version>0.43.0</version>
+				<version>0.44.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

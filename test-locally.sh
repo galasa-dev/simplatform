@@ -181,7 +181,7 @@ function runProvisionedAccountCreditTests {
 source_dir="."
 
 project=$(basename ${BASEDIR})
-SIMBANK_VERSION="0.43.0"
+SIMBANK_VERSION="0.44.0"
 
 checkGalasaCtlAvailable
 checkSimBankTestAreBuilt
@@ -197,7 +197,7 @@ java -jar ~/.m2/repository/dev/galasa/galasa-simplatform/${SIMBANK_VERSION}/gala
 
 success "Simbank application started OK."
 
-TEST_OBR_VERSION="0.43.0"
+TEST_OBR_VERSION="0.44.0"
 
 h1 "Running Simbank tests"
 
