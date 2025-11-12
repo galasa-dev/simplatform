@@ -1,4 +1,4 @@
-FROM tomcat:8.5.82-jre11-temurin
+FROM tomcat:9-jre17-temurin
 
 ADD target/galasa-simplatform-webapp.war  /usr/local/tomcat/webapps/
 EXPOSE 8080
