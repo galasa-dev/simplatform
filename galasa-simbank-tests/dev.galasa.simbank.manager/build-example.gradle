@@ -3,8 +3,11 @@ plugins {
     id 'biz.aQute.bnd.builder' version '7.1.0'
 }
 
-sourceCompatibility = '11'
-targetCompatibility = '11'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 group = '%%prefix%%'
 version = '0.1.0'

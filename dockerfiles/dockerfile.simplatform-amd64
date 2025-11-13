@@ -1,4 +1,4 @@
-FROM ghcr.io/galasa-dev/openjdk:11-jdk
+FROM ghcr.io/galasa-dev/openjdk:17
 
 RUN mkdir /galasa
 
