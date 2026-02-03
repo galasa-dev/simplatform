@@ -90,8 +90,9 @@ jobs:
     #----------------------------------------------------------------------------------
     # Set up Galasa environment
       - name: Initialise local Galasa environment to create remaining files and folders
+        working-directory: ${{ github.workspace }}/temp
         run: |
-          galasactl local init --log -
+          ./galasactl local init --log -
 
     #----------------------------------------------------------------------------------
     # Download or build the Simplatform application that the tests connect to
