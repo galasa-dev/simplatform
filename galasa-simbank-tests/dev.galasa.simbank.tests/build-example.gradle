@@ -27,6 +27,6 @@ dependencies {
     implementation 'dev.galasa:dev.galasa.zos.manager:0.+'
     implementation 'dev.galasa:dev.galasa.zos3270.manager:0.+'
     
-    implementation 'org.assertj:assertj-core:3.25.+'
+    implementation 'org.assertj:assertj-core:3.27.+'
     
 }
