@@ -157,7 +157,7 @@ jobs:
     # Skip these steps for forks. Only report results if this workflow was
     # called from a regression run as Main builds run multiple times a day.
       - name: Combine test reports
-        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
+        if: ${{ failure() && github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
         run: |
           jq -s '{ tests: map(.tests[]) }' ${{ github.workspace }}/.galasa/test-1.json ${{ github.workspace }}/.galasa/test-2.json ${{ github.workspace }}/.galasa/test-3.json > ${{ github.workspace }}/.galasa/tests.json
 
@@ -165,7 +165,7 @@ jobs:
       # We need to run a Docker image to communicate with the Slack webhook and the macos-latest
       # runner does not have `docker` installed. Upload the report and download in the next job.
       - name: Upload combined test report
-        if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
+        if: ${{ failure() && github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
         uses: actions/upload-artifact@v4
         with:
           name: tests.json
@@ -177,7 +177,7 @@ jobs:
 
     # Skip this job for forks. Only report results if this workflow was
     # called from a regression run as Main builds run multiple times a day.
-    if: ${{ github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
+    if: ${{ failure() && github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
 
     needs: [build-and-run-simbank-tests]
 
