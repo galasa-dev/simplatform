@@ -70,15 +70,28 @@ jobs:
           gradle-version: 9.0.0
           cache-disabled: true
 
-      - name: Install galasactl with Homebrew
+    #----------------------------------------------------------------------------------
+    # Install galasactl from development download site
+      - name: Make temp directory
         run: |
-          brew tap galasa-dev/tap
-          brew install --no-quarantine galasactl
+          mkdir ${{ github.workspace }}/temp
+
+      - name: Download the galasactl-darwin-arm64 binary
+        working-directory: ${{ github.workspace }}/temp
+        run: |
+          wget https://development.galasa.dev/main/binary/cli/galasactl-darwin-arm64
+
+      - name: Make `galasactl` executable
+        working-directory: ${{ github.workspace }}/temp
+        run: |
+          chmod +x galasactl-darwin-arm64
+          xattr -dr com.apple.quarantine galasactl-darwin-arm64
+          mv galasactl-darwin-arm64 galasactl
     #----------------------------------------------------------------------------------
     # Set up Galasa environment
       - name: Initialise local Galasa environment to create remaining files and folders
         run: |
-            galasactl local init --log -
+          galasactl local init --log -
 
     #----------------------------------------------------------------------------------
     # Download or build the Simplatform application that the tests connect to
@@ -117,10 +130,11 @@ jobs:
     #----------------------------------------------------------------------------------
     # Run the Simbank tests
       - name: Run the SimBankIVT
+        working-directory: ${{ github.workspace }}/temp
         env:
           GALASA_VERSION: ${{ needs.get-galasa-version.outputs.galasa-version }}
         run: |
-          galasactl runs submit local \
+          ./galasactl runs submit local \
           --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
           --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
           --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.SimBankIVT \
@@ -129,10 +143,11 @@ jobs:
           --log -
 
       - name: Run the BasicAccountCreditTest
+        working-directory: ${{ github.workspace }}/temp
         env:
           GALASA_VERSION: ${{ needs.get-galasa-version.outputs.galasa-version }}
         run: |
-          galasactl runs submit local \
+          ./galasactl runs submit local \
           --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
           --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
           --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.BasicAccountCreditTest \
@@ -141,10 +156,11 @@ jobs:
           --log -
 
       - name: Run the ProvisionedAccountCreditTests
+        working-directory: ${{ github.workspace }}/temp
         env:
           GALASA_VERSION: ${{ needs.get-galasa-version.outputs.galasa-version }}
         run: |
-          galasactl runs submit local \
+          ./galasactl runs submit local \
           --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
           --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
           --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.ProvisionedAccountCreditTests \
