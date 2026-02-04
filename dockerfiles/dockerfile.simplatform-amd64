@@ -9,7 +9,7 @@ WORKDIR /galasa
 
 USER galasa
 
-COPY galasa-simplatform-application/galasa-simplatform-3270/target/galasa-simplatform-0.47.0.jar /galasa/simplatform.jar
+COPY galasa-simplatform-application/galasa-simplatform-3270/target/galasa-simplatform-0.46.1.jar /galasa/simplatform.jar
 
 VOLUME /galasa/.galasa
 VOLUME /galasa/load
