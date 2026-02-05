@@ -12,7 +12,7 @@ WORKDIR /galasa
 
 USER galasa
 
-COPY target/galasa-simplatform-0.46.1.jar /galasa/simplatform.jar
+COPY target/galasa-simplatform-0.47.0.jar /galasa/simplatform.jar
     
 VOLUME /galasa/.galasa
 VOLUME /galasa/load
