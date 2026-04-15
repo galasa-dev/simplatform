@@ -169,6 +169,19 @@ jobs:
           --reportjson ${{ github.workspace }}/.galasa/test-3.json \
           --log -
 
+      - name: Run the BatchAccountsOpenTest
+        working-directory: ${{ github.workspace }}/temp
+        env:
+          GALASA_VERSION: ${{ needs.get-galasa-version.outputs.galasa-version }}
+        run: |
+          ./galasactl runs submit local \
+          --obr mvn:dev.galasa/dev.galasa.simbank.obr/${GALASA_VERSION}/obr \
+          --obr mvn:dev.galasa/dev.galasa.uber.obr/${GALASA_VERSION}/obr \
+          --class dev.galasa.simbank.tests/dev.galasa.simbank.tests.BatchAccountsOpenTest \
+          --remoteMaven https://development.galasa.dev/main/maven-repo/obr \
+          --reportjson ${{ github.workspace }}/.galasa/test-4.json \
+          --log -
+
     #----------------------------------------------------------------------------------
     # Combine test reports and report to Slack channel
     # Skip these steps for forks. Only report results if this workflow was
@@ -176,7 +189,7 @@ jobs:
       - name: Combine test reports
         if: ${{ failure() && github.repository_owner == 'galasa-dev' && github.event_name == 'schedule' }}
         run: |
-          jq -s '{ tests: map(.tests[]) }' ${{ github.workspace }}/.galasa/test-1.json ${{ github.workspace }}/.galasa/test-2.json ${{ github.workspace }}/.galasa/test-3.json > ${{ github.workspace }}/.galasa/tests.json
+          jq -s '{ tests: map(.tests[]) }' ${{ github.workspace }}/.galasa/test-1.json ${{ github.workspace }}/.galasa/test-2.json ${{ github.workspace }}/.galasa/test-3.json ${{ github.workspace }}/.galasa/test-4.json > ${{ github.workspace }}/.galasa/tests.json
 
       # The test report must be sent to Slack in the next job that uses the ubuntu-latest runner.
       # We need to run a Docker image to communicate with the Slack webhook and the macos-latest
