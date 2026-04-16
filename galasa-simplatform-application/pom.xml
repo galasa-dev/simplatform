@@ -127,6 +127,13 @@
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 
+			<!-- Overrides the version of easymock 3.4 that gets pulled in transiently -->
+			<dependency>
+				<groupId>org.easymock</groupId>
+				<artifactId>easymock</artifactId>
+				<version>5.6.0</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
