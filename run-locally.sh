@@ -111,7 +111,7 @@ fi
 # Main logic.
 #-----------------------------------------------------------------------------------------                   
 
-SIMBANK_VERSION="1.1.2"
+SIMBANK_VERSION="1.2.0"
 
 function run_server {
     h1 "Running Simbank back-end server application (version ${SIMBANK_VERSION}) ..."
