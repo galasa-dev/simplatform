@@ -1,4 +1,4 @@
-FROM ghcr.io/galasa-dev/openjdk:17
+FROM ghcr.io/galasa-dev/eclipse-temurin:17-jdk
 
 RUN mkdir /galasa
 
