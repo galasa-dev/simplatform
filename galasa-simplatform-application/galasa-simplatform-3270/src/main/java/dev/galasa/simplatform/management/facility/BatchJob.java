@@ -59,7 +59,7 @@ public class BatchJob {
 	private String jcl;
 	private String program;	
 	private int programStmtNo;
-	private String output;
+	private volatile String output;
 
 	private boolean submitted;
 	private boolean jclError;	
