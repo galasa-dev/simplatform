@@ -186,14 +186,17 @@ public class ManagementFacilityListener implements IListener {
 		}
 		batchJobs.put(batchJob.getJobname() + "/" + batchJob.getJobid(), batchJob);			
 			
+		// Read the output once: the job's timer thread can replace it at any time, and the
+		// Content-Length must match the body that is sent.
+		String jobOutput = batchJob.getOutput();
 		OutputStream output = socket.getOutputStream();
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_201_CREATED);
 		ps.println(HEADER_SERVER);
 		ps.println(HEADER_CONNECTION_CLOSE);
-		ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
+		ps.println(HEADER_CONTENT_LENGTH + jobOutput.length());
 		ps.println(HEADER_CONTENT_TYPE_JSON);
-		ps.println(batchJob.getOutput());
+		ps.println(jobOutput);
 		ps.println(CR_LF);
 		ps.flush();
 		socket.close();
@@ -208,14 +211,15 @@ public class ManagementFacilityListener implements IListener {
 
 	private void batchJobStatus(BatchJob batchJob) throws IOException {
 		batchJob.refreshJobStatus();
+		String jobOutput = batchJob.getOutput();
 		OutputStream output = socket.getOutputStream();
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_200_OK);
 		ps.println(HEADER_SERVER);
 		ps.println(HEADER_CONNECTION_CLOSE);
-		ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
+		ps.println(HEADER_CONTENT_LENGTH + jobOutput.length());
 		ps.println(HEADER_CONTENT_TYPE_JSON);
-		ps.println(batchJob.getOutput());
+		ps.println(jobOutput);
 		ps.println(CR_LF);
 		ps.flush();
 		socket.close();
@@ -223,14 +227,15 @@ public class ManagementFacilityListener implements IListener {
 
 	private void batchJobListFiles(BatchJob batchJob) throws IOException {
 		batchJob.listFiles();
+		String jobOutput = batchJob.getOutput();
 		OutputStream output = socket.getOutputStream();
 		PrintStream ps = new PrintStream(output);
 		ps.println(HEADER_HTTP_200_OK);
 		ps.println(HEADER_SERVER);
 		ps.println(HEADER_CONNECTION_CLOSE);
-		ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
+		ps.println(HEADER_CONTENT_LENGTH + jobOutput.length());
 		ps.println(HEADER_CONTENT_TYPE_JSON);
-		ps.println(batchJob.getOutput());
+		ps.println(jobOutput);
 		ps.println(CR_LF);
 		ps.flush();
 		socket.close();
@@ -257,14 +262,15 @@ public class ManagementFacilityListener implements IListener {
 
     private void batchJobCancel(BatchJob batchJob) throws IOException {
         batchJob.cancel();
+        String jobOutput = batchJob.getOutput();
         OutputStream output = socket.getOutputStream();
         PrintStream ps = new PrintStream(output);
         ps.println(HEADER_HTTP_200_OK);
         ps.println(HEADER_SERVER);
         ps.println(HEADER_CONNECTION_CLOSE);
-        ps.println(HEADER_CONTENT_LENGTH + batchJob.getOutput().length());
+        ps.println(HEADER_CONTENT_LENGTH + jobOutput.length());
         ps.println(HEADER_CONTENT_TYPE_JSON);
-        ps.println(batchJob.getOutput());
+        ps.println(jobOutput);
         ps.println(CR_LF);
         ps.flush();
         socket.close();
