@@ -9,9 +9,11 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.logging.Logger;
 
+import dev.galasa.zos3270.common.screens.TerminalSize;
 import dev.galasa.zos3270.AttentionIdentification;
 import dev.galasa.zos3270.internal.comms.NetworkServer;
 import dev.galasa.zos3270.internal.comms.NetworkThread;
@@ -128,7 +130,7 @@ public abstract class AbstractScreen implements IScreen {
                 }
             }
 
-            Screen screen = new Screen(80, 24, null);
+            Screen screen = new Screen(new TerminalSize(80, 24), new TerminalSize(0, 0), null, Charset.forName("Cp037"));
             screen.setBuffer(buffer);
             if (newCursorPosition >= 0) {
                 screen.setCursorPosition(newCursorPosition);
