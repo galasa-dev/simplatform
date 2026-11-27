@@ -134,6 +134,13 @@
 				<version>5.7.0</version>
 			</dependency>
 
+			<!-- Overrides the version of byte-buddy 1.17.5 that gets pulled in transiently -->
+			<dependency>
+				<groupId>net.bytebuddy</groupId>
+				<artifactId>byte-buddy</artifactId>
+				<version>1.18.16</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
